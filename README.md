@@ -27,7 +27,7 @@ The following **optional** features are implemented:
 
 The following **bonus** features are implemented:
 
-* [ ] Users can add **follow** other users and get trip details on their activity feed
+* [ ] Users can **follow** other users and get trip details on their activity feed
 * [ ] Users can request a **trip plan** and the app will provide one based on available data
 * [ ] **Trip recommendations** are provided based on users' preferences/past trips/favorites
 
