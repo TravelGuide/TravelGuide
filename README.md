@@ -7,13 +7,45 @@ Today, Travelers spend up to 3Hr’s crawling the web (Ex: Trip Advisor) in find
 
 
 
-Time spent: **2** hours spent in total
+Time spent: **x** hours spent in total
 
 ## User Stories
 
-The following **required** functionality is completed:
+**ArchTypes - Login,Register and Profile  -PRAVEEN**
 
-**ArchTypes - Stream and Details**
+
++The following **required** functionality is completed:
+* [ ]	Users can sign up for a new **Travel Guide** user account
+* [ ]	Users can log in to their **Travel Guide** user account
+* [ ] Users are able to view their profile - Name, profile picture, recent trips
+* [ ] Users can upload their trip experiences - Location, days travelled, number of people, pictures, hotel, cost etc.
+* [ ] Users can view others' trip experiences
+* [ ] Authentication is done using **OAuth**
+* [ ] Data storage is done using **Parse**
+* [ ] Data is stored for offline access in **SQLite** database and disk
+* [ ] Data is retreived from local storage using ORM **Active Android**
+* [ ] Data is also obtained using **[TripAdvisor APIs](https://developer-tripadvisor.com/content-api/)**
+    
+The following **optional** features are implemented:
+* [ ] Users can add other users' trips to their **favorites**
+* [ ] Users can **rate** other users' trips (upto 5 stars)
+* [ ] Users can post **reviews** on other users' trips
+* [ ] **Location based** information is pushed to users' phone
+
+The following **bonus** features are implemented:
+
+* [ ] Users can **follow** other users and get trip details on their activity feed
+* [ ] Users can request a **trip plan** and the app will provide one based on available data
+* [ ] **Trip recommendations** are provided based on users' preferences/past trips/favorites
++
++The following **additional** features are implemented:
++
++* [ ] Location based **real time data** (e.g. some event happening locally) is pushed to the users' phone
+
+
+**ArchTypes - Stream and Details  -HEMANTH**
+
++The following **required** functionality is completed:
 * [ ] User can **scroll through current popular travel plans** 
 * [ ] User can **search for travel plans at a particular destination and/or can use phone's location services** 
 * [ ] User can **select and add any travel plan to his personal account** 
@@ -23,8 +55,7 @@ The following **required** functionality is completed:
  * [ ] **places displayed based on days,time taken to visit,photos,videos,created by user details,option to follow the plan,add/update         the plan in his personal bucket Caption, Username,Ratings,Time taken,Reviews and Ratings from Trip Advisor /Yelp**
 
 
-The following **optional** features are implemented:
-
++The following **optional** features are implemented:
 * [ ] User can **pull-to-refresh** popular stream to get the latest popular plans
 * [ ] Show latest comments for each plan
 * [ ] Display each user profile image using a RoundedImageViewDisplay each user profile image using a [RoundedImageView](https://github.com/vinc3m1/RoundedImageView)
@@ -34,8 +65,7 @@ The following **optional** features are implemented:
 * [ ] Allow user to view all comments for each plan  within a separate activity or dialog fragment
 * [ ] Allow images/video posts to be played in full-screen using the VideoView
 
-The following **additional** features are implemented:
-
++The following **additional** features are implemented:
 * [ ] List anything else that you can get done to improve the app functionality!
 
 ## Video Walkthrough 
