@@ -14,23 +14,22 @@ Time spent: **2** hours spent in total
 The following **required** functionality is completed:
 
 **ArchTypes - Stream and Details**
-* [] User can **scroll through current popular travel plans** 
-* [] User can **search for travel plans at a particular destination and/or can use phone's location services** 
-* [] User can **select and add any travel plan to his personal account** 
-* [] For each plan displayed, user can see the following details:
- * [] Graphic, Caption, Username,Ratings,Time taken
- * [] Relative timestamp, like count, user profile image
-* [] For each plan displayed, user can select the plan to seefollowing details:
- * [] places sorted by days,time taken to visit,photos,videos,created by user details,option to follow the plan,add/update         the plan in his personal bucket Caption, Username,Ratings,Time taken,Reviews and Ratings from Trip Advisor /Yelp
+* [ ] User can **scroll through current popular travel plans** 
+* [ ] User can **search for travel plans at a particular destination and/or can use phone's location services** 
+* [ ] User can **select and add any travel plan to his personal account** 
+* [ ] For each **plan displayed, user can see the following details:**
+ * [ ] **Graphic, Caption, Username,Ratings,Time taken,Add to favorites icon**
+* [ ]  For each **plan displayed, user can select the plan to see following details**:
+ * [ ] **places displayed based on days,time taken to visit,photos,videos,created by user details,option to follow the plan,add/update         the plan in his personal bucket Caption, Username,Ratings,Time taken,Reviews and Ratings from Trip Advisor /Yelp**
 
 
 The following **optional** features are implemented:
 
-* [x] User can **pull-to-refresh** popular stream to get the latest popular photos
+* [ ] User can **pull-to-refresh** popular stream to get the latest popular photos
 * [ ] Show latest comments for each photo
-* [x] Display each photo with the same style and proportions as the real Instagram
-* [x] Display each user profile image using a RoundedImageViewDisplay each user profile image using a [RoundedImageView](https://github.com/vinc3m1/RoundedImageView)
-* [x] Display a nice default placeholder graphic for each image during loading
+* [ ] Display each photo with the same style and proportions as the real Instagram
+* [ ] Display each user profile image using a RoundedImageViewDisplay each user profile image using a [RoundedImageView](https://github.com/vinc3m1/RoundedImageView)
+* [ ] Display a nice default placeholder graphic for each image during loading
 * [ ] Improved the user interface through styling and coloring
 
 The following **bonus** features are implemented:
