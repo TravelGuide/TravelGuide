@@ -64,6 +64,8 @@ The following **optional** features are implemented:
 ![Wireframe](Wireframes/Login_2.png)
 ![Wireframe](Wireframes/SignUp.png)
 ![Wireframe](Wireframes/Profile.png)
+![Wireframe](Wireframes/HomeScreen.png)
+![Wireframe](Wireframes/Detailed_Plan.png)
 
 ## Video Walkthrough 
 
