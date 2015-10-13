@@ -1,6 +1,6 @@
 # Project  - *Travel Guide*
 
-**Travel Guide** is an android app that allows a user to check out popular travel plans created by other travelers. It allows a user plan a trip based on preferences and crowd sourced information. The app utilizes information from travelers, Location services, photos and [Trip Advisor APIss](https://developer-tripadvisor.com/content-api/) to display information and images about tourist places across the globe.
+**Travel Guide** is an android app that allows a user to check out popular travel plans created by other travelers. It allows a user plan a trip based on preferences and crowd sourced information. The app utilizes information from travelers, Location services, photos and [Trip Advisor APIs](https://developer-tripadvisor.com/content-api/) to display information and images about tourist places across the globe.
 
 Today, Travelers spend up to 3Hr’s crawling the web (Ex: Trip Advisor) in finding the places to visit/stay when planning for a trip. They do it because they want to tailor a plan to suit their needs/family needs so everyone can have a good time. What we can do better is - Create an app where users can create travel/trip plans from their recent trips which can be shared with other travels. By doing this travelers can spend less time in tailoring a plan and can spend more time on needed things. We will make phone UI look as simple as possible by displaying places on Map/ListView.(Here we will integrate with TripAdvisor/Yelp to pull data and we will use Phone’s features such as Camera, Persistence and Locations services)
 
@@ -8,7 +8,7 @@ Time spent: **X** hours spent in total
 
 ## User Stories
 
-**ArchTypes - Login,Register and Profile - PRAVEEN**
+**ArchTypes - Login, Register and Profile - PRAVEEN**
 
 The following **required** functionality is completed:
 
@@ -41,22 +41,21 @@ The following **additional** features are implemented:
 **ArchTypes - Stream and Details - HEMANTH**
 
 The following **required** functionality is completed:
-* [ ] User can **scroll through current popular travel plans** 
-* [ ] User can **search for travel plans at a particular destination and/or can use phone's location services** 
-* [ ] User can **select and add any travel plan to his personal account** 
-* [ ] For each **plan displayed, user can see the following details:**
- * [ ] **Graphic, Caption, Username,Ratings,Time taken,Add to favorites icon**
-* [ ]  For each **plan displayed, user can select the plan to see following details**:
- * [ ] **places displayed based on days,time taken to visit,photos,videos,created by user details,option to follow the plan,add/update the plan in his personal bucket Caption, Username,Ratings,Time taken,Reviews and Ratings from Trip Advisor /Yelp**
+* [ ] User can **scroll** through current popular travel plans
+* [ ] User can **search** for travel plans at a particular destination and/or can use phone's **location services**
+* [ ] User can select and **add** any travel plan to his personal account
+* [ ] For each plan displayed, user can see the following details:
+ * [ ] Graphic, Caption, Username, Ratings, Time taken, Add to favorites icon
+* [ ]  For each plan displayed, user can select the plan to see following details:
+ * [ ] places displayed based on days/time taken to visit, photos, videos, created by user details, option to follow the plan, add/update the plan in his personal bucket, caption, username, reviews and ratings from Trip Advisor/Yelp**
 
 The following **optional** features are implemented:
 * [ ] User can **pull-to-refresh** popular stream to get the latest popular plans
 * [ ] Show latest comments for each plan
-* [ ] Display each user profile image using a RoundedImageViewDisplay each user profile image using a [RoundedImageView](https://github.com/vinc3m1/RoundedImageView)
+* [ ] Display each user profile image using a [RoundedImageView](https://github.com/vinc3m1/RoundedImageView)
 * [ ] Display a nice default placeholder graphic for each image during loading
 * [ ] Improved the user interface through styling and coloring
-* [ ] Show last 2 comments for each plan
-* [ ] Allow user to view all comments for each plan  within a separate activity or dialog fragment
+* [ ] Allow user to view all comments for each plan using a modal overlay
 * [ ] Allow images/video posts to be played in full-screen using the VideoView
 
 ## Wireframes
