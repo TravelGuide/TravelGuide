@@ -17,7 +17,7 @@ The following **required** functionality is completed:
 * [ ] Users are able to view their profile - Name, profile picture, recent trips
 * [ ] Users can upload their trip experiences - Location, days travelled, number of people, pictures, hotel, cost etc.
 * [ ] Users can view others' trip experiences
-* [ ] Authentication is done using **OAuth**
+* [ ] Authentication is done using **Parse** - Integrate with **Facebook/Twitter**.
 * [ ] Data storage is done using **Parse**
 * [ ] Data is stored for offline access in **SQLite** database and disk
 * [ ] Data is retreived from local storage using ORM **Active Android**
