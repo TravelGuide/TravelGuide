@@ -1,8 +1,14 @@
 # Project  - *Travel Guide*
 
-**Travel Guide** is an android app that allows a user to check out popular travel plans created by other travelers. It allows a user plan a trip based on preferences and crowd sourced information. The app utilizes information from travelers, Location services, photos and [Trip Advisor APIs](https://developer-tripadvisor.com/content-api/) to display information and images about tourist places across the globe.
+**Travel Guide** is an android app that allows a user to check out popular travel plans created by other travelers. It allows a user plan a trip based on preferences and crowd sourced information. The app utilizes information from travelers, location services, photos and [Trip Advisor APIs](https://developer-tripadvisor.com/content-api/)* to display information and images about tourist places across the globe.
 
-Today, Travelers spend up to 3Hr’s crawling the web (Ex: Trip Advisor) in finding the places to visit/stay when planning for a trip. They do it because they want to tailor a plan to suit their needs/family needs so everyone can have a good time. What we can do better is - Create an app where users can create travel/trip plans from their recent trips which can be shared with other travels. By doing this travelers can spend less time in tailoring a plan and can spend more time on needed things. We will make phone UI look as simple as possible by displaying places on Map/ListView.(Here we will integrate with TripAdvisor/Yelp to pull data and we will use Phone’s features such as Camera, Persistence and Locations services)
+\* Still pending of authorization from TripAdvisor they have a police that requires it.
+
+Today, travelers spend up to three hours crawling the web (Ex: [TripAdvisor](www.tripadvisor.com)) in finding the places to visit/stay when planning for a trip. They do it because they want to tailor a plan to suit their needs/family needs so everyone can have a good time.
+
+What we can do better is create an app where users can create travel/trip plans from their recent trips which can be shared with other travelers. By doing this travelers can spend less time in tailoring a plan and can spend more time on needed things. We will make an Android app as simple as possible by displaying places, others users plan.
+
+In the future we could integrate with [TripAdvisor](www.tripadvisor.com) or [Yelp](www.yelp.com) to pull data. By now we're going to use Android features such as: camera, persitence and location services.
 
 Time spent: **X** hours spent in total
 
