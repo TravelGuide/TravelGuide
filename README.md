@@ -34,18 +34,19 @@ The following **required** functionality is completed:
   * [ ] Fetch plan details from **Parse** based on **User Details**. If no personal plans exist for user than display existed plans from others users.
   * [ ] For each plan the app displayed: **graphic, caption, username, ratings, trip duration, favorite’s icon**.
 * [ ] For each plan displayed, user can select the plan to see following details:
-  * [ ] Horizontal Scrolling **List of days** & **option to follow the plan** & **option to share the plan**
-  * [ ] On click of each date we display **place name, time taken to visit, photos, created by user details and ratings**
+  * [ ] Horizontal Scrolling **list of days, option to follow the plan, option to share the plan**.
+  * [ ] Clicking on the day we display **place name, visit duration, photos, created by user details and ratings**.
 * [ ] Display each user profile image using a **RoundedImageView**.
-* * [ ] Plan creation: Plan Name, Created User, Time Taken(duration), Picture (places), Single/Group (Travel Type), Month (January, February). (OK)
-      * [ ] User click on a button will show a dialog to create a Day plan: **place name, time taken to visit, photos, created by user details and descriptions (comments)** (OK)
+* [ ] Create a new travel plan: name, travel duration, picture of places, travel type (Single/Group), month of visit (January, February).
+  * [ ] Inside travel plan creation user can click to add more days to the trip, will show a dialog to fill following fields: **place name, visit duration, photos, description**.
     
 The following **optional** features are implemented:
-* [ ] Users can add other users' trips to their **favorites**
-* [ ] Users can **rate** other users' trips (upto 5 stars)
-* [ ] Users can post **reviews** on other users' trips
-* [ ] **Location based** information is pushed to users' phone
-* * [ ] For plans that are added to user personal list:
+
+* [ ] Users can add other users' trips to their **favorites**.
+* [ ] Users can **rate** other users' trips (up to 5 stars).
+* [ ] Users can post **reviews** on other users' trips.
+* [ ] **Location based** information is pushed to users' phone.
+* [ ] For plans that are added to user personal list:
   * [ ] He/She Can Update **(Add/Remove/Edit) places or details or photos**
   * [ ] Publish his new plan to **Parse**
   * [ ] **Add friends to plan**
@@ -55,16 +56,16 @@ The following **optional** features are implemented:
 * [ ] Allow images/video posts to be played in full-screen using the **VideoView**
 * [ ] Show Places on **Map**
 * [ ] If filters exist then save them to **Shared Preferences** and use them for future searches
-* [ ] On click of each date we display **video , weather details**
+* [ ] On click of each date we display **video, weather details**
 
 The following **bonus** features are implemented:
 
-* [ ] Users can **follow** other users and get trip details on their activity feed
-* [ ] Users can request a **trip plan** and the app will provide one based on available data
-* [ ] **Trip recommendations** are provided based on users' preferences/past trips/favorites
-* [ ] Data is also obtained using **[TripAdvisor APIs](https://developer-tripadvisor.com/content-api/)**
-* [ ] Pull a public from google image search to plan creation.
-* * [ ] Location based **real time data** (e.g. some event happening locally) is pushed to the users' phone
+* [ ] Users can **follow** other users and get trip details on their activity feed.
+* [ ] Users can request a **trip plan** and the app will provide one based on available data.
+* [ ] **Trip recommendations** are provided based on users' preferences/past trips/favorites.
+* [ ] Data is also obtained using **[TripAdvisor APIs](https://developer-tripadvisor.com/content-api/)**.
+* [ ] Pull images of places from google image to add photos on creation plan.
+* [ ] Location based **real time data** (e.g. some event happening locally) is pushed to the users' phone.
 
 ## Wireframes
 
