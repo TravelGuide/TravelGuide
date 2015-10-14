@@ -75,6 +75,7 @@ The following **bonus** features are implemented:
 ![Wireframe](Wireframes/Profile.png)
 ![Wireframe](Wireframes/HomeScreen.png)
 ![Wireframe](Wireframes/Detailed_Plan.png)
+![Wireframe](Wireframes/Creation_Plan.png)
 
 ## Video Walkthrough 
 
