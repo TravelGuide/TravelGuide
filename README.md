@@ -12,16 +12,15 @@ Time spent: **X** hours spent in total
 
 The following **required** functionality is completed:
 
-* [ ]	Users can sign up for a new **Travel Guide** user account
-* [ ]	Users can log in to their **Travel Guide** user account
-* [ ] Users are able to view their profile - Name, profile picture, recent trips
-* [ ] Users can upload their trip experiences - Location, days travelled, number of people, pictures, hotel, cost etc.
-* [ ] Users can view others' trip experiences
-* [ ] Authentication is done using **Parse** - Integrate with **Facebook/Twitter**.
-* [ ] Data storage is done using **Parse**
-* [ ] Data is stored for offline access in **SQLite** database and disk
-* [ ] Data is retreived from local storage using ORM **Active Android**
-* [ ] Data is also obtained using **[TripAdvisor APIs](https://developer-tripadvisor.com/content-api/)**
+* [ ]	Users can sign up for a new **Travel Guide** user account (OK)
+* [ ]	Users can log in to their **Travel Guide** user account (OK)
+* [ ] Users are able to view their profile - Name, profile picture, recent trips (plans of trip) (OK)
+* [ ] Users can upload their trip experiences - Location (still pending to check available APIS), days travelled, number of people, pictures, hotel, cost. (OK)
+* [ ] Users can view others' trip experiences (OK)
+* [ ] Authentication is done using **Parse** - Integrate with **Facebook/Twitter**. (OK)
+* [ ] Data storage is done using **Parse** (OK)
+* [ ] Data is stored for offline access in **SQLite** database and disk (checking if Parse takes care of that) (OK)
+* [ ] Data is retreived from local storage using ORM **Active Android** (OK)
     
 The following **optional** features are implemented:
 * [ ] Users can add other users' trips to their **favorites**
@@ -34,6 +33,7 @@ The following **bonus** features are implemented:
 * [ ] Users can **follow** other users and get trip details on their activity feed
 * [ ] Users can request a **trip plan** and the app will provide one based on available data
 * [ ] **Trip recommendations** are provided based on users' preferences/past trips/favorites
+* [ ] Data is also obtained using **[TripAdvisor APIs](https://developer-tripadvisor.com/content-api/)**
 
 The following **additional** features are implemented:
 * [ ] Location based **real time data** (e.g. some event happening locally) is pushed to the users' phone
@@ -42,7 +42,7 @@ ArchTypes - Stream and Details - HEMANTH
 
 The following **required** functionality is completed:
 
-* [ ] The app includes functionality for **users to search and select places**
+
   * [ ] User can enter place names (Type Ahead) and app will fetch place names from **parse** using Restful Services
   * [ ] The app includes functionality for users to use **Location services** to determine place name
 * [ ] The app includes functionality for users to perform filters on search results through **floating action button**
@@ -67,6 +67,9 @@ The following **optional** functionality is completed:
 * [ ] Display each user profile image using a **RoundedImageView**
 * [ ] Allow images/video posts to be played in full-screen using the **VideoView**
 * [ ] Show Places on **Map**
+* 
+**bonus**
+* [ ] The app includes functionality for **users to search and select places**
 
 ## Wireframes
 
