@@ -1,62 +1,71 @@
 # Project  - *Travel Guide*
 
-**Travel Guide** is an android app that allows a user to check out popular travel plans created by other travelers. It allows a user plan a trip based on preferences and crowd sourced information. The app utilizes information from travelers, Location services, photos and [Trip Advisor APIs](https://developer-tripadvisor.com/content-api/) to display information and images about tourist places across the globe.
+**Travel Guide** is an android app that allows a user to check out popular travel plans created by other travelers or create your own. It allows a user plan a trip based on preferences and crowd sourced information. The app utilizes information from travelers, location services, photos and [Trip Advisor APIs](https://developer-tripadvisor.com/content-api/)* to display information and images about tourist places across the globe.
 
-Today, Travelers spend up to 3Hr’s crawling the web (Ex: Trip Advisor) in finding the places to visit/stay when planning for a trip. They do it because they want to tailor a plan to suit their needs/family needs so everyone can have a good time. What we can do better is - Create an app where users can create travel/trip plans from their recent trips which can be shared with other travels. By doing this travelers can spend less time in tailoring a plan and can spend more time on needed things. We will make phone UI look as simple as possible by displaying places on Map/ListView.(Here we will integrate with TripAdvisor/Yelp to pull data and we will use Phone’s features such as Camera, Persistence and Locations services)
+\* Still pending of authorization from TripAdvisor they have a police that requires it.
+
+Today, travelers spend up to three hours crawling the web (Ex: [TripAdvisor](www.tripadvisor.com)) in finding the places to visit/stay when planning for a trip. They do it because they want to tailor a plan to suit their needs/family needs so everyone can have a good time.
+
+What we can do better is create an app where users can create travel/trip plans from their recent trips which can be shared with other travelers. By doing this travelers can spend less time in tailoring a plan and can spend more time on needed things. We will make an Android app as simple as possible by displaying places, others users plan.
+
+In the future we could integrate with [TripAdvisor](www.tripadvisor.com) or [Yelp](www.yelp.com) to pull data. By now we're going to use Android features such as: camera, persitence and location services.
 
 Time spent: **X** hours spent in total
 
 ## User Stories
 
-**ArchTypes - Login, Register and Profile - PRAVEEN**
-
 The following **required** functionality is completed:
 
-* [ ]	Users can sign up for a new **Travel Guide** user account
-* [ ]	Users can log in to their **Travel Guide** user account
-* [ ] Users are able to view their profile - Name, profile picture, recent trips
-* [ ] Users can upload their trip experiences - Location, days travelled, number of people, pictures, hotel, cost etc.
-* [ ] Users can view others' trip experiences
-* [ ] Authentication is done using **Parse** - Integrate with **Facebook/Twitter**.
-* [ ] Data storage is done using **Parse**
-* [ ] Data is stored for offline access in **SQLite** database and disk
-* [ ] Data is retreived from local storage using ORM **Active Android**
-* [ ] Data is also obtained using **[TripAdvisor APIs](https://developer-tripadvisor.com/content-api/)**
+* [ ] Users can sign up for a new **Travel Guide** user account.
+* [ ] Users can login to their **Travel Guide** user account.
+* [ ] Users should be able to view their own profile showing name, picture, your own plans.
+* [ ] Users can upload their trip experiences, location(*still pending of APIs availability*), days travelled, number of people, pictures, hotel and cost.
+* [ ] Users can view others trip/travels plans.
+* [ ] Authentication is done using **Facebook/Twitter** via **Parse**.
+* [ ] Remote data storage is done using **Parse**.
+* [ ] Data is stored for offline access in **SQLite** database(*checking if Parse takes care of that*)
+* [ ] Data is retrieved from local storage using ORM **Active Android**.
+* [ ] The app includes functionality for **users to search and select places**.
+  * [ ] User can enter place names (suggestion box) and app will fetch place names from **Parse**.
+  * [ ] The app includes functionality for users to use **Location services** to determine place name.
+* [ ] The app includes functionality for users to perform filters on search results through in a dialog fragment.
+  * [ ] User can **select filters** such as travel days/length of stay, seasons, months, group type (Single, Family).
+* [ ] User can scroll (infinite) through **travel plans at a particular location**.
+  * [ ] Fetch plan details from **Parse** based on **User Details**. If no personal plans exist for user than display existed plans from others users.
+  * [ ] For each plan the app displayed: **graphic, caption, username, ratings, trip duration, favorite’s icon**.
+* [ ] For each plan displayed, user can select the plan to see following details:
+  * [ ] Horizontal Scrolling **list of days, option to follow the plan, option to share the plan**.
+  * [ ] Clicking on the day we display **place name, visit duration, photos, created by user details and ratings**.
+* [ ] Display each user profile image using a **RoundedImageView**.
+* [ ] Create a new travel plan: name, travel duration, picture of places, travel type (Single/Group), month of visit (January, February).
+  * [ ] Inside travel plan creation user can click to add more days to the trip, will show a dialog to fill following fields: **place name, visit duration, photos, description**.
     
 The following **optional** features are implemented:
-* [ ] Users can add other users' trips to their **favorites**
-* [ ] Users can **rate** other users' trips (upto 5 stars)
-* [ ] Users can post **reviews** on other users' trips
-* [ ] **Location based** information is pushed to users' phone
+
+* [ ] Users can add other users' trips to their **favorites**.
+* [ ] Users can **rate** other users' trips (up to 5 stars).
+* [ ] Users can post **reviews** on other users' trips.
+* [ ] **Location based** information is pushed to users' phone.
+* [ ] For plans that are added to user personal list:
+  * [ ] He/She Can Update **(Add/Remove/Edit) places or details or photos**
+  * [ ] Publish his new plan to **Parse**
+  * [ ] **Add friends to plan**
+  * [ ] View his published plan **reviews and ratings** by other users
+* [ ] User can **pull-to-refresh** popular stream to get the latest popular plans
+* [ ] Show **latest comments** for each plan and place in **modal overlay**
+* [ ] Allow images/video posts to be played in full-screen using the **VideoView**
+* [ ] Show Places on **Map**
+* [ ] If filters exist then save them to **Shared Preferences** and use them for future searches
+* [ ] On click of each date we display **video, weather details**
 
 The following **bonus** features are implemented:
 
-* [ ] Users can **follow** other users and get trip details on their activity feed
-* [ ] Users can request a **trip plan** and the app will provide one based on available data
-* [ ] **Trip recommendations** are provided based on users' preferences/past trips/favorites
-
-The following **additional** features are implemented:
-* [ ] Location based **real time data** (e.g. some event happening locally) is pushed to the users' phone
-
-**ArchTypes - Stream and Details - HEMANTH**
-
-The following **required** functionality is completed:
-* [ ] User can **scroll** through current popular travel plans
-* [ ] User can **search** for travel plans at a particular destination and/or can use phone's **location services**
-* [ ] User can select and **add** any travel plan to his personal account
-* [ ] For each plan displayed, user can see the following details:
- * [ ] Graphic, Caption, Username, Ratings, Time taken, Add to favorites icon
-* [ ]  For each plan displayed, user can select the plan to see following details:
- * [ ] places displayed based on days/time taken to visit, photos, videos, created by user details, option to follow the plan, add/update the plan in his personal bucket, caption, username, reviews and ratings from Trip Advisor/Yelp**
-
-The following **optional** features are implemented:
-* [ ] User can **pull-to-refresh** popular stream to get the latest popular plans
-* [ ] Show latest comments for each plan
-* [ ] Display each user profile image using a [RoundedImageView](https://github.com/vinc3m1/RoundedImageView)
-* [ ] Display a nice default placeholder graphic for each image during loading
-* [ ] Improved the user interface through styling and coloring
-* [ ] Allow user to view all comments for each plan using a modal overlay
-* [ ] Allow images/video posts to be played in full-screen using the VideoView
+* [ ] Users can **follow** other users and get trip details on their activity feed.
+* [ ] Users can request a **trip plan** and the app will provide one based on available data.
+* [ ] **Trip recommendations** are provided based on users' preferences/past trips/favorites.
+* [ ] Data is also obtained using **[TripAdvisor APIs](https://developer-tripadvisor.com/content-api/)**.
+* [ ] Pull images of places from google image to add photos on creation plan.
+* [ ] Location based **real time data** (e.g. some event happening locally) is pushed to the users' phone.
 
 ## Wireframes
 
@@ -66,6 +75,7 @@ The following **optional** features are implemented:
 ![Wireframe](Wireframes/Profile.png)
 ![Wireframe](Wireframes/HomeScreen.png)
 ![Wireframe](Wireframes/Detailed_Plan.png)
+![Wireframe](Wireframes/Creation_Plan.png)
 
 ## Video Walkthrough 
 
@@ -79,7 +89,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Unable to get Refresh on Scroll Working
+Describe any challenges encountered while building the app.
 
 ## Open-source libraries used
 
@@ -88,7 +98,7 @@ Unable to get Refresh on Scroll Working
 
 ## License
 
-    Copyright [2015] kprav, SharedMocha, rafagcamargo
+    Copyright 2015 Praveen Kannan, Praveen Kannan, Rafael Camargo
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
