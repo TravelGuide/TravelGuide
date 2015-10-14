@@ -42,18 +42,24 @@ ArchTypes - Stream and Details - HEMANTH
 
 The following **required** functionality is completed:
 
-
-  * [ ] User can enter place names (Type Ahead) and app will fetch place names from **parse** using Restful Services
-  * [ ] The app includes functionality for users to use **Location services** to determine place name
-* [ ] The app includes functionality for users to perform filters on search results through **floating action button**
-  * [ ] User can **select filters** such as travel days / length of stay , seasons , months ,group type (Single, Family)
-  * [ ] If filters exist then save them to **Shared Preferences** and use them for future searches
-* [ ] User can scroll through **travel plans at a particular location** .
-  * [ ] Fetch Plan details from "Parse" based on **User Details** .If no personal plans exist for user than display List of           existing plans
-  * [ ] For each plan displayed, user can see the following details: **Graphic, Caption, Username, Ratings, Time taken,              favorite’s icon**
+* [ ] The app includes functionality for **users to search and select places** (OK)
+  * [ ] User can enter place names (Type Ahead) and app will fetch place names from **parse** using Restful Services (OK)
+  * [ ] The app includes functionality for users to use **Location services** to determine place name (OK)
+* [ ] The app includes functionality for users to perform filters on search results through in a dialog fragment.
+  * [ ] User can **select filters** such as travel days / length of stay , seasons , months ,group type (Single, Family) (OK)
+* [ ] User can scroll through **travel plans at a particular location** . (OK)
+  * [ ] Fetch Plan details from "Parse" based on **User Details** .If no personal plans exist for user than display List of existing plans (OK)
+  * [ ] For each plan displayed, user can see the following details: **Graphic, Caption, Username, Ratings, Time taken, favorite’s icon** (OK)
 * [ ] For each plan displayed, user can select the plan to see following details:
   * [ ] Horizontal Scrolling **List of days** & **option to follow the plan** & **option to share the plan**
-  * [ ] On click of each date we display **place name , weather details, time taken to visit, photos, videos, created by user            details and ratings**
+  * [ ] On click of each date we display **place name, time taken to visit, photos, created by user details and ratings**
+* [ ] Display each user profile image using a **RoundedImageView**.
+
+** Rafael Camargo **
+* [ ] Plan creation: Plan Name, Created User, Time Taken(duration), Picture (places), Single/Group (Travel Type), Month (January, February). (OK)
+      * [ ] User click on a button will show a dialog to create a Day plan: **place name, time taken to visit, photos, created by user details and descriptions (comments)** (OK)
+
+
 
 The following **optional** functionality is completed:
 
@@ -64,12 +70,14 @@ The following **optional** functionality is completed:
   * [ ] View his published plan **reviews and ratings** by other users
 * [ ] User can **pull-to-refresh** popular stream to get the latest popular plans
 * [ ] Show **latest comments** for each plan and place in **modal overlay**
-* [ ] Display each user profile image using a **RoundedImageView**
 * [ ] Allow images/video posts to be played in full-screen using the **VideoView**
 * [ ] Show Places on **Map**
+* [ ] If filters exist then save them to **Shared Preferences** and use them for future searches
+* [ ] On click of each date we display **video , weather details**
 * 
 **bonus**
-* [ ] The app includes functionality for **users to search and select places**
+
+* [] Pull a public from google image search to plan creation.
 
 ## Wireframes
 
