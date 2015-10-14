@@ -1,6 +1,6 @@
 # Project  - *Travel Guide*
 
-**Travel Guide** is an android app that allows a user to check out popular travel plans created by other travelers. It allows a user plan a trip based on preferences and crowd sourced information. The app utilizes information from travelers, location services, photos and [Trip Advisor APIs](https://developer-tripadvisor.com/content-api/)* to display information and images about tourist places across the globe.
+**Travel Guide** is an android app that allows a user to check out popular travel plans created by other travelers or create your own. It allows a user plan a trip based on preferences and crowd sourced information. The app utilizes information from travelers, location services, photos and [Trip Advisor APIs](https://developer-tripadvisor.com/content-api/)* to display information and images about tourist places across the globe.
 
 \* Still pending of authorization from TripAdvisor they have a police that requires it.
 
