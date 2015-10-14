@@ -14,41 +14,18 @@ Time spent: **X** hours spent in total
 
 ## User Stories
 
-**ArchTypes - Login, Register and Profile - PRAVEEN**
-
 The following **required** functionality is completed:
 
-* [ ]	Users can sign up for a new **Travel Guide** user account (OK)
-* [ ]	Users can log in to their **Travel Guide** user account (OK)
-* [ ] Users are able to view their profile - Name, profile picture, recent trips (plans of trip) (OK)
-* [ ] Users can upload their trip experiences - Location (still pending to check available APIS), days travelled, number of people, pictures, hotel, cost. (OK)
-* [ ] Users can view others' trip experiences (OK)
-* [ ] Authentication is done using **Parse** - Integrate with **Facebook/Twitter**. (OK)
-* [ ] Data storage is done using **Parse** (OK)
-* [ ] Data is stored for offline access in **SQLite** database and disk (checking if Parse takes care of that) (OK)
-* [ ] Data is retreived from local storage using ORM **Active Android** (OK)
-    
-The following **optional** features are implemented:
-* [ ] Users can add other users' trips to their **favorites**
-* [ ] Users can **rate** other users' trips (upto 5 stars)
-* [ ] Users can post **reviews** on other users' trips
-* [ ] **Location based** information is pushed to users' phone
-
-The following **bonus** features are implemented:
-
-* [ ] Users can **follow** other users and get trip details on their activity feed
-* [ ] Users can request a **trip plan** and the app will provide one based on available data
-* [ ] **Trip recommendations** are provided based on users' preferences/past trips/favorites
-* [ ] Data is also obtained using **[TripAdvisor APIs](https://developer-tripadvisor.com/content-api/)**
-
-The following **additional** features are implemented:
-* [ ] Location based **real time data** (e.g. some event happening locally) is pushed to the users' phone
-
-ArchTypes - Stream and Details - HEMANTH
-
-The following **required** functionality is completed:
-
-* [ ] The app includes functionality for **users to search and select places** (OK)
+* [ ] Users can sign up for a new **Travel Guide** user account.
+* [ ] Users can login to their **Travel Guide** user account.
+* [ ] Users should be able to view their own profile showing name, picture, your own plans.
+* [ ] Users can upload their trip experiences, location(*still pending of APIs availability*), days travelled, number of people, pictures, hotel and cost.
+* [ ] Users can view others trip/travels plans.
+* [ ] Authentication is done using **Facebook/Twitter** via **Parse**.
+* [ ] Remote data storage is done using **Parse**.
+* [ ] Data is stored for offline access in **SQLite** database(*checking if Parse takes care of that*)
+* [ ] Data is retreived from local storage using ORM **Active Android**.
+* * [ ] The app includes functionality for **users to search and select places** (OK)
   * [ ] User can enter place names (Type Ahead) and app will fetch place names from **parse** using Restful Services (OK)
   * [ ] The app includes functionality for users to use **Location services** to determine place name (OK)
 * [ ] The app includes functionality for users to perform filters on search results through in a dialog fragment.
@@ -60,16 +37,15 @@ The following **required** functionality is completed:
   * [ ] Horizontal Scrolling **List of days** & **option to follow the plan** & **option to share the plan**
   * [ ] On click of each date we display **place name, time taken to visit, photos, created by user details and ratings**
 * [ ] Display each user profile image using a **RoundedImageView**.
-
-** Rafael Camargo **
-* [ ] Plan creation: Plan Name, Created User, Time Taken(duration), Picture (places), Single/Group (Travel Type), Month (January, February). (OK)
+* * [ ] Plan creation: Plan Name, Created User, Time Taken(duration), Picture (places), Single/Group (Travel Type), Month (January, February). (OK)
       * [ ] User click on a button will show a dialog to create a Day plan: **place name, time taken to visit, photos, created by user details and descriptions (comments)** (OK)
-
-
-
-The following **optional** functionality is completed:
-
-* [ ] For plans that are added to user personal list:
+    
+The following **optional** features are implemented:
+* [ ] Users can add other users' trips to their **favorites**
+* [ ] Users can **rate** other users' trips (upto 5 stars)
+* [ ] Users can post **reviews** on other users' trips
+* [ ] **Location based** information is pushed to users' phone
+* * [ ] For plans that are added to user personal list:
   * [ ] He/She Can Update **(Add/Remove/Edit) places or details or photos**
   * [ ] Publish his new plan to **Parse**
   * [ ] **Add friends to plan**
@@ -80,10 +56,15 @@ The following **optional** functionality is completed:
 * [ ] Show Places on **Map**
 * [ ] If filters exist then save them to **Shared Preferences** and use them for future searches
 * [ ] On click of each date we display **video , weather details**
-* 
-**bonus**
 
-* [] Pull a public from google image search to plan creation.
+The following **bonus** features are implemented:
+
+* [ ] Users can **follow** other users and get trip details on their activity feed
+* [ ] Users can request a **trip plan** and the app will provide one based on available data
+* [ ] **Trip recommendations** are provided based on users' preferences/past trips/favorites
+* [ ] Data is also obtained using **[TripAdvisor APIs](https://developer-tripadvisor.com/content-api/)**
+* [ ] Pull a public from google image search to plan creation.
+* * [ ] Location based **real time data** (e.g. some event happening locally) is pushed to the users' phone
 
 ## Wireframes
 
@@ -106,7 +87,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Unable to get Refresh on Scroll Working
+Describe any challenges encountered while building the app.
 
 ## Open-source libraries used
 
