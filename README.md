@@ -23,8 +23,7 @@ The following **required** functionality is completed:
 * [ ] Users can view others trip/travels plans.
 * [ ] Authentication is done using **Facebook/Twitter** via **Parse**.
 * [ ] Remote data storage is done using **Parse**.
-* [ ] Data is stored for offline access in **SQLite** database(*checking if Parse takes care of that*)
-* [ ] Data is retrieved from local storage using ORM **Active Android**.
+* [ ] Local data storage is done using **Parse**.
 * [ ] The app includes functionality for **users to search and select places**.
   * [ ] User can enter place names (suggestion box) and app will fetch place names from **Parse**.
   * [ ] The app includes functionality for users to use **Location services** to determine place name.
