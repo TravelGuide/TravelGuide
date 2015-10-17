@@ -10,10 +10,10 @@ import java.util.Date;
  */
 
 @ParseClassName("DayDetails")
-public class DayParseModel extends ParseObject{
+public class Day extends ParseObject{
 
     //Constructor
-    public DayParseModel(){
+    public Day(){
         super();
     }
 
