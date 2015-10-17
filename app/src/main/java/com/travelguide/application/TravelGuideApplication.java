@@ -6,9 +6,9 @@ import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.travelguide.models.DayParseModel;
-import com.travelguide.models.PlaceParseModel;
-import com.travelguide.models.PlanParseModel;
+import com.travelguide.models.Day;
+import com.travelguide.models.Place;
+import com.travelguide.models.TripPlan;
 
 /**
  * Created by htammare on 10/16/2015.
@@ -23,9 +23,9 @@ public class TravelGuideApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        ParseObject.registerSubclass(PlanParseModel.class);
-        ParseObject.registerSubclass(DayParseModel.class);
-        ParseObject.registerSubclass(PlaceParseModel.class);
+        ParseObject.registerSubclass(TripPlan.class);
+        ParseObject.registerSubclass(Day.class);
+        ParseObject.registerSubclass(Place.class);
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
         // Initialization code here

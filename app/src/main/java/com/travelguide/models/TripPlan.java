@@ -9,10 +9,10 @@ import java.util.Date;
  * Created by htammare on 10/16/2015.
  */
 @ParseClassName("PlanDetails")
-public class PlanParseModel extends ParseObject {
+public class TripPlan extends ParseObject {
 
     //Constructor
-    public PlanParseModel(){
+    public TripPlan(){
         super();
     }
 

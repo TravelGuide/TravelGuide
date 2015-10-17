@@ -7,10 +7,10 @@ import com.parse.ParseObject;
  * Created by htammare on 10/16/2015.
  */
 @ParseClassName("PlaceDetails")
-public class PlaceParseModel extends ParseObject {
+public class Place extends ParseObject {
 
     //Constructor
-    public PlaceParseModel(){
+    public Place(){
         super();
     }
 

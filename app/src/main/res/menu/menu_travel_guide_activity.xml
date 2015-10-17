@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.travelguide.activities.TestActivity">
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_go_to_login"
+        android:onClick="loginFragment"
+        android:orderInCategory="100"
+        android:title="Login Fragment"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_go_to_trip_plan_details"
+        android:onClick="tripPlanDetailsFragment"
+        android:orderInCategory="100"
+        android:title="Trip Plan Details Fragment"
+        app:showAsAction="never" />
+</menu>
