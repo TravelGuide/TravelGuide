@@ -4,4 +4,9 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="label_login_with_facebook">Login with Facebook</string>
+    <string name="label_login_fragment">Login Fragment</string>
+    <string name="label_trip_plan_details_fragment">Trip Plan Details Fragment</string>
+
+    <string name="facebook_app_id">Put Your App ID Here</string>
 </resources>

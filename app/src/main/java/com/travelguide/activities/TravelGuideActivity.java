@@ -1,11 +1,14 @@
 package com.travelguide.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.parse.ParseFacebookUtils;
 import com.travelguide.R;
 import com.travelguide.fragments.LoginFragment;
 import com.travelguide.fragments.TripPlanDetailsFragment;
@@ -18,11 +21,19 @@ public class TravelGuideActivity extends AppCompatActivity {
         setContentView(R.layout.activity_travel_guide);
 
         // create a fragment transaction
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         // replace contents of FrameLayout with FirstFragment
-        fragmentTransaction.replace(R.id.fragment_frame, new LoginFragment());
+         fragmentTransaction.replace(R.id.fragment_frame, new LoginFragment());
         // commit the transaction
-        fragmentTransaction.commit();
+         fragmentTransaction.commit();
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("ResultCode", Integer.toString(resultCode));
+        super.onActivityResult(requestCode, resultCode, data);
+        ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
