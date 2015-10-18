@@ -50,6 +50,10 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
         return mTripPlans.size();
     }
 
+    public TripPlan get(int position) {
+        return mTripPlans.get(position);
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTotalTravelTime;
         TextView tvGroupType;

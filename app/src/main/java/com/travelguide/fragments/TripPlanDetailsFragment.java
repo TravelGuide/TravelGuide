@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.travelguide.R;
 import com.travelguide.adapters.DayAdapter;
@@ -17,6 +18,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TripPlanDetailsFragment extends Fragment {
+
+    private static final String ARG_TRIP_PLAN_OBJECT_ID = "tripPlanObjectId";
+
+    private String mTripPLanObjectId;
+
+    public static TripPlanDetailsFragment newInstance(String tripPlanObjectId) {
+        TripPlanDetailsFragment fragment = new TripPlanDetailsFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_TRIP_PLAN_OBJECT_ID, tripPlanObjectId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public TripPlanDetailsFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mTripPLanObjectId = getArguments().getString(ARG_TRIP_PLAN_OBJECT_ID);
+        }
+    }
 
     @Nullable
     @Override
@@ -44,21 +69,9 @@ public class TripPlanDetailsFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         rvContacts.setLayoutManager(layoutManager);
 
-        //
-//        // Construct query to execute
-//        ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
-//        // Configure limit and sort order
-//        // Execute query to fetch all messages from Parse asynchronously
-//        // This is equivalent to a SELECT query with SQL
-//        query.findInBackground(new FindCallback<TripPlan>() {
-//            public void done(List<TripPlan> messages, ParseException e) {
-//                if (e == null) {
-//                    Log.d("message", messages.toString());
-//                } else {
-//                    Log.d("message", "Error: " + e.getMessage());
-//                }
-//            }
-//        });
+        Toast.makeText(getContext(), "objectId: " + mTripPLanObjectId, Toast.LENGTH_LONG).show();
+
+        //TODO Load PlanDetail from Parse locally
 
         return view;
     }
