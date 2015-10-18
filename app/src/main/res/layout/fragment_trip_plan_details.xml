@@ -5,11 +5,10 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tvPlanName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Trip Plan Details Fragment"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
@@ -18,7 +17,7 @@
         android:id="@+id/rvContacts"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_below="@+id/textView2"
+        android:layout_below="@+id/tvPlanName"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 </RelativeLayout>

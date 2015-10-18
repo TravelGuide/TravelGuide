@@ -2,7 +2,6 @@
     <string name="app_name">TravelGuide</string>
     <string name="title_activity_test">TestActivity</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="label_login_with_facebook">Login with Facebook</string>
     <string name="label_login_fragment">Login Fragment</string>
