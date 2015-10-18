@@ -13,13 +13,13 @@
         android:id="@+id/action_go_to_login"
         android:onClick="loginFragment"
         android:orderInCategory="100"
-        android:title="Login Fragment"
+        android:title="@string/label_login_fragment"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_go_to_trip_plan_details"
         android:onClick="tripPlanDetailsFragment"
         android:orderInCategory="100"
-        android:title="Trip Plan Details Fragment"
+        android:title="@string/label_trip_plan_details_fragment"
         app:showAsAction="never" />
 </menu>

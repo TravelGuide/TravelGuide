@@ -1,16 +1,13 @@
-package com.travelguide.fragments;
+package com.travelguide.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +25,6 @@ import com.parse.SaveCallback;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.travelguide.R;
-import com.travelguide.activities.LoginActivity;
 
 import org.json.JSONException;
 
@@ -39,12 +35,15 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
+ * Activity to login and authenticate with Facebook.
+ * Currently not used. Login is done via LoginFragment
+ *
  * @author kprav
  *
  * History:
  *   10/17/2015     kprav       Initial Version
  */
-public class LoginFragment extends Fragment {
+public class LoginActivity extends AppCompatActivity {
 
     private CircleImageView ivProfilePic;
     private TextView tvName;
@@ -62,35 +61,29 @@ public class LoginFragment extends Fragment {
     }};
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
+        setContentView(R.layout.activity_login);
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
-        ivProfilePic = (CircleImageView) view.findViewById(R.id.ivProfilePic);
-        tvName = (TextView) view.findViewById(R.id.tvName);
-        tvEmail = (TextView) view.findViewById(R.id.tvEmail);
-        btnLogin = (Button) view.findViewById(R.id.btnLogin);
+        ivProfilePic = (CircleImageView) findViewById(R.id.ivProfilePic);
+        tvName = (TextView) findViewById(R.id.tvName);
+        tvEmail = (TextView) findViewById(R.id.tvEmail);
+        btnLogin = (Button) findViewById(R.id.btnLogin);
 
         setLoginButtonOnClickListener();
 
         if (ParseUser.getCurrentUser() != null) {
-            ParseFacebookUtils.linkWithReadPermissionsInBackground(ParseUser.getCurrentUser(), getActivity(), permissions, new SaveCallback() {
+            ParseFacebookUtils.linkWithReadPermissionsInBackground(ParseUser.getCurrentUser(), LoginActivity.this, permissions, new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
                     getUserDetailsFromParse();
                 }
             });
         }
-
-        return view;
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
     }
@@ -99,7 +92,7 @@ public class LoginFragment extends Fragment {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseFacebookUtils.logInWithReadPermissionsInBackground(getActivity(), permissions, new LogInCallback() {
+                ParseFacebookUtils.logInWithReadPermissionsInBackground(LoginActivity.this, permissions, new LogInCallback() {
                     @Override
                     public void done(ParseUser user, ParseException err) {
                         if (user == null) {
@@ -110,9 +103,6 @@ public class LoginFragment extends Fragment {
                         } else {
                             Log.d("LOGGED IN", "User logged in through Facebook!");
                             getUserDetailsFromParse();
-                        }
-                        if (err != null) {
-                            err.printStackTrace();
                         }
                     }
                 });
@@ -142,7 +132,7 @@ public class LoginFragment extends Fragment {
                             name = response.getJSONObject().getString("name");
                             tvName.setText(name);
                             profilePicUrl = response.getJSONObject().getJSONObject("picture").getJSONObject("data").getString("url");
-                            Picasso.with(getContext()).load(profilePicUrl).into(ivProfilePic, new Callback() {
+                            Picasso.with(getApplicationContext()).load(profilePicUrl).into(ivProfilePic, new Callback() {
                                 @Override
                                 public void onSuccess() {
                                     saveNewUser();
@@ -181,7 +171,7 @@ public class LoginFragment extends Fragment {
                 parseUser.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast.makeText(getActivity(), "New user:" + name + " Signed up", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "New user:" + name + " Signed up", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -201,7 +191,37 @@ public class LoginFragment extends Fragment {
         }
         tvEmail.setText(parseUser.getEmail());
         tvName.setText(parseUser.getUsername());
-        Toast.makeText(getActivity(), "Welcome back " + tvName.getText().toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(LoginActivity.this, "Welcome back " + tvName.getText().toString(), Toast.LENGTH_SHORT).show();
     }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        // Logs 'install' and 'app activate' App Events.
+//        AppEventsLogger.activateApp(this);
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//
+//        // Logs 'app deactivate' App Event.
+//        AppEventsLogger.deactivateApp(this);
+//    } @Override
+//
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
 }
