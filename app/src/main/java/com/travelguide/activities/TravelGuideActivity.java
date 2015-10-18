@@ -12,6 +12,7 @@ import com.parse.ParseFacebookUtils;
 import com.travelguide.R;
 import com.travelguide.fragments.LoginFragment;
 import com.travelguide.fragments.TripPlanDetailsFragment;
+import com.travelguide.fragments.TripPlanListFragment;
 
 public class TravelGuideActivity extends AppCompatActivity {
 
@@ -62,6 +63,16 @@ public class TravelGuideActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         // replace contents of FrameLayout with FirstFragment
         fragmentTransaction.replace(R.id.fragment_frame, new LoginFragment());
+        fragmentTransaction.addToBackStack(null);
+        // commit the transaction
+        fragmentTransaction.commit();
+    }
+
+    public void tripPlanListFragment(MenuItem item) {
+        // create a fragment transaction
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        // replace contents of FrameLayout with FirstFragment
+        fragmentTransaction.replace(R.id.fragment_frame, new TripPlanListFragment());
         fragmentTransaction.addToBackStack(null);
         // commit the transaction
         fragmentTransaction.commit();
