@@ -6,11 +6,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.travelguide.R;
 import com.travelguide.adapters.TripPlanAdapter;
 import com.travelguide.decorations.VerticalSpaceItemDecoration;
@@ -22,8 +25,11 @@ import java.util.List;
 
 public class TripPlanListFragment extends Fragment {
 
+    private static final String TAG = TripPlanListFragment.class.getSimpleName();
+
     private OnFragmentInteractionListener mListener;
-    private TripPlanAdapter tripPlanAdapter;
+    private TripPlanAdapter mTripPlanAdapter;
+    private List<TripPlan> mTripPlans;
 
     //TODO Load Plan from Parse remotelly
 
@@ -33,15 +39,10 @@ public class TripPlanListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_trip_plan_list, container, false);
 
         RecyclerView rvTripPlans = (RecyclerView) view.findViewById(R.id.rvTripPlans);
-
-        List<TripPlan> tripPlans = new ArrayList<>();
-        for (int i = 0; i< 50; i++) {
-            tripPlans.add(new TripPlan());
-        }
-
-        tripPlanAdapter = new TripPlanAdapter(tripPlans);
+        mTripPlans = new ArrayList<>();
+        mTripPlanAdapter = new TripPlanAdapter(mTripPlans);
         // Attach the adapter to the recyclerview to populate items
-        rvTripPlans.setAdapter(tripPlanAdapter);
+        rvTripPlans.setAdapter(mTripPlanAdapter);
         // Set layout manager to position the items
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvTripPlans.setLayoutManager(layoutManager);
@@ -52,15 +53,20 @@ public class TripPlanListFragment extends Fragment {
         ItemClickSupport.addTo(rvTripPlans).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                String name = tripPlanAdapter.get(position).getPlanName();
-                Toast.makeText(getContext(), name + " was clicked!", Toast.LENGTH_SHORT).show();
+                String tripPlanObjectId = mTripPlanAdapter.get(position).getObjectId();
                 if (mListener != null){
-                    mListener.onTripPlanItemSelected("15234");
+                    mListener.onTripPlanItemSelected(tripPlanObjectId);
                 }
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateTripPlanList();
     }
 
     @Override
@@ -78,6 +84,35 @@ public class TripPlanListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void populateTripPlanList() {
+        // Construct query to execute
+        ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
+        query.findInBackground(new FindCallback<TripPlan>() {
+            @Override
+            public void done(List<TripPlan> tripPlans, ParseException e) {
+                if (e == null) {
+                    mTripPlans.clear();
+                    mTripPlans.addAll(tripPlans);
+                    mTripPlanAdapter.notifyDataSetChanged();
+                    savingOnDatabase(tripPlans);
+                } else {
+                    Log.d(TAG, "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void savingOnDatabase(List<TripPlan> tripPlans) {
+        for (TripPlan tp: tripPlans)
+            tp.pinInBackground();
+        //TODO Investigate why "ParseObject.saveAll(tripPlans);" not working.
+//        try {
+//            ParseObject.saveAll(tripPlans);
+//        } catch (ParseException e1) {
+//            e1.printStackTrace();
+//        }
     }
 
     public interface OnFragmentInteractionListener {
