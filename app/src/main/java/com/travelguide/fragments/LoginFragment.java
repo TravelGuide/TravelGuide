@@ -1,6 +1,7 @@
 package com.travelguide.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -44,9 +45,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * @author kprav
- *         <p>
- *         History:
- *         10/17/2015     kprav       Initial Version
+ *
+ * History:
+ *   10/17/2015     kprav       Initial Version
  */
 public class LoginFragment extends Fragment {
 
@@ -61,6 +62,8 @@ public class LoginFragment extends Fragment {
     private String email = null;
     private String profilePicUrl = null;
     private String coverPicUrl = null;
+
+    private SharedPreferences userInfo;
 
     public static final List<String> permissions = new ArrayList<String>() {{
         add("public_profile");
@@ -82,6 +85,8 @@ public class LoginFragment extends Fragment {
         btnLogin = (Button) view.findViewById(R.id.btnLogin);
         ivCoverPic = (ImageView) view.findViewById(R.id.ivCoverPic);
 
+        createSharedPreferences();
+
         btnLogin.setEnabled(true);
         btnLogin.setVisibility(View.VISIBLE);
         setLoginButtonOnClickListener();
@@ -91,11 +96,29 @@ public class LoginFragment extends Fragment {
                 @Override
                 public void done(ParseException e) {
                     getUserDetailsFromParse();
+                    updateSharedPreferences("userObjectId", parseUser.getObjectId());
                 }
             });
         }
 
         return view;
+    }
+
+    private void createSharedPreferences() {
+        userInfo = getActivity().getSharedPreferences("userInfo", 0);
+        SharedPreferences.Editor editor = userInfo.edit();
+        editor.putString("userObjectId", userInfo.getString("userObjectId", "missing"));
+        editor.putString("name", userInfo.getString("name", "missing"));
+        editor.putString("email", userInfo.getString("email", "missing"));
+        editor.putString("profilePicUrl", userInfo.getString("profilePicUrl", "missing"));
+        editor.putString("coverPicUrl", userInfo.getString("coverPicUrl", "missing"));
+        editor.apply();
+    }
+
+    private void updateSharedPreferences(String key, String value) {
+        SharedPreferences.Editor editor = userInfo.edit();
+        editor.putString(key, value);
+        editor.apply();
     }
 
     @Override
@@ -151,10 +174,12 @@ public class LoginFragment extends Fragment {
 
                             name = response.getJSONObject().getString("name");
                             tvName.setText(name);
+                            updateSharedPreferences("name", name);
 
                             if (response.getJSONObject().optString("email") != null) {
                                 email = response.getJSONObject().getString("email");
                                 tvEmail.setText(email);
+                                updateSharedPreferences("email", email);
                             } else {
                                 email = "";
                             }
@@ -164,6 +189,7 @@ public class LoginFragment extends Fragment {
 
                                 @Override
                                 public void onSuccess() {
+                                    updateSharedPreferences("profilePicUrl", profilePicUrl);
                                     if (response.getJSONObject().optJSONObject("cover") != null) {
                                         try {
                                             coverPicUrl = response.getJSONObject().getJSONObject("cover").getString("source");
@@ -171,9 +197,10 @@ public class LoginFragment extends Fragment {
                                             e.printStackTrace();
                                         }
                                         if (coverPicUrl != null) {
-                                            Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getContext()), 0).into(ivCoverPic, new Callback() {
+                                            Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic, new Callback() {
                                                 @Override
                                                 public void onSuccess() {
+                                                    updateSharedPreferences("coverPicUrl", coverPicUrl);
                                                     saveOrUpdateParseUser(requestType);
                                                     btnLogin.setVisibility(View.INVISIBLE);
                                                     btnLogin.setEnabled(false);
@@ -211,6 +238,7 @@ public class LoginFragment extends Fragment {
 
     private void saveOrUpdateParseUser(RequestType requestType) {
         parseUser = ParseUser.getCurrentUser();
+        updateSharedPreferences("userObjectId", parseUser.getObjectId());
         parseUser.setUsername(name);
         parseUser.setEmail(email);
         // Saving profile photo as a ParseFile
