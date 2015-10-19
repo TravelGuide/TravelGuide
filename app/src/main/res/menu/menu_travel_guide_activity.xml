@@ -17,9 +17,17 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_go_to_profile"
+        android:onClick="profileFragment"
+        android:orderInCategory="100"
+        android:title="@string/label_profile_fragment"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_go_to_trip_plan_list"
         android:onClick="tripPlanListFragment"
         android:orderInCategory="100"
-        android:title="Trip Plan List Fragment"
+        android:title="@string/label_trip_plan_list_fragment"
         app:showAsAction="never" />
+
 </menu>

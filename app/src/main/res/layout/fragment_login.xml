@@ -45,7 +45,7 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:src="@color/colorAccent"
-                app:border_width="0dp" />
+                app:border_width="1dp" />
 
             <TextView
                 android:id="@+id/tvName"

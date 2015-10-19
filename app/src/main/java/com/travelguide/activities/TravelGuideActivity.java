@@ -12,11 +12,12 @@ import android.widget.Toast;
 import com.parse.ParseFacebookUtils;
 import com.travelguide.R;
 import com.travelguide.fragments.LoginFragment;
+import com.travelguide.fragments.ProfileFragment;
 import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
 
 public class TravelGuideActivity extends AppCompatActivity implements
-        TripPlanListFragment.OnFragmentInteractionListener {
+        TripPlanListFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,5 +85,13 @@ public class TravelGuideActivity extends AppCompatActivity implements
         fragmentTransaction.commit();
     }
 
-
+    public void profileFragment(MenuItem item) {
+        // create a fragment transaction
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        // replace contents of FrameLayout with FirstFragment
+        fragmentTransaction.replace(R.id.fragment_frame, new ProfileFragment());
+        fragmentTransaction.addToBackStack(null);
+        // commit the transaction
+        fragmentTransaction.commit();
+    }
 }
