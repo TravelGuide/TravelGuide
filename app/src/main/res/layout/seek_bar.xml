@@ -1,0 +1,15 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/edit_text_style"
+    android:orientation="vertical">
+    //SeekBar layout
+    <SeekBar
+        android:id="@+id/sb_TravelDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progress="1"
+        android:max="90"
+        android:layout_gravity="center" />
+</LinearLayout>
