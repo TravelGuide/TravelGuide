@@ -13,4 +13,32 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="label_trip_plan_list_fragment">Trip Plan List Fragment</string>
     <string name="label_profile_fragment">Profile Fragment</string>
+    <string name="label_new_plan">Creat New Plan</string>
+    <string name="title_activity_new_tavel_plan">NewTavelPlanActivity</string>
+    <string name="new_trip">New Trip</string>
+    <string name="hint_destination">Destination</string>
+    <string name="hint_plan_name">Plan Name ... </string>
+    <string name="label_trip_start_day">1 Day</string>
+    <string name="label_trip_middle_day">30 Days</string>
+    <string name="label_trip_end_day">60 Days</string>
+    <string name="label_travel_days">Travel Days</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="label_travel_month">Travel Month</string>
+    <string name="label_create_plan">Create Plan</string>
+    <string-array name="label_month">
+        <item>Travel Month</item>
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+    <string name="title_activity_plan_details">PlanDetails</string>
 </resources>
