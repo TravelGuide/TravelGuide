@@ -2,6 +2,7 @@ package com.travelguide.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,25 +14,25 @@ import com.parse.ParseFacebookUtils;
 import com.travelguide.R;
 import com.travelguide.fragments.LoginFragment;
 import com.travelguide.fragments.ProfileFragment;
+import com.travelguide.fragments.TripPlanNewFragment;
 import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
+import com.travelguide.listener.OnTripPlanListener;
 
 public class TravelGuideActivity extends AppCompatActivity implements
-        TripPlanListFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
+        OnTripPlanListener, ProfileFragment.OnFragmentInteractionListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_travel_guide);
+        setContentFragment(new TripPlanListFragment());
+    }
 
-
-        // create a fragment transaction
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        // replace contents of FrameLayout with FirstFragment
-        fragmentTransaction.replace(R.id.fragment_frame, new LoginFragment());
-        // commit the transaction
-        fragmentTransaction.commit();
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setDisplayHomeAsUpEnabled(false);
     }
 
     @Override
@@ -48,55 +49,58 @@ public class TravelGuideActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setDisplayHomeAsUpEnabled(false);
+    }
+
+    @Override
     public void onTripPlanItemSelected(String tripPlanObjectId) {
         Toast.makeText(this, tripPlanObjectId + " was clicked!", Toast.LENGTH_SHORT).show();
-        // Opening PlanDetailsFragment
+
         TripPlanDetailsFragment fragment = TripPlanDetailsFragment.newInstance(tripPlanObjectId);
+        setContentFragment(fragment);
+    }
 
+    @Override
+    public void onTripPlanNew() {
+        setContentFragment(new TripPlanNewFragment());
+    }
+
+    @Override
+    public void onTripPlanCreated() {
+        //Opening details passing ID of new item
+        TripPlanDetailsFragment fragment = TripPlanDetailsFragment.newInstance("10");
+        setContentFragment(fragment);
+    }
+
+    public void onSettingsClick(MenuItem item) {
+        Toast.makeText(this, "Open settings", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onLoginClick(MenuItem item) {
+        setContentFragment(new LoginFragment());
+    }
+
+    public void onProfileClick(MenuItem item) {
+        setContentFragment(new ProfileFragment());
+    }
+
+    private void setContentFragment(Fragment fragment) {
+        // create a fragment transaction
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
+        // replace contents of FrameLayout with FirstFragment
         fragmentTransaction.replace(R.id.fragment_frame, fragment);
         fragmentTransaction.addToBackStack(null);
         // commit the transaction
         fragmentTransaction.commit();
+        // setting up button on action bar
+        setDisplayHomeAsUpEnabled(true);
     }
 
-    /**
-     * Those methods we should use for test purposes in order to access our
-     * fragments directly, since we don't have a way to access them.
-     */
-
-    public void loginFragment(MenuItem item) {
-        // create a fragment transaction
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        // replace contents of FrameLayout with FirstFragment
-        fragmentTransaction.replace(R.id.fragment_frame, new LoginFragment());
-        fragmentTransaction.addToBackStack(null);
-        // commit the transaction
-        fragmentTransaction.commit();
-    }
-
-    public void tripPlanListFragment(MenuItem item) {
-        // create a fragment transaction
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        // replace contents of FrameLayout with FirstFragment
-        fragmentTransaction.replace(R.id.fragment_frame, new TripPlanListFragment());
-        fragmentTransaction.addToBackStack(null);
-        // commit the transaction
-        fragmentTransaction.commit();
-    }
-
-    public void profileFragment(MenuItem item) {
-        // create a fragment transaction
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        // replace contents of FrameLayout with FirstFragment
-        fragmentTransaction.replace(R.id.fragment_frame, new ProfileFragment());
-        fragmentTransaction.addToBackStack(null);
-        // commit the transaction
-        fragmentTransaction.commit();
-    }
-    public void newTravelPlanActivity(MenuItem item) {
-        Intent intent = new Intent(this,NewTavelPlanActivity.class);
-        startActivity(intent);
+    private void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(showHomeAsUp);
+        }
     }
 }

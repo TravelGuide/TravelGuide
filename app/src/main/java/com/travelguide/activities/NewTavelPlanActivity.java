@@ -1,14 +1,10 @@
 package com.travelguide.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -40,28 +36,6 @@ public class NewTavelPlanActivity extends AppCompatActivity implements SeekBar.O
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_new_tavel_plan, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         value = progress;
         result.setText (value+" "+"  Days "      );
@@ -78,67 +52,67 @@ public class NewTavelPlanActivity extends AppCompatActivity implements SeekBar.O
 
     }
 
-    public void travellerType(View view) {
-
-        switch (view.getId()){
-            case R.id.iv_Male:
-                RelativeLayout maleIcon = (RelativeLayout) findViewById(R.id.rl_Male);
-                maleIcon.setBackgroundColor(Color.RED);
-
-                //Reset
-                RelativeLayout fI = (RelativeLayout) findViewById(R.id.rl_Female);
-                fI.setBackgroundColor(Color.TRANSPARENT);
-                RelativeLayout cI = (RelativeLayout) findViewById(R.id.rl_CoupleImage);
-                cI.setBackgroundColor(Color.TRANSPARENT);
-                RelativeLayout faI = (RelativeLayout) findViewById(R.id.rl_Family);
-                faI.setBackgroundColor(Color.TRANSPARENT);
-
-                break;
-            case R.id.iv_Female:
-                RelativeLayout femaleIcon = (RelativeLayout) findViewById(R.id.rl_Female);
-                femaleIcon.setBackgroundColor(Color.RED);
-
-
-                //Reset
-                RelativeLayout maleI = (RelativeLayout) findViewById(R.id.rl_Male);
-                maleI.setBackgroundColor(Color.TRANSPARENT);
-                RelativeLayout coupleI = (RelativeLayout) findViewById(R.id.rl_CoupleImage);
-                coupleI.setBackgroundColor(Color.TRANSPARENT);
-                RelativeLayout familyI = (RelativeLayout) findViewById(R.id.rl_Family);
-                familyI.setBackgroundColor(Color.TRANSPARENT);
-
-                break;
-            case R.id.iv_Couple:
-                RelativeLayout coupleIcon = (RelativeLayout) findViewById(R.id.rl_CoupleImage);
-                coupleIcon.setBackgroundColor(Color.RED);
-
-                //Reset
-                RelativeLayout maleIconReset = (RelativeLayout) findViewById(R.id.rl_Male);
-                maleIconReset.setBackgroundColor(Color.TRANSPARENT);
-                RelativeLayout femaleIconReset = (RelativeLayout) findViewById(R.id.rl_Female);
-                femaleIconReset.setBackgroundColor(Color.TRANSPARENT);
-                RelativeLayout familyIconReset = (RelativeLayout) findViewById(R.id.rl_Family);
-                familyIconReset.setBackgroundColor(Color.TRANSPARENT);
-
-
-                break;
-            case R.id.iv_Family:
-                RelativeLayout familyIcon = (RelativeLayout) findViewById(R.id.rl_Family);
-                familyIcon.setBackgroundColor(Color.RED);
-
-                //Reset
-                RelativeLayout maleIconResetBack = (RelativeLayout) findViewById(R.id.rl_Male);
-                maleIconResetBack.setBackgroundColor(Color.TRANSPARENT);
-                RelativeLayout femaleIconResetBack = (RelativeLayout) findViewById(R.id.rl_Female);
-                femaleIconResetBack.setBackgroundColor(Color.TRANSPARENT);
-                RelativeLayout coupleIconResetBack = (RelativeLayout) findViewById(R.id.rl_CoupleImage);
-                coupleIconResetBack.setBackgroundColor(Color.TRANSPARENT);
-
-                break;
-
-        }
-
-    }
+//    public void travellerType(View view) {
+//
+//        switch (view.getId()){
+//            case R.id.iv_Male:
+//                RelativeLayout maleIcon = (RelativeLayout) findViewById(R.id.rl_Male);
+//                maleIcon.setBackgroundColor(Color.RED);
+//
+//                //Reset
+//                RelativeLayout fI = (RelativeLayout) findViewById(R.id.rl_Female);
+//                fI.setBackgroundColor(Color.TRANSPARENT);
+//                RelativeLayout cI = (RelativeLayout) findViewById(R.id.rl_CoupleImage);
+//                cI.setBackgroundColor(Color.TRANSPARENT);
+//                RelativeLayout faI = (RelativeLayout) findViewById(R.id.rl_Family);
+//                faI.setBackgroundColor(Color.TRANSPARENT);
+//
+//                break;
+//            case R.id.iv_Female:
+//                RelativeLayout femaleIcon = (RelativeLayout) findViewById(R.id.rl_Female);
+//                femaleIcon.setBackgroundColor(Color.RED);
+//
+//
+//                //Reset
+//                RelativeLayout maleI = (RelativeLayout) findViewById(R.id.rl_Male);
+//                maleI.setBackgroundColor(Color.TRANSPARENT);
+//                RelativeLayout coupleI = (RelativeLayout) findViewById(R.id.rl_CoupleImage);
+//                coupleI.setBackgroundColor(Color.TRANSPARENT);
+//                RelativeLayout familyI = (RelativeLayout) findViewById(R.id.rl_Family);
+//                familyI.setBackgroundColor(Color.TRANSPARENT);
+//
+//                break;
+//            case R.id.iv_Couple:
+//                RelativeLayout coupleIcon = (RelativeLayout) findViewById(R.id.rl_CoupleImage);
+//                coupleIcon.setBackgroundColor(Color.RED);
+//
+//                //Reset
+//                RelativeLayout maleIconReset = (RelativeLayout) findViewById(R.id.rl_Male);
+//                maleIconReset.setBackgroundColor(Color.TRANSPARENT);
+//                RelativeLayout femaleIconReset = (RelativeLayout) findViewById(R.id.rl_Female);
+//                femaleIconReset.setBackgroundColor(Color.TRANSPARENT);
+//                RelativeLayout familyIconReset = (RelativeLayout) findViewById(R.id.rl_Family);
+//                familyIconReset.setBackgroundColor(Color.TRANSPARENT);
+//
+//
+//                break;
+//            case R.id.iv_Family:
+//                RelativeLayout familyIcon = (RelativeLayout) findViewById(R.id.rl_Family);
+//                familyIcon.setBackgroundColor(Color.RED);
+//
+//                //Reset
+//                RelativeLayout maleIconResetBack = (RelativeLayout) findViewById(R.id.rl_Male);
+//                maleIconResetBack.setBackgroundColor(Color.TRANSPARENT);
+//                RelativeLayout femaleIconResetBack = (RelativeLayout) findViewById(R.id.rl_Female);
+//                femaleIconResetBack.setBackgroundColor(Color.TRANSPARENT);
+//                RelativeLayout coupleIconResetBack = (RelativeLayout) findViewById(R.id.rl_CoupleImage);
+//                coupleIconResetBack.setBackgroundColor(Color.TRANSPARENT);
+//
+//                break;
+//
+//        }
+//
+//    }
 
     public void upatePlan(View view) {
         Intent i = new Intent(this,PlanDetails.class);

@@ -3,6 +3,7 @@ package com.travelguide.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import com.parse.ParseQuery;
 import com.travelguide.R;
 import com.travelguide.adapters.TripPlanAdapter;
 import com.travelguide.decorations.VerticalSpaceItemDecoration;
+import com.travelguide.listener.OnTripPlanListener;
 import com.travelguide.models.TripPlan;
 import com.travelguide.utils.ItemClickSupport;
 
@@ -27,11 +29,11 @@ public class TripPlanListFragment extends Fragment {
 
     private static final String TAG = TripPlanListFragment.class.getSimpleName();
 
-    private OnFragmentInteractionListener mListener;
+    private OnTripPlanListener mTripPlanListener;
     private TripPlanAdapter mTripPlanAdapter;
     private List<TripPlan> mTripPlans;
 
-    //TODO Load Plan from Parse remotelly
+    //TODO Load Plan from Parse remotely
 
     @Nullable
     @Override
@@ -54,8 +56,18 @@ public class TripPlanListFragment extends Fragment {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 String tripPlanObjectId = mTripPlanAdapter.get(position).getObjectId();
-                if (mListener != null){
-                    mListener.onTripPlanItemSelected(tripPlanObjectId);
+                if (mTripPlanListener != null) {
+                    mTripPlanListener.onTripPlanItemSelected(tripPlanObjectId);
+                }
+            }
+        });
+
+        FloatingActionButton fabNewTripPlan = (FloatingActionButton) view.findViewById(R.id.fabNewTripPlan);
+        fabNewTripPlan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mTripPlanListener != null) {
+                    mTripPlanListener.onTripPlanNew();
                 }
             }
         });
@@ -73,7 +85,7 @@ public class TripPlanListFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mListener = (OnFragmentInteractionListener) context;
+            mTripPlanListener = (OnTripPlanListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -83,7 +95,7 @@ public class TripPlanListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mTripPlanListener = null;
     }
 
     private void populateTripPlanList() {
@@ -105,7 +117,7 @@ public class TripPlanListFragment extends Fragment {
     }
 
     private void savingOnDatabase(List<TripPlan> tripPlans) {
-        for (TripPlan tp: tripPlans)
+        for (TripPlan tp : tripPlans)
             tp.pinInBackground();
         //TODO Investigate why "ParseObject.saveAll(tripPlans);" not working.
 //        try {
@@ -115,7 +127,4 @@ public class TripPlanListFragment extends Fragment {
 //        }
     }
 
-    public interface OnFragmentInteractionListener {
-        void onTripPlanItemSelected(String tripPlanObjectId);
-    }
 }

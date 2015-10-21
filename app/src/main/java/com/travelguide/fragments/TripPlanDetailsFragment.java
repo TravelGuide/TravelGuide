@@ -3,9 +3,11 @@ package com.travelguide.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -58,6 +60,9 @@ public class TripPlanDetailsFragment extends Fragment {
 
         tvPlanName = (TextView) view.findViewById(R.id.tvPlanName);
 
+        getActivity().setTitle(R.string.travel);
+        setHasOptionsMenu(true);
+
         // Lookup the recyclerview in activity layout
         RecyclerView rvContacts = (RecyclerView) view.findViewById(R.id.rvContacts);
         // Create adapter passing in the sample user data
@@ -84,6 +89,18 @@ public class TripPlanDetailsFragment extends Fragment {
         //TODO Load PlanDetail from Parse locally
 
         return view;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getFragmentManager().popBackStack();
+                ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void loadPlanDetails() {
