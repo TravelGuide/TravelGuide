@@ -1,7 +1,10 @@
 package com.travelguide.helpers;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.travelguide.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,9 +36,11 @@ public class NearbyPlaces {
     }
 
     public static List<NPlace> nearbyPlaceList;
+    public static Context mContext;
 
     // Get the nearby places based on the given latitude and longitude
-    public static void getNearbyPlaces(Double mLatitude, Double mLongitude) {
+    public static void getNearbyPlaces(Double mLatitude, Double mLongitude, Context context) {
+        mContext = context;
         nearbyPlaceList = null;
         // San Francisco = 37.7833, -122.4167;
         String url = buildUrl(mLatitude, mLongitude);
@@ -52,7 +57,8 @@ public class NearbyPlaces {
         url.append("&types=" + "airport|amusement_park|aquarium|art_gallery|bowling_alley|campground|" +
                 "casino|establishment|food|movie_theater|museum|night_club|park|restaurant|shopping_mall" +
                 "|spa|stadium|subway_station|train_station|university|zoo");
-        url.append("&key=AIzaSyDTT6Wc8MJ6yrP6tuHzx2xtJItst5fmAxE");
+        url.append("&key=");
+        url.append(mContext.getResources().getString(R.string.google_places_web_service_api_key));
         Log.d("Place List URL", url.toString());
         return url.toString();
     }

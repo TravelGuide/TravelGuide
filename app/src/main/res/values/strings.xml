@@ -9,6 +9,8 @@
 
     <string name="facebook_app_id">1666229463589747</string>
 
+    <string name="google_places_web_service_api_key">Your Google Places Web Service API Key</string>
+
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="label_trip_plan_list_fragment">Trip Plan List Fragment</string>
