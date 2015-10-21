@@ -24,6 +24,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_travel_guide);
 
+
         // create a fragment transaction
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         // replace contents of FrameLayout with FirstFragment
@@ -93,5 +94,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
         fragmentTransaction.addToBackStack(null);
         // commit the transaction
         fragmentTransaction.commit();
+    }
+    public void newTravelPlanActivity(MenuItem item) {
+        Intent intent = new Intent(this,NewTavelPlanActivity.class);
+        startActivity(intent);
     }
 }
