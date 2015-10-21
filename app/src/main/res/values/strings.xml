@@ -41,4 +41,6 @@
         <item>December</item>
     </string-array>
     <string name="title_activity_plan_details">PlanDetails</string>
+    <string name="label_Start_Date">Trip Start Date</string>
+    <string name="label_End_Date">Trip End Date</string>
 </resources>

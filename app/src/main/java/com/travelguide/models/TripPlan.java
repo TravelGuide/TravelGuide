@@ -18,10 +18,12 @@ public class TripPlan extends ParseObject {
 
     //Getting Data
     public String getCreatedUserId() {return getString("createdUserId");}
+    public String getCreatedName() {return getString("createdUserName");}
     public String getPlanName() {return getString("planName");}
     public String getCityImageUrl() {return getString("cityImageUrl");}
     public String getCityName() {return getString("cityName");}
     public Integer getTripTime() {return getInt("totalTripTime");}
+    public Integer getTravelMonthNumber() {return getInt("getTravelMonthNumber");}
     public String getTravelMonth() {return getString("travelMonth");}
     public String getTravelSeason() {return getString("travelSeason");}
     public Date getTripBeginDate() {return getDate("tripBeginDate");}
@@ -29,13 +31,17 @@ public class TripPlan extends ParseObject {
     public String getTripNotes() {return getString("tripNotes");}
     public Integer getTripCost() {return getInt("tripCost");}
     public String getGroupType() {return getString("groupType");}
+    public Boolean getEnabledFlag() {return getBoolean("enabledFlag");}
+
 
     //Saving Data
     public void putCreatedUserId(String createdUserId) { put("createdUserId", createdUserId);}
+    public void putCreatedUserName(String createdUserName) { put("createdUserName", createdUserName);}
     public void putPlanName(String planName) {put("planName",planName);}
     public void putCityName(String cityName) {put("cityName",cityName);}
     public void puCityImageURL(String cityImageUrl) {put("cityImageUrl",cityImageUrl);}
     public void putTripTime(Integer totalTripTime) {put("totalTripTime",totalTripTime);}
+    public void putTravelMonthNumber(Integer travelMonthNumber) {put("travelMonthNumber",travelMonthNumber);}
     public void putTravelMonth(String travelMonth) {put("travelMonth",travelMonth);}
     public void putTravelSeason(String travelSeason) {put("travelSeason",travelSeason);}
     public void putTripBeginDate(Date tripBeginDate) {put("tripBeginDate",tripBeginDate);}
@@ -43,4 +49,5 @@ public class TripPlan extends ParseObject {
     public void putTripNotes(String tripNotes) {put("tripNotes",tripNotes);}
     public void putTripCost(Integer tripCost) {put("tripCost",tripCost);}
     public void putGroupType(String groupType) {put("groupType",groupType);}
+    public void putEnabledFlag(Boolean enabledFlag) {put("enabledFlag",enabledFlag);}
 }
