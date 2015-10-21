@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.parse.ParseFacebookUtils;
 import com.travelguide.R;
 import com.travelguide.fragments.LoginFragment;
+import com.travelguide.fragments.NewTripFragment;
 import com.travelguide.fragments.ProfileFragment;
 import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
@@ -95,8 +96,14 @@ public class TravelGuideActivity extends AppCompatActivity implements
         // commit the transaction
         fragmentTransaction.commit();
     }
-    public void newTravelPlanActivity(MenuItem item) {
-        Intent intent = new Intent(this,NewTavelPlanActivity.class);
-        startActivity(intent);
+
+    public void travelPlanFragment(MenuItem item) {
+        // create a fragment transaction
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        // replace contents of FrameLayout with FirstFragment
+        fragmentTransaction.replace(R.id.fragment_frame, new NewTripFragment());
+        fragmentTransaction.addToBackStack(null);
+        // commit the transaction
+        fragmentTransaction.commit();
     }
 }

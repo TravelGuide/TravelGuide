@@ -29,14 +29,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.LoginActivity" />
-        <activity
-            android:name=".activities.NewTavelPlanActivity"
-            android:label="@string/label_new_plan" >
-        </activity>
-        <activity
-            android:name=".activities.PlanDetails"
-            android:label="@string/title_activity_plan_details" >
-        </activity>
     </application>
 
 </manifest>

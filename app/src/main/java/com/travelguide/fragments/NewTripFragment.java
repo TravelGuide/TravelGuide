@@ -1,7 +1,9 @@
 package com.travelguide.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -48,6 +50,9 @@ public class NewTripFragment extends Fragment implements DatePickerFragment.Date
     String sMonth;
     ProgressDialog progressDialog;
     Integer totalTravelDays;
+    String parseNewTripObjectId;
+    private TripPlanListFragment.OnFragmentInteractionListener mListener;
+    Handler mHandler;
 
 
     @Override
@@ -67,7 +72,31 @@ public class NewTripFragment extends Fragment implements DatePickerFragment.Date
         travellerButtons();
         datesButtons();
         saveButton();
+        mHandler = new Handler();
         return topLevelView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //populateTripPlanList();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (TripPlanListFragment.OnFragmentInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     public void travellerButtons() {
@@ -204,10 +233,14 @@ public class NewTripFragment extends Fragment implements DatePickerFragment.Date
             @Override
             public void done(com.parse.ParseException e) {
                 if (e == null) {
-                    String parsePlanID = planDetails.getObjectId();
-                    Log.d("TAG", "The object id is: " + parsePlanID);
-                    saveDayDetails(parsePlanID, totalTravelDays, planName.getText().toString(), simpelDateFormat(startDate.getText().toString()));
-                    progressDialog.dismiss();
+                    parseNewTripObjectId = planDetails.getObjectId();
+                    Log.d("TAG", "The object id is: " + parseNewTripObjectId);
+                    saveDayDetails(parseNewTripObjectId, totalTravelDays, planName.getText().toString(), simpelDateFormat(startDate.getText().toString()));
+                    mHandler.postDelayed(new Runnable() {
+                        public void run() {
+                            launchFragment();
+                        }
+                    }, 500);
                 }
             }
         });
@@ -266,5 +299,9 @@ public class NewTripFragment extends Fragment implements DatePickerFragment.Date
             });
         }
         return successCheck;
+    }
+    public  void  launchFragment(){
+        mListener.onTripPlanItemSelected(parseNewTripObjectId);
+        progressDialog.dismiss();
     }
 }

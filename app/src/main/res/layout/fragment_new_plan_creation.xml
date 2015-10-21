@@ -142,6 +142,5 @@
         android:layout_below="@+id/btn_Female"
         android:layout_marginTop="35dp"
         android:background="@drawable/edit_text_style"
-        android:onClick="createPlan"
         android:text="@string/label_create_plan" />
 </RelativeLayout>
