@@ -28,6 +28,7 @@ import java.util.List;
 public class NearbyPlaces {
 
     public static class NPlace {
+        public String iconUrl;
         public String placeId;
         public String name;
         public String vicinity; // This attribute in most cases is the address of the place
@@ -142,6 +143,7 @@ public class NearbyPlaces {
                 // Log.d("Place " + Integer.toString(i) + " Lat", Double.toString(place.latitude));
                 // Log.d("Place " + Integer.toString(i) + " Lng", Double.toString(place.longitude));
                 // Log.d("Place " + Integer.toString(i) + " Vicinity", place.vicinity);
+                // Log.d("Place " + Integer.toString(i) + " ICON", place.iconUrl);
             }
             nearbyPlaceList = list;
         }
@@ -178,7 +180,8 @@ public class NearbyPlaces {
         private NPlace getPlace(JSONObject jsonObject) {
             NPlace place = new NPlace();
             try {
-                if (jsonObject.optString("place_id") == null ||
+                if (jsonObject.optString("icon") == null ||
+                        jsonObject.optString("place_id") == null ||
                         jsonObject.optString("name") == null ||
                         jsonObject.optString("vicinity") == null ||
                         jsonObject.optJSONObject("geometry") == null ||
@@ -186,6 +189,9 @@ public class NearbyPlaces {
                         jsonObject.getJSONObject("geometry").getJSONObject("location").optString("lat") == null ||
                         jsonObject.getJSONObject("geometry").getJSONObject("location").optString("lng") == null) {
                     return null;
+                }
+                if (!jsonObject.isNull("icon")) {
+                    place.iconUrl = jsonObject.getString("icon");
                 }
                 if (!jsonObject.isNull("place_id")) {
                     place.placeId = jsonObject.getString("place_id");
