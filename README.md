@@ -80,7 +80,7 @@ The following **bonus** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-![demo](Walkthrough/walkthrough.gif)
+![demo](Walkthrough/Walkthrough.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
