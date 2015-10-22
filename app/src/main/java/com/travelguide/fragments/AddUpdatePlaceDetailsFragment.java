@@ -60,7 +60,7 @@ public class AddUpdatePlaceDetailsFragment extends DialogFragment implements Vie
         if (view == view.findViewById(R.id.cancelbutton)) {
             getDialog().cancel();
         } else {
-            EditItemDialogListener listener = (EditItemDialogListener) getActivity();
+            EditItemDialogListener listener = (EditItemDialogListener) getParentFragment();
             listener.onFinishEditDialogcontrol(placeName.getText().toString(), travelTime.getText().toString(), getArguments().getString("parseObjectId"));
             getDialog().dismiss();
         }

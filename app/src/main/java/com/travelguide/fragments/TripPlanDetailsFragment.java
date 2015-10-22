@@ -128,13 +128,11 @@ public class TripPlanDetailsFragment extends Fragment implements AddUpdatePlaceD
                 //dayidnew = daysDetailss.getObjectId();
             }
         });
-
-
     }
 
     //Calling the Interface Method from EditItemFragment.java
     public void onitemClicktoFragment(String title, String parseObjectId, String date) {
-        android.support.v4.app.FragmentManager fragmentManager = getFragmentManager();
+        android.support.v4.app.FragmentManager fragmentManager = getChildFragmentManager();
         AddUpdatePlaceDetailsFragment addUpdatePlace = AddUpdatePlaceDetailsFragment.newInstance(title, parseObjectId, null);
         addUpdatePlace.show(fragmentManager, "edit_item_dialog_fragment");
     }
