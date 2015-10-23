@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.parse.ParseFacebookUtils;
 import com.travelguide.R;
+import com.travelguide.fragments.AddUpdatePlaceDetailsFragment;
 import com.travelguide.fragments.LoginFragment;
 import com.travelguide.fragments.NewTripFragment;
 import com.travelguide.fragments.ProfileFragment;
@@ -18,7 +19,9 @@ import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
 
 public class TravelGuideActivity extends AppCompatActivity implements
-        TripPlanListFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
+        TripPlanListFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, AddUpdatePlaceDetailsFragment.EditItemDialogListener {
+
+    AddUpdatePlaceDetailsFragment fragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,7 +35,8 @@ public class TravelGuideActivity extends AppCompatActivity implements
         fragmentTransaction.replace(R.id.fragment_frame, new LoginFragment());
         // commit the transaction
         fragmentTransaction.commit();
-
+        // Get access to the detail view fragment by id
+        //fragment = (AddUpdatePlaceDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_frame);
     }
 
     @Override
@@ -53,10 +57,8 @@ public class TravelGuideActivity extends AppCompatActivity implements
         Toast.makeText(this, tripPlanObjectId + " was clicked!", Toast.LENGTH_SHORT).show();
         // Opening PlanDetailsFragment
         TripPlanDetailsFragment fragment = TripPlanDetailsFragment.newInstance(tripPlanObjectId);
-
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-        fragmentTransaction.replace(R.id.fragment_frame, fragment);
+        fragmentTransaction.replace(R.id.fragment_frame, fragment, "TRIP_PLAN_FRAGMENT");
         fragmentTransaction.addToBackStack(null);
         // commit the transaction
         fragmentTransaction.commit();
@@ -105,5 +107,17 @@ public class TravelGuideActivity extends AppCompatActivity implements
         fragmentTransaction.addToBackStack(null);
         // commit the transaction
         fragmentTransaction.commit();
+    }
+
+    public void addNewPlace() {
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        AddUpdatePlaceDetailsFragment addUpdatePlace = AddUpdatePlaceDetailsFragment.newInstance("Add New Place", null, null);
+        addUpdatePlace.show(fragmentManager, "add_update_place_details_fragment");
+    }
+
+    @Override
+    public void onFinishEditDialogcontrol(String placeName, String travelTime) {
+        TripPlanDetailsFragment fragmentDemo = (TripPlanDetailsFragment) getSupportFragmentManager().findFragmentByTag("TRIP_PLAN_FRAGMENT");
+        fragmentDemo.onFinishEditAddingNewPlace(placeName, travelTime);
     }
 }

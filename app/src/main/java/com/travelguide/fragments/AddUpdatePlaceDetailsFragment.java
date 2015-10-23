@@ -1,5 +1,6 @@
 package com.travelguide.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -9,31 +10,44 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.travelguide.R;
+import com.travelguide.activities.TravelGuideActivity;
 
 /**
  * Created by htammare on 10/21/2015.
  */
 public class AddUpdatePlaceDetailsFragment extends DialogFragment implements View.OnClickListener {
-
-    public interface EditItemDialogListener {
-        void onFinishEditDialogcontrol(String placeName, String travelTime, String dateObjectId);
-    }
-
     EditText placeName;
     EditText travelTime;
     Button cancelbutton;
     Button savebutton;
+    private EditItemDialogListener listener;
+
+    public interface EditItemDialogListener {
+        void onFinishEditDialogcontrol(String placeName, String travelTime);
+    }
+
 
     public AddUpdatePlaceDetailsFragment() {
         //blank cosntructor needed for for dialog fragment
     }
 
-    public static AddUpdatePlaceDetailsFragment newInstance(String title, String parseObjectId, String date) {
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof TravelGuideActivity) {
+            listener = (EditItemDialogListener) activity;
+        } else {
+            throw new ClassCastException(activity.toString()
+                    + " must implement MyListFragment.OnItemSelectedListener");
+        }
+    }
+
+    public static AddUpdatePlaceDetailsFragment newInstance(String title, String placeName, String time) {
         AddUpdatePlaceDetailsFragment editnamemaster = new AddUpdatePlaceDetailsFragment();
         Bundle bund = new Bundle();
         bund.putString("title", title);
-        bund.putString("date", date);
-        bund.putString("parseObjectId", parseObjectId);
+        bund.putString("time", time);
+        bund.putString("placeName", placeName);
         editnamemaster.setArguments(bund);
         return editnamemaster;
     }
@@ -60,9 +74,9 @@ public class AddUpdatePlaceDetailsFragment extends DialogFragment implements Vie
         if (view == view.findViewById(R.id.cancelbutton)) {
             getDialog().cancel();
         } else {
-            EditItemDialogListener listener = (EditItemDialogListener) getParentFragment();
-            listener.onFinishEditDialogcontrol(placeName.getText().toString(), travelTime.getText().toString(), getArguments().getString("parseObjectId"));
+            //listener = (EditItemDialogListener) getActivity();
             getDialog().dismiss();
+            listener.onFinishEditDialogcontrol(placeName.getText().toString(), travelTime.getText().toString());
         }
     }
 }

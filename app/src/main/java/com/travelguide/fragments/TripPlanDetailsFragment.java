@@ -19,7 +19,9 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.travelguide.R;
+import com.travelguide.activities.TravelGuideActivity;
 import com.travelguide.adapters.DayAdapter;
+import com.travelguide.adapters.PlaceAdapter;
 import com.travelguide.models.Day;
 import com.travelguide.models.Place;
 import com.travelguide.models.TripPlan;
@@ -27,15 +29,21 @@ import com.travelguide.models.TripPlan;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TripPlanDetailsFragment extends Fragment implements AddUpdatePlaceDetailsFragment.EditItemDialogListener {
+public class TripPlanDetailsFragment extends Fragment implements DayAdapter.ViewHolder.DayClickedListener {
 
     private static final String ARG_TRIP_PLAN_OBJECT_ID = "tripPlanObjectId";
     private String mTripPLanObjectId;
     private TextView tvPlanName;
     private List<Day> mDayDetails;
+    private static List<Place> mPlaceDetails;
     RecyclerView rvDayDetails;
+    static RecyclerView rvPlaceDetails;
     FloatingActionButton floatingActionButton;
-    public static String selectedDay;
+    public static String selectedDayObjectId;
+    static PlaceAdapter adapter;
+    public DayAdapter.ViewHolder.DayClickedListener dayClickedListener;
+
+
 
     public static TripPlanDetailsFragment newInstance(String tripPlanObjectId) {
         TripPlanDetailsFragment fragment = new TripPlanDetailsFragment();
@@ -64,17 +72,19 @@ public class TripPlanDetailsFragment extends Fragment implements AddUpdatePlaceD
         View view = inflater.inflate(R.layout.fragment_trip_plan_details, container, false);
         tvPlanName = (TextView) view.findViewById(R.id.tvPlanName);
         //FAB
-        FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fablListItems);
+        floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fablListItems);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                onitemClicktoFragment("Add New Place", selectedDay, null);
+                onItemClickToFragment();
             }
         });
-
         mDayDetails = new ArrayList<Day>();
+        mPlaceDetails = new ArrayList<Place>();
+
+
+
         // Lookup the recyclerview in activity layout
         rvDayDetails = (RecyclerView) view.findViewById(R.id.rvContacts);
-        // Create adapter passing in the sample user data
         //fetch data from parse-using inner query on plan and then day details
         ParseQuery innerQuery = new ParseQuery(TripPlan.class);
         innerQuery.whereEqualTo("objectId", mTripPLanObjectId);
@@ -91,6 +101,14 @@ public class TripPlanDetailsFragment extends Fragment implements AddUpdatePlaceD
                 }
             }
         });
+
+        //set onclick listner for day --removed click from adapter
+        rvDayDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         //List<Day> days = new ArrayList<>();
         //days.add(new Day());
         //days.add(new Day());
@@ -101,6 +119,12 @@ public class TripPlanDetailsFragment extends Fragment implements AddUpdatePlaceD
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         rvDayDetails.setLayoutManager(layoutManager);
+
+        rvPlaceDetails = (RecyclerView) view.findViewById(R.id.rvPlaces);
+        adapter = new PlaceAdapter(mPlaceDetails);
+        rvPlaceDetails.setAdapter(adapter);
+        rvPlaceDetails.setLayoutManager(new LinearLayoutManager(getContext()));
+
         //Toast.makeText(getContext(), "objectId: " + mTripPLanObjectId, Toast.LENGTH_LONG).show();
         //TODO Load PlanDetail from Parse locally
         return view;
@@ -109,37 +133,62 @@ public class TripPlanDetailsFragment extends Fragment implements AddUpdatePlaceD
     public void resetDayDetails(List<Day> dayDetails) {
         mDayDetails.clear();
         mDayDetails.addAll(dayDetails);
-        DayAdapter adapter = new DayAdapter(mDayDetails);
+        DayAdapter adapter = new DayAdapter(mDayDetails,this);
         rvDayDetails.setAdapter(adapter);
     }
+    public static void resetPlaceDetails(List<Place> placeDetails) {
+        mPlaceDetails.clear();
+        mPlaceDetails.addAll(placeDetails);
+        //rvPlaceDetails.setLayoutManager(new LinearLayoutManager(this));
+        adapter.notifyDataSetChanged();
+        PlaceAdapter adapter = new PlaceAdapter(mPlaceDetails);
+        rvPlaceDetails.setAdapter(adapter);
 
-    @Override
-    public void onFinishEditDialogcontrol(String placeName, String travelTime, String dateObjectId) {
+    }
+    public void onFinishEditAddingNewPlace(String placeName, String travelTime) {
         ParseUser user = ParseUser.getCurrentUser();
         Place placeDetails = new Place();
         placeDetails.putCreatedUserId(user.getObjectId());
-        placeDetails.putPlanName(placeName);
-        placeDetails.putVisitingTime(Integer.parseInt(travelTime));
+        placeDetails.putPlaceName(placeName);
+        placeDetails.putVisitingTime(travelTime);
         placeDetails.putPlaceImageUrl("http://www.travelmanly.com/wp-content/uploads/2012/02/NewYorkCity2.jpg");
-        placeDetails.put("parent", ParseObject.createWithoutData("DayDetails", dateObjectId));
+        placeDetails.put("parent", ParseObject.createWithoutData("DayDetails", selectedDayObjectId));
         placeDetails.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                //dayidnew = daysDetailss.getObjectId();
+                if (e == null) {
+                    onDateClicked(selectedDayObjectId);
+                }
             }
         });
     }
 
-    //Calling the Interface Method from EditItemFragment.java
-    public void onitemClicktoFragment(String title, String parseObjectId, String date) {
-        android.support.v4.app.FragmentManager fragmentManager = getChildFragmentManager();
-        AddUpdatePlaceDetailsFragment addUpdatePlace = AddUpdatePlaceDetailsFragment.newInstance(title, parseObjectId, null);
-        addUpdatePlace.show(fragmentManager, "edit_item_dialog_fragment");
+    public void onItemClickToFragment() {
+        ((TravelGuideActivity) getActivity()).addNewPlace();
     }
 
-    public static void onItemClicked(String objectId) {
-        selectedDay = objectId;
-
+    //Method to load places data on click
+    public void onDateClicked(String travelDateObjectId) {
+        selectedDayObjectId = travelDateObjectId;
+        ParseQuery innerQuery = new ParseQuery(Day.class);
+        innerQuery.whereEqualTo("objectId", travelDateObjectId);
+        ParseQuery query = new ParseQuery(Place.class);
+        query.whereMatchesQuery("parent", innerQuery);
+        query.findInBackground(new FindCallback<Place>() {
+            @Override
+            public void done(List<Place> list, ParseException e) {
+                if (e == null) {
+                    resetPlaceDetails(list);
+                } else {
+                    Log.d("ERROR", "Data not fetched");
+                }
+            }
+        });
     }
 
+
+    @Override
+    public void onDayClicked(View caller) {
+
+    }
 }

@@ -24,8 +24,10 @@ import com.travelguide.models.TripPlan;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -239,11 +241,6 @@ public class NewTripFragment extends Fragment implements DatePickerFragment.Date
                     parseNewTripObjectId = planDetails.getObjectId();
                     Log.d("TAG", "The object id is: " + parseNewTripObjectId);
                     saveDayDetails(parseNewTripObjectId, totalTravelDays, planName.getText().toString(), simpelDateFormat(startDate.getText().toString()));
-                    mHandler.postDelayed(new Runnable() {
-                        public void run() {
-                            launchFragment();
-                        }
-                    }, 500);
                 }
             }
         });
@@ -275,6 +272,8 @@ public class NewTripFragment extends Fragment implements DatePickerFragment.Date
             totalTravelDays = totalTravelDays + 1;
         }
         Date updatedStartDate = null;
+        List<Day> dayList = new ArrayList<Day>();
+
         for (int i = 0; i < totalTravelDays; i++) {
             if (trackCount == 0) {
                 updatedStartDate = startDate;
@@ -286,25 +285,25 @@ public class NewTripFragment extends Fragment implements DatePickerFragment.Date
             }
             trackCount = trackCount + 1;
             Day daysDetails = new Day();
+            dayList.add(daysDetails);
             daysDetails.putCreatedUserId(user.getObjectId());
             daysDetails.putPlanName(planName);
             daysDetails.putTravelDay(trackCount);
             daysDetails.putTravelDate(updatedStartDate);
             daysDetails.put("parent", ParseObject.createWithoutData("PlanDetails", parsePlanID));
-            daysDetails.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(com.parse.ParseException e) {
-                    if (e == null) {
-                        //String parsePlanID = planDetails.getObjectId();
-                        successCheck = true;
-                    }
-                }
-            });
+            dayList.add(daysDetails);
         }
+        ParseObject.saveAllInBackground(dayList, new SaveCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
+                if (e == null) {
+                    successCheck = true;
+                    mListener.onTripPlanItemSelected(parseNewTripObjectId);
+                    progressDialog.dismiss();
+                }
+            }
+        });
         return successCheck;
     }
-    public  void  launchFragment(){
-        mListener.onTripPlanItemSelected(parseNewTripObjectId);
-        progressDialog.dismiss();
-    }
+
 }

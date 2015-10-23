@@ -18,21 +18,33 @@ import java.util.Date;
 import java.util.List;
 
 public class DayAdapter extends RecyclerView.Adapter<DayAdapter.ViewHolder> {
-
     private List<Day> mDays;
+    public static ViewHolder.DayClickedListener listener;
 
-    public DayAdapter(List<Day> days) {
+    public DayAdapter(List<Day> days,TripPlanDetailsFragment context) {
         this.mDays = days;
+        this.listener = context.dayClickedListener;
+
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View contactView = inflater.inflate(R.layout.item_day, parent, false);
 
-        return new ViewHolder(contactView);
+        /*
+        DayAdapter.ViewHolder vhs = new ViewHolder(contactView, new DayAdapter.ViewHolder.DayClickedListner() {
+            @Override
+            public void onDayClicked(View caller) {
+                //  NEED TO CALL FRAGMENT "onDayClicked" rather than this
+            }
+        });
+        */
+
+        DayAdapter.ViewHolder vh = new ViewHolder(contactView, listener);
+
+        return vh;
     }
 
     @Override
@@ -63,6 +75,7 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.ViewHolder> {
         }
         holder.tvDay.setText(Integer.toString(day));
         holder.tvMonth.setText(monthName);
+        holder.tvObjectId.setText(mDays.get(position).getObjectId());
     }
 
     @Override
@@ -70,13 +83,15 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.ViewHolder> {
         return mDays.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tvDay;
         TextView tvMonth;
         TextView tvObjectId;
         RelativeLayout relativeLayout;
-        public ViewHolder(View itemView) {
+        //public DayClickedListner dayClickedListner;
+        public ViewHolder(View itemView,DayClickedListener dayListener) {
             super(itemView);
+            listener = dayListener;
             tvDay = (TextView) itemView.findViewById(R.id.tvDay);
             tvMonth = (TextView) itemView.findViewById(R.id.tvMonth);
             tvObjectId = (TextView) itemView.findViewById(R.id.tv_objectID);
@@ -86,10 +101,14 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.ViewHolder> {
         public void onClick(View v) {
             int position = getLayoutPosition(); // gets item position
             Log.d("DayAdapter", "position: " + position);
-            //RelativeLayout relativeLayout = (RelativeLayout) v.findViewById(R.id.rl_Item_day_day);
-            //relativeLayout.setBackground(v.getResources().getDrawable(R.drawable.selector_day));
-            TripPlanDetailsFragment.onItemClicked(tvObjectId.getText().toString());
+            listener.onDayClicked(v);
         }
+
+        public interface DayClickedListener {
+            void onDayClicked(View caller);
+        }
+
     }
+
 
 }
