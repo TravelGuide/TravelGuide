@@ -4,6 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
+    android:id="@+id/rl_Item_day_day"
     android:background="@drawable/selector_day">
 
     <TextView
@@ -26,4 +27,14 @@
         android:textColor="@android:color/black"
         tools:text="Oct" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/tv_objectID"
+        android:layout_below="@+id/tvMonth"
+        android:visibility="gone"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

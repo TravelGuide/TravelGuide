@@ -1,41 +1,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.travelguide.activities.TestActivity">
+    tools:context="com.travelguide.activities.TravelGuideActivity">
+
+    <item
+        android:id="@+id/action_login"
+        android:onClick="onLoginClick"
+        android:title="@string/action_login"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_profile"
+        android:onClick="onProfileClick"
+        android:title="@string/action_profile"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:onClick="onSettingsClick"
         android:title="@string/action_settings"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_go_to_login"
-        android:onClick="loginFragment"
-        android:orderInCategory="100"
-        android:title="@string/label_login_fragment"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_go_to_profile"
-        android:onClick="profileFragment"
-        android:orderInCategory="100"
-        android:title="@string/label_profile_fragment"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_go_to_trip_plan_list"
-        android:onClick="tripPlanListFragment"
-        android:orderInCategory="100"
-        android:title="@string/label_trip_plan_list_fragment"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_launch_new_plan"
-        android:onClick="newTravelPlanActivity"
-        android:orderInCategory="100"
-        android:title="@string/label_new_plan"
-        app:showAsAction="never" />
-
 
 </menu>
