@@ -4,7 +4,7 @@ public interface OnTripPlanListener {
 
     void onTripPlanItemSelected(String tripPlanObjectId);
 
-    void onTripPlanNew();
+    void onTripPlanCreated(String tripPlanObjectId);
 
-    void onTripPlanCreated();
+    void onTripPlanNew();
 }

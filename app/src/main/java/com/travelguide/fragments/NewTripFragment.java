@@ -1,193 +1,238 @@
 package com.travelguide.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.travelguide.R;
+import com.travelguide.adapters.DateSetAdapter;
+import com.travelguide.listener.OnTripPlanListener;
 import com.travelguide.models.Day;
 import com.travelguide.models.TripPlan;
+import com.travelguide.viewmodel.TripDateViewModel;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+
+import static android.text.TextUtils.isEmpty;
+import static com.travelguide.helpers.DateUtils.daysDifference;
+import static com.travelguide.helpers.DateUtils.parse;
 
 /**
  * Created by htammare on 10/20/2015.
  */
-public class NewTripFragment extends Fragment implements DatePickerFragment.DatePickerDialogFragmentEvents {
-    TextView startDate;
-    TextView endDate;
-    EditText planName;
-    EditText destination;
-    String clickedDate;
-    String travellerType;
-    View topLevelView;
-    Button male;
-    Button female;
-    Button couple;
-    Button family;
-    Button save;
-    Integer sDateMonth;
-    String sSeason;
-    String sMonth;
-    ProgressDialog progressDialog;
-    Integer totalTravelDays;
+public class NewTripFragment extends Fragment {
 
+    private static final String TAG = NewTripFragment.class.getSimpleName();
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private TextView startDate;
+    private TextView endDate;
+    private EditText planName;
+    private EditText destination;
+    private ProgressDialog progressDialog;
+
+    private TripDateViewModel startDateViewModel;
+    private TripDateViewModel endDateViewModel;
+
+    private OnTripPlanListener mListener;
+
+    private String travellerType;
+    private String parseNewTripObjectId;
+    private Integer totalTravelDays;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        topLevelView = inflater.inflate(R.layout.fragment_new_plan_creation, container, false);
-        planName = (EditText) topLevelView.findViewById(R.id.tv_PlanName);
-        destination = (EditText) topLevelView.findViewById(R.id.et_PlaceName);
-        startDate = (TextView) topLevelView.findViewById(R.id.tv_StartDate);
-        endDate = (TextView) topLevelView.findViewById(R.id.tv_EndDate);
-        save = (Button) topLevelView.findViewById(R.id.btn_CreatePlan);
-        travellerButtons();
-        datesButtons();
-        saveButton();
-        return topLevelView;
-    }
+        setHasOptionsMenu(true);
 
-    public void travellerButtons() {
-        male = (Button) topLevelView.findViewById(R.id.btn_Male);
-        female = (Button) topLevelView.findViewById(R.id.btn_Female);
-        couple = (Button) topLevelView.findViewById(R.id.btn_Couple);
-        family = (Button) topLevelView.findViewById(R.id.btn_Family);
-        male.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //View maleIcon = v.findViewById(R.id.btn_Male);
-                male.setBackground(getResources().getDrawable(R.drawable.button_pressed));
-                female.setBackground(getResources().getDrawable(R.drawable.edit_text_style));
-                couple.setBackground(getResources().getDrawable(R.drawable.edit_text_style));
-                family.setBackground(getResources().getDrawable(R.drawable.edit_text_style));
-                travellerType = "Male";
-            }
-        });
-        female.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                female.setBackground(getResources().getDrawable(R.drawable.button_pressed));
-                male.setBackground(getResources().getDrawable(R.drawable.edit_text_style));
-                couple.setBackground(getResources().getDrawable(R.drawable.edit_text_style));
-                family.setBackground(getResources().getDrawable(R.drawable.edit_text_style));
-                travellerType = "Female";
-            }
-        });
-        couple.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                couple.setBackground(getResources().getDrawable(R.drawable.button_pressed));
-                female.setBackground(getResources().getDrawable(R.drawable.edit_text_style));
-                male.setBackground(getResources().getDrawable(R.drawable.edit_text_style));
-                family.setBackground(getResources().getDrawable(R.drawable.edit_text_style));
-                travellerType = "Couple";
-            }
-        });
-        family.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                family.setBackground(getResources().getDrawable(R.drawable.button_pressed));
-                couple.setBackground(getResources().getDrawable(R.drawable.edit_text_style));
-                female.setBackground(getResources().getDrawable(R.drawable.edit_text_style));
-                travellerType = "Family";
-            }
-        });
-    }
+        View view = inflater.inflate(R.layout.fragment_new_plan_creation, container, false);
 
-    public void datesButtons() {
-        startDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerFragment newFragment = new DatePickerFragment();
-                newFragment.setDatePickerDialogFragmentEvents(NewTripFragment.this);
-                newFragment.show(getFragmentManager(), "datePicker");
-                clickedDate = "SD";
-            }
-        });
-        endDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerFragment newFragment = new DatePickerFragment();
-                newFragment.setDatePickerDialogFragmentEvents(NewTripFragment.this);
-                newFragment.show(getFragmentManager(), "datePicker");
-                clickedDate = "ED";
-            }
-        });
+        planName = (EditText) view.findViewById(R.id.tv_PlanName);
+        destination = (EditText) view.findViewById(R.id.et_PlaceName);
+
+        startDate = (TextView) view.findViewById(R.id.tv_StartDate);
+        startDate.setOnClickListener(startDateOnClickListener());
+
+        endDate = (TextView) view.findViewById(R.id.tv_EndDate);
+        endDate.setOnClickListener(endDateOnClickListener());
+
+        RadioGroup rgGroupType = (RadioGroup) view.findViewById(R.id.rgGroupType);
+        rgGroupType.setOnCheckedChangeListener(groupTypeOnCheckedChangeListener());
+
+        return view;
     }
 
     @Override
-    public void onDateSelected(String date, Integer month, String monthName, String season) {
-        if (clickedDate.equalsIgnoreCase("SD")) {
-            startDate.setText(date);
-            sDateMonth = month;
-            sSeason = season;
-            sMonth = monthName;
-
-        } else {
-            endDate.setText(date);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (OnTripPlanListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnTripPlanListener");
         }
-        clickedDate = "";
     }
 
-    public void saveButton() {
-        save.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_plan_create, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getFragmentManager().popBackStack();
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                return true;
+            case R.id.action_done:
+                done();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @NonNull
+    private RadioGroup.OnCheckedChangeListener groupTypeOnCheckedChangeListener() {
+        return new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.rbMale:
+                        travellerType = getString(R.string.male);
+                        break;
+                    case R.id.rbFemale:
+                        travellerType = getString(R.string.female);
+                        break;
+                    case R.id.rbCouple:
+                        travellerType = getString(R.string.couple);
+                        break;
+                    case R.id.rbFamily:
+                        travellerType = getString(R.string.family);
+                        break;
+                }
+                Log.d(TAG, "travellerType: " + travellerType);
+            }
+        };
+    }
+
+    private View.OnClickListener endDateOnClickListener() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (planName.getText().toString().trim().equals("")) {
-                    planName.setError("Plan name is required!");
-                } else if (destination.getText().toString().trim().equals("")) {
-                    destination.setError("Destination is required!");
-                } else if (startDate.getText().toString().trim().equals("")) {
-                    startDate.setError("Plan start date is required!");
-                } else {
-                    saveAndStartDetailsFragment();
-                }
+                DatePickerFragment datePickerFragment = DatePickerFragment.newInstance(endDateSelected());
+                datePickerFragment.show(getFragmentManager(), "datePicker");
             }
-        });
+        };
     }
 
-    public void saveAndStartDetailsFragment() {
+    private DateSetAdapter endDateSelected() {
+        return new DateSetAdapter() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                endDateViewModel = new TripDateViewModel(year, monthOfYear, dayOfMonth);
+                endDate.setText(endDateViewModel.getFormattedDate());
+                Log.d(TAG, "endDateSelected: " + endDateViewModel);
+            }
+        };
+    }
+
+    private View.OnClickListener startDateOnClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerFragment datePickerFragment = DatePickerFragment.newInstance(startDateSelected());
+                datePickerFragment.show(getFragmentManager(), "datePicker");
+            }
+        };
+    }
+
+    private DateSetAdapter startDateSelected() {
+        return new DateSetAdapter() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                startDateViewModel = new TripDateViewModel(year, monthOfYear, dayOfMonth);
+                startDate.setText(startDateViewModel.getFormattedDate());
+                Log.d(TAG, "startDateSelected: " + startDateViewModel);
+            }
+        };
+    }
+
+    private void done() {
+        boolean valid = true;
+
+        if (isEmpty(planName.getText().toString().trim())) {
+            planName.setError(getString(R.string.plan_name_is_required));
+            valid = false;
+        }
+
+        if (isEmpty(destination.getText().toString().trim())) {
+            destination.setError(getString(R.string.destination_is_required));
+            valid = false;
+        }
+
+        if (startDateViewModel == null) {
+            startDate.setError(getString(R.string.plan_start_date_is_required));
+            valid = false;
+        }
+
+        if (valid) {
+            saveAndStartDetailsFragment();
+        }
+    }
+
+    private void saveAndStartDetailsFragment() {
         progressDialog = new ProgressDialog(getContext());
-        progressDialog.setTitle("Creating Plan...");
-        progressDialog.setMessage("Please wait.");
+        progressDialog.setTitle(R.string.creating_plan);
+        progressDialog.setMessage(getString(R.string.please_wait));
         progressDialog.setCancelable(false);
         progressDialog.show();
+
         ParseUser user = ParseUser.getCurrentUser();
+
         final TripPlan planDetails = new TripPlan();
         planDetails.putCreatedUserId(user.getObjectId());
         planDetails.putCreatedUserName(user.getUsername());
         planDetails.putPlanName(planName.getText().toString());
         planDetails.putCityName(destination.getText().toString());
-        planDetails.putTravelMonthNumber(sDateMonth + 1);
-        planDetails.putTravelMonth(sMonth);
-        planDetails.putTravelSeason(sSeason);
-        planDetails.putTripBeginDate(simpelDateFormat(startDate.getText().toString()));
-        if (!endDate.getText().toString().equals("")) {
-            planDetails.putTripEndDate(simpelDateFormat(endDate.getText().toString()));
+        planDetails.putTravelMonthNumber(startDateViewModel.getMonthNumber() + 1);
+        planDetails.putTravelMonth(startDateViewModel.getMonthName());
+        planDetails.putTravelSeason(startDateViewModel.getSeasonName());
+
+        planDetails.putTripBeginDate(startDateViewModel.getParsedDate());
+
+        if (endDateViewModel != null) {
+            planDetails.putTripEndDate(endDateViewModel.getParsedDate());
         }
+
         planDetails.putTripNotes("");
         planDetails.putTripCost(0);
         planDetails.putGroupType(travellerType);
@@ -195,50 +240,35 @@ public class NewTripFragment extends Fragment implements DatePickerFragment.Date
             totalTravelDays = 1;
             planDetails.putTripTime(totalTravelDays);
         } else {
-            totalTravelDays = daysDifference(simpelDateFormat(startDate.getText().toString()), simpelDateFormat(endDate.getText().toString()));
+            totalTravelDays = daysDifference(parse(startDate.getText().toString()), parse(endDate.getText().toString()));
             planDetails.putTripTime(totalTravelDays);
         }
         planDetails.puCityImageURL("http://thenextweb.com/wp-content/blogs.dir/1/files/2013/09/nyc.jpg");
         planDetails.putEnabledFlag(false);
+
+        //ParseRelation relation = planDetails.getD
+
         planDetails.saveInBackground(new SaveCallback() {
             @Override
             public void done(com.parse.ParseException e) {
                 if (e == null) {
-                    String parsePlanID = planDetails.getObjectId();
-                    Log.d("TAG", "The object id is: " + parsePlanID);
-                    saveDayDetails(parsePlanID, totalTravelDays, planName.getText().toString(), simpelDateFormat(startDate.getText().toString()));
-                    progressDialog.dismiss();
+                    parseNewTripObjectId = planDetails.getObjectId();
+                    Log.d(TAG, "The object id is: " + parseNewTripObjectId);
+                    saveDayDetails(parseNewTripObjectId, totalTravelDays, planName.getText().toString(), parse(startDate.getText().toString()));
                 }
             }
         });
     }
 
-    public Date simpelDateFormat(String date) {
-        Date dateFormated = null;
-        DateFormat format = new SimpleDateFormat("MMM/dd/yyyy", Locale.ENGLISH);
-        try {
-            dateFormated = format.parse(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return dateFormated;
-    }
-
-    public int daysDifference(Date startDate, Date endDate) {
-        long diff = endDate.getTime() - startDate.getTime();
-        int noofDays = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-        return noofDays;
-    }
-
-    public Boolean successCheck = false;
-
-    public Boolean saveDayDetails(String parsePlanID, int totalTravelDays, String planName, Date startDate) {
+    private void saveDayDetails(String parsePlanID, int totalTravelDays, String planName, Date startDate) {
         ParseUser user = ParseUser.getCurrentUser();
         Integer trackCount = 0;
         if (totalTravelDays != 1) {
             totalTravelDays = totalTravelDays + 1;
         }
         Date updatedStartDate = null;
+        List<Day> dayList = new ArrayList<Day>();
+
         for (int i = 0; i < totalTravelDays; i++) {
             if (trackCount == 0) {
                 updatedStartDate = startDate;
@@ -250,21 +280,26 @@ public class NewTripFragment extends Fragment implements DatePickerFragment.Date
             }
             trackCount = trackCount + 1;
             Day daysDetails = new Day();
+            dayList.add(daysDetails);
             daysDetails.putCreatedUserId(user.getObjectId());
             daysDetails.putPlanName(planName);
             daysDetails.putTravelDay(trackCount);
             daysDetails.putTravelDate(updatedStartDate);
             daysDetails.put("parent", ParseObject.createWithoutData("PlanDetails", parsePlanID));
-            daysDetails.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(com.parse.ParseException e) {
-                    if (e == null) {
-                        //String parsePlanID = planDetails.getObjectId();
-                        successCheck = true;
+            dayList.add(daysDetails);
+        }
+        ParseObject.saveAllInBackground(dayList, new SaveCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
+                if (e == null) {
+                    progressDialog.dismiss();
+                    getFragmentManager().popBackStack();
+                    if (mListener != null) {
+                        mListener.onTripPlanCreated(parseNewTripObjectId);
                     }
                 }
-            });
-        }
-        return successCheck;
+            }
+        });
     }
+
 }

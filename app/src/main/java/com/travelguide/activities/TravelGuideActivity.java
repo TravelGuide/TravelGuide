@@ -13,14 +13,15 @@ import android.widget.Toast;
 import com.parse.ParseFacebookUtils;
 import com.travelguide.R;
 import com.travelguide.fragments.LoginFragment;
+import com.travelguide.fragments.NewTripFragment;
 import com.travelguide.fragments.ProfileFragment;
-import com.travelguide.fragments.TripPlanNewFragment;
 import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
 import com.travelguide.listener.OnTripPlanListener;
 
 public class TravelGuideActivity extends AppCompatActivity implements
-        OnTripPlanListener, ProfileFragment.OnFragmentInteractionListener {
+        OnTripPlanListener,
+        ProfileFragment.OnFragmentInteractionListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,20 +58,19 @@ public class TravelGuideActivity extends AppCompatActivity implements
     @Override
     public void onTripPlanItemSelected(String tripPlanObjectId) {
         Toast.makeText(this, tripPlanObjectId + " was clicked!", Toast.LENGTH_SHORT).show();
-
         TripPlanDetailsFragment fragment = TripPlanDetailsFragment.newInstance(tripPlanObjectId);
         setContentFragment(fragment);
     }
 
     @Override
     public void onTripPlanNew() {
-        setContentFragment(new TripPlanNewFragment());
+        setContentFragment(new NewTripFragment());
     }
 
     @Override
-    public void onTripPlanCreated() {
+    public void onTripPlanCreated(String tripPlanObjectId) {
         //Opening details passing ID of new item
-        TripPlanDetailsFragment fragment = TripPlanDetailsFragment.newInstance("10");
+        TripPlanDetailsFragment fragment = TripPlanDetailsFragment.newInstance(tripPlanObjectId);
         setContentFragment(fragment);
     }
 
@@ -87,14 +87,10 @@ public class TravelGuideActivity extends AppCompatActivity implements
     }
 
     private void setContentFragment(Fragment fragment) {
-        // create a fragment transaction
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        // replace contents of FrameLayout with FirstFragment
         fragmentTransaction.replace(R.id.fragment_frame, fragment);
         fragmentTransaction.addToBackStack(null);
-        // commit the transaction
         fragmentTransaction.commit();
-        // setting up button on action bar
         setDisplayHomeAsUpEnabled(true);
     }
 

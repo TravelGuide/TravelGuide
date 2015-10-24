@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,8 +25,8 @@ import com.travelguide.R;
 import com.travelguide.adapters.TripPlanAdapter;
 import com.travelguide.decorations.VerticalSpaceItemDecoration;
 import com.travelguide.helpers.DeviceDimensionsHelper;
-import com.travelguide.models.TripPlan;
 import com.travelguide.helpers.ItemClickSupport;
+import com.travelguide.models.TripPlan;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +82,9 @@ public class ProfileFragment extends Fragment {
         tvName = (TextView) view.findViewById(R.id.tvNameInProfile);
         tvEmail = (TextView) view.findViewById(R.id.tvEmailInProfile);
 
+        setHasOptionsMenu(true);
+
+
         tvName.setText(name);
         tvEmail.setText(email);
         Picasso.with(getContext()).load(profilePicUrl).into(ivProfilePic);
@@ -108,6 +113,18 @@ public class ProfileFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getFragmentManager().popBackStack();
+                ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void getSharedPreferences() {

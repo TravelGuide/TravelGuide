@@ -8,8 +8,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -85,6 +87,8 @@ public class LoginFragment extends Fragment {
         btnLogin = (Button) view.findViewById(R.id.btnLogin);
         ivCoverPic = (ImageView) view.findViewById(R.id.ivCoverPic);
 
+        setHasOptionsMenu(true);
+
         createSharedPreferences();
 
         btnLogin.setEnabled(true);
@@ -125,6 +129,18 @@ public class LoginFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getFragmentManager().popBackStack();
+                ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void setLoginButtonOnClickListener() {
