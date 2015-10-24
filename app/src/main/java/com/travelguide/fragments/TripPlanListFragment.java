@@ -20,7 +20,7 @@ import com.travelguide.adapters.TripPlanAdapter;
 import com.travelguide.decorations.VerticalSpaceItemDecoration;
 import com.travelguide.listener.OnTripPlanListener;
 import com.travelguide.models.TripPlan;
-import com.travelguide.utils.ItemClickSupport;
+import com.travelguide.helpers.ItemClickSupport;
 
 import java.util.ArrayList;
 import java.util.List;

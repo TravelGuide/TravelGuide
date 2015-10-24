@@ -1,4 +1,4 @@
-package com.travelguide.utils;
+package com.travelguide.helpers;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
