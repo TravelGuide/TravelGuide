@@ -3,27 +3,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@drawable/layer_list_item_trip_plan"
     android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/ivPlace"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/city_placeholder" />
+
+    <TextView
+        android:id="@+id/tvPlanName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivPlace"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        tools:text="Trip to NYC" />
 
     <TextView
         android:id="@+id/tvTotalTravelTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="3 days" />
+        android:layout_below="@+id/tvPlanName"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        tools:text="72 hours" />
 
     <TextView
         android:id="@+id/tvGroupType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvTotalTravelTime"
+        android:layout_below="@+id/tvPlanName"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/tvTotalTravelTime"
+        android:layout_toRightOf="@+id/tvTotalTravelTime"
         tools:text="Family" />
 
     <TextView
         android:id="@+id/tvTravelSeason"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvTotalTravelTime"
+        android:layout_below="@+id/tvPlanName"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/tvGroupType"
@@ -34,54 +66,12 @@
         android:id="@+id/tvTravelMonth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvTotalTravelTime"
+        android:layout_below="@+id/tvPlanName"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@id/tvTravelSeason"
         android:layout_toRightOf="@id/tvTravelSeason"
         tools:text="Jan" />
-
-    <ImageView
-        android:id="@+id/ivPlace"
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/tvGroupType"
-        android:contentDescription="@null"
-        android:scaleType="fitXY"
-        android:src="@drawable/b427fea788a6c7f657fe113856fa4e90" />
-
-    <TextView
-        android:id="@+id/tvPlanName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ivPlace"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        tools:text="Trip to NYC" />
-
-    <RatingBar
-        android:id="@+id/ratingBar"
-        style="?android:attr/ratingBarStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/tvPlanName"
-        android:rating="3.5" />
-
-
-    <TextView
-        android:id="@+id/tvReviewCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvPlanName"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/ratingBar"
-        android:layout_toRightOf="@+id/ratingBar"
-        tools:text="50 reviews" />
 
 </RelativeLayout>

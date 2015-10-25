@@ -6,9 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.travelguide.R;
 import com.travelguide.models.TripPlan;
 
@@ -16,16 +16,17 @@ import java.util.List;
 
 public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHolder> {
 
-    private List<TripPlan> mTripPlans;
+    private final Context mContext;
+    private final List<TripPlan> mTripPlans;
 
-    public TripPlanAdapter(List<TripPlan> mTripPlans) {
+    public TripPlanAdapter(List<TripPlan> mTripPlans, Context context) {
         this.mTripPlans = mTripPlans;
+        this.mContext = context;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
 
         View contactView = inflater.inflate(R.layout.item_trip_plan, parent, false);
 
@@ -36,13 +37,23 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         TripPlan tripPlan = mTripPlans.get(position);
 
-        holder.tvTotalTravelTime.setText("3 days");
-        holder.tvGroupType.setText("Family");
-        holder.tvTravelSeason.setText("Winter");
-        holder.tvTravelMonth.setText("Jan");
-        holder.tvPlanName.setText("Trip to NYC " + position);
-        holder.ratingBar.setRating(2);
-        holder.tvReviewCount.setText("1500 reviews");
+        holder.tvPlanName.setText(tripPlan.getPlanName());
+
+        String totalTravelTime = mContext.getResources()
+                .getQuantityString(R.plurals.days, tripPlan.getTripTime(), tripPlan.getTripTime());
+
+        holder.tvTotalTravelTime.setText(totalTravelTime);
+        holder.tvGroupType.setText(tripPlan.getGroupType());
+        holder.tvTravelSeason.setText(tripPlan.getTravelSeason());
+        holder.tvTravelMonth.setText(tripPlan.getTravelMonth());
+
+        holder.ivPlace.setImageResource(R.drawable.city_placeholder);
+
+        Picasso.with(mContext)
+                .load(tripPlan.getCityImageUrl())
+                .placeholder(R.drawable.city_placeholder)
+                .resize(0, 600)
+                .into(holder.ivPlace);
     }
 
     @Override
@@ -61,8 +72,6 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
         TextView tvTravelMonth;
         ImageView ivPlace;
         TextView tvPlanName;
-        RatingBar ratingBar;
-        TextView tvReviewCount;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -73,8 +82,6 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
             tvTravelMonth = (TextView) itemView.findViewById(R.id.tvTravelMonth);
             ivPlace = (ImageView) itemView.findViewById(R.id.ivPlace);
             tvPlanName = (TextView) itemView.findViewById(R.id.tvPlanName);
-            ratingBar = (RatingBar) itemView.findViewById(R.id.ratingBar);
-            tvReviewCount = (TextView) itemView.findViewById(R.id.tvReviewCount);
         }
     }
 }
