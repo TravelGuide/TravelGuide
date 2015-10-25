@@ -19,5 +19,16 @@
         <item name="android:clickable">true</item>
     </style>
 
+    <style name="dialogFragment" parent="@android:style/Theme.Holo.Dialog.MinWidth" >
+        <item name="android:windowTitleStyle">@style/dialogFragmentTitle</item>
+    </style>
+
+    <style name="dialogFragmentTitle">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
 
 </resources>
