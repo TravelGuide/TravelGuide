@@ -1,13 +1,18 @@
+
+
 package com.travelguide.fragments;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,7 +39,6 @@ import com.parse.SaveCallback;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.travelguide.R;
-import com.travelguide.helpers.DeviceDimensionsHelper;
 import com.travelguide.helpers.NetworkAvailabilityCheck;
 
 import org.json.JSONException;
@@ -51,7 +55,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * History:
  *   10/17/2015     kprav       Initial Version
  */
-public class LoginFragment extends Fragment {
+public class LoginFragment extends DialogFragment {
 
     private CircleImageView ivProfilePic;
     private ImageView ivCoverPic;
@@ -72,9 +76,14 @@ public class LoginFragment extends Fragment {
         add("email");
     }};
 
+    public LoginFragment() {
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.dialogFragment);
     }
 
     @Nullable
@@ -87,9 +96,13 @@ public class LoginFragment extends Fragment {
         btnLogin = (Button) view.findViewById(R.id.btnLogin);
         ivCoverPic = (ImageView) view.findViewById(R.id.ivCoverPic);
 
-        setHasOptionsMenu(true);
-
+        setHasOptionsMenu(false);
         createSharedPreferences();
+
+        getDialog().setTitle("Login with Facebook");
+        final Drawable d = new ColorDrawable(Color.WHITE);
+        d.setAlpha(225);
+        getDialog().getWindow().setBackgroundDrawable(d);
 
         btnLogin.setEnabled(true);
         btnLogin.setVisibility(View.VISIBLE);
@@ -188,6 +201,8 @@ public class LoginFragment extends Fragment {
                         try {
                             Log.d("response", response.toString());
 
+                            boolean updateCoverPicUrl = true;
+
                             name = response.getJSONObject().getString("name");
                             tvName.setText(name);
                             updateSharedPreferences("name", name);
@@ -201,47 +216,73 @@ public class LoginFragment extends Fragment {
                             }
 
                             profilePicUrl = response.getJSONObject().getJSONObject("picture").getJSONObject("data").getString("url");
-                            Picasso.with(getContext()).load(profilePicUrl).into(ivProfilePic, new Callback() {
+                            if (response.getJSONObject().optJSONObject("cover") != null)
+                                coverPicUrl = response.getJSONObject().getJSONObject("cover").getString("source");
+                            else
+                                coverPicUrl = null;
 
-                                @Override
-                                public void onSuccess() {
-                                    updateSharedPreferences("profilePicUrl", profilePicUrl);
-                                    if (response.getJSONObject().optJSONObject("cover") != null) {
-                                        try {
-                                            coverPicUrl = response.getJSONObject().getJSONObject("cover").getString("source");
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
+                            if (!userInfo.getString("profilePicUrl", "missing").equals(profilePicUrl)) {
+                                updateCoverPicUrl = false;
+                                Picasso.with(getContext()).load(profilePicUrl).into(ivProfilePic, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        updateSharedPreferences("profilePicUrl", profilePicUrl);
                                         if (coverPicUrl != null) {
-                                            Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic, new Callback() {
-                                                @Override
-                                                public void onSuccess() {
-                                                    updateSharedPreferences("coverPicUrl", coverPicUrl);
-                                                    saveOrUpdateParseUser(requestType);
-                                                    btnLogin.setVisibility(View.INVISIBLE);
-                                                    btnLogin.setEnabled(false);
-                                                }
+                                            if (!userInfo.getString("coverPicUrl", "missing").equals(coverPicUrl)) {
+                                                // Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic, new Callback() {
+                                                Picasso.with(getContext()).load(coverPicUrl).resize(getView().getWidth(), 0).into(ivCoverPic, new Callback() {
+                                                    @Override
+                                                    public void onSuccess() {
+                                                        updateSharedPreferences("coverPicUrl", coverPicUrl);
+                                                        saveOrUpdateParseUser(requestType);
+                                                    }
 
-                                                @Override
-                                                public void onError() {
-                                                    saveOrUpdateParseUser(requestType);
-                                                }
-                                            });
+                                                    @Override
+                                                    public void onError() {
+                                                        saveOrUpdateParseUser(requestType);
+                                                    }
+                                                });
+                                            }
+                                        } else {
+                                            ivCoverPic.setImageResource(android.R.color.transparent);
+                                            saveOrUpdateParseUser(requestType);
                                         }
-                                    } else {
-                                        coverPicUrl = null;
-                                        ivCoverPic.setImageResource(android.R.color.transparent);
-                                        saveOrUpdateParseUser(requestType);
                                     }
-                                }
 
-                                @Override
-                                public void onError() {
-                                    // TODO: Handle Error
-                                    // saveOrUpdateParseUser(requestType);
-                                }
-                            });
+                                    @Override
+                                    public void onError() {
+                                        // TODO: Handle Error
+                                        // saveOrUpdateParseUser(requestType);
+                                    }
+                                });
+                            }
 
+                            if (updateCoverPicUrl) {
+                                updateCoverPicUrl = false;
+                                if (coverPicUrl != null) {
+                                    if (!userInfo.getString("coverPicUrl", "missing").equals(coverPicUrl)) {
+                                        // Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic, new Callback() {
+                                        Picasso.with(getContext()).load(coverPicUrl).resize(getView().getWidth(), 0).into(ivCoverPic, new Callback() {
+                                            @Override
+                                            public void onSuccess() {
+                                                updateSharedPreferences("coverPicUrl", coverPicUrl);
+                                                saveOrUpdateParseUser(requestType);
+                                            }
+
+                                            @Override
+                                            public void onError() {
+                                                saveOrUpdateParseUser(requestType);
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    ivCoverPic.setImageResource(android.R.color.transparent);
+                                    saveOrUpdateParseUser(requestType);
+                                }
+                            }
+
+                            btnLogin.setVisibility(View.INVISIBLE);
+                            btnLogin.setEnabled(false);
 
                         } catch (JSONException e) {
                             e.printStackTrace();

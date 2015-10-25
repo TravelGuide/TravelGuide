@@ -3,6 +3,7 @@ package com.travelguide.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -79,7 +80,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
     }
 
     public void onLoginClick(MenuItem item) {
-        setContentFragment(new LoginFragment());
+        //setContentFragment(new LoginFragment());
+        FragmentManager fm = getSupportFragmentManager();
+        new LoginFragment().show(fm, "Login_with_Facebook");
     }
 
     public void onProfileClick(MenuItem item) {

@@ -139,8 +139,7 @@ public class ProfileFragment extends Fragment {
     private void populateTripPlanList() {
         // Construct query to execute
         ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
-        // TODO: Uncomment following code once Parse Model has been updated to have a Parent User for every Trip Detail
-        // query.whereEqualTo("Parent", userObjectId);
+        query.whereEqualTo("createdUserId", userObjectId);
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
             public void done(List<TripPlan> tripPlans, ParseException e) {
