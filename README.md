@@ -31,7 +31,7 @@ The following **required** functionality is completed:
   * [Praveen] User can **select filters** such as travel days/length of stay, seasons, months, group type (Single, Family).
 * [Rafael] User can scroll (infinite) through **travel plans at a particular location**.
   * [x] Fetch plan details from **Parse** based on **User Details**. If no personal plans exist for user than display existed plans from others users.
-  * [Rafael] For each plan the app displayed: **graphic, caption, username, ratings, trip duration, favorite’s icon**.
+  * [x] For each plan the app displayed: **graphic, caption, username, trip duration**.
 * [Hema] For each plan displayed, user can select the plan to see following details:
   * [x] Horizontal Scrolling **list of days, option to follow the plan, option to share the plan**.
   * [Hema] Clicking on the day we display **place name, visit duration, photos, created by user details and ratings**.
