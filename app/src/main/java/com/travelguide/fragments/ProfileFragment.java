@@ -92,14 +92,14 @@ public class ProfileFragment extends Fragment {
 
         RecyclerView rvTripPlans = (RecyclerView) view.findViewById(R.id.rvTripPlansInProfile);
         mTripPlans = new ArrayList<>();
-        mTripPlanAdapter = new TripPlanAdapter(mTripPlans);
+        mTripPlanAdapter = new TripPlanAdapter(mTripPlans, getContext());
         // Attach the adapter to the recyclerview to populate items
         rvTripPlans.setAdapter(mTripPlanAdapter);
         // Set layout manager to position the items
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvTripPlans.setLayoutManager(layoutManager);
 
-        RecyclerView.ItemDecoration itemDecoration = new VerticalSpaceItemDecoration(20);
+        RecyclerView.ItemDecoration itemDecoration = new VerticalSpaceItemDecoration(20, true, true);
         rvTripPlans.addItemDecoration(itemDecoration);
 
         ItemClickSupport.addTo(rvTripPlans).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
