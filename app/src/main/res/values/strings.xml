@@ -23,5 +23,7 @@
     <string name="couple">Couple</string>
     <string name="family">Family</string>
     <string name="creating_plan">Creating Plan…</string>
+    <string name="loading_plans">Loading Plans…</string>
     <string name="please_wait">Please wait.</string>
+    <string name="no_data_available">No data available.</string>
 </resources>
