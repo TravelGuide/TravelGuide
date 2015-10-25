@@ -3,7 +3,6 @@ package com.travelguide.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,9 +11,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -23,28 +23,29 @@ import com.parse.SaveCallback;
 import com.travelguide.R;
 import com.travelguide.adapters.DayAdapter;
 import com.travelguide.adapters.PlaceAdapter;
+import com.travelguide.decorations.DividerItemDecoration;
 import com.travelguide.helpers.ItemClickSupport;
+import com.travelguide.helpers.NetworkAvailabilityCheck;
 import com.travelguide.models.Day;
 import com.travelguide.models.Place;
 import com.travelguide.models.TripPlan;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-public class TripPlanDetailsFragment extends Fragment
+public class TripPlanDetailsFragment extends TripBaseFragment
         implements AddUpdatePlaceDetailsFragment.EditItemDialogListener {
 
     private static final String ARG_TRIP_PLAN_OBJECT_ID = "tripPlanObjectId";
 
-    private TextView tvPlanName;
     private RecyclerView rvDayDetails;
     private RecyclerView rvPlaceDetails;
 
     private String mTripPLanObjectId;
     private String mSelectedDayObjectId;
-    private List<Day> mDayDetails;
-    private List<Place> mPlaceDetails;
+
+    private List<Day> mDayList;
+    private List<Place> mPlaceList;
 
     private PlaceAdapter mPlaceAdapter;
     private DayAdapter mDayAdapter;
@@ -66,7 +67,6 @@ public class TripPlanDetailsFragment extends Fragment
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTripPLanObjectId = getArguments().getString(ARG_TRIP_PLAN_OBJECT_ID);
-            //loadPlanDetails();
         }
     }
 
@@ -74,10 +74,10 @@ public class TripPlanDetailsFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trip_plan_details, container, false);
-        tvPlanName = (TextView) view.findViewById(R.id.tvPlanName);
         setHasOptionsMenu(true);
-        //FAB
-        FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fablListItems);
+
+        //Setup FAB New Place
+        FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fabNewPlace);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AddUpdatePlaceDetailsFragment addUpdatePlace = AddUpdatePlaceDetailsFragment
@@ -85,76 +85,61 @@ public class TripPlanDetailsFragment extends Fragment
                 addUpdatePlace.show(getFragmentManager(), "add_update_place_details_fragment");
             }
         });
-        mDayDetails = new ArrayList<Day>();
 
-        Day day = new Day();
-        day.putTravelDate(Calendar.getInstance().getTime());
-        day.putPlanName("Plan Name");
-        day.putTravelDay(1);
+        //Setup RecyclerView Days
+        LinearLayoutManager layoutManagerDay = new LinearLayoutManager(getContext());
+        layoutManagerDay.setOrientation(LinearLayoutManager.HORIZONTAL);
 
-        mDayDetails.add(day);
+        mDayList = new ArrayList<>();
+        mDayAdapter = new DayAdapter(mDayList);
 
-        mPlaceDetails = new ArrayList<Place>();
-
-
-        // Lookup the recyclerview in activity layout
         rvDayDetails = (RecyclerView) view.findViewById(R.id.rvContacts);
-        //fetch data from parse-using inner query on plan and then day details
-        ParseQuery innerQuery = new ParseQuery(TripPlan.class);
-        innerQuery.whereEqualTo("objectId", mTripPLanObjectId);
-        ParseQuery query = new ParseQuery(Day.class);
-        query.orderByAscending("travelDay");
-        query.whereMatchesQuery("parent", innerQuery);
-        query.findInBackground(new FindCallback<Day>() {
-            @Override
-            public void done(List<Day> list, ParseException e) {
-                if (e == null) {
-                    resetDayDetails(list);
-                } else {
-                    Log.d("ERROR", "Data not fetched");
-                }
-            }
-        });
+        rvDayDetails.setLayoutManager(layoutManagerDay);
+        rvDayDetails.setAdapter(mDayAdapter);
 
         ItemClickSupport.addTo(rvDayDetails).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 mSelectedDayObjectId = mDayAdapter.get(position).getObjectId();
+                Toast.makeText(getContext(), "mSelectedDayObjectId: " + mSelectedDayObjectId,
+                        Toast.LENGTH_LONG).show();
+                loadTripPlacesFromRemote();
             }
         });
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        rvDayDetails.setLayoutManager(layoutManager);
+        //Setup RecyclerView Places
+        LinearLayoutManager layoutManagerPlace = new LinearLayoutManager(getContext());
+        layoutManagerPlace.setOrientation(LinearLayoutManager.VERTICAL);
+
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(),
+                DividerItemDecoration.VERTICAL_LIST);
+
+        mPlaceList = new ArrayList<>();
+        mPlaceAdapter = new PlaceAdapter(mPlaceList, getContext());
 
         rvPlaceDetails = (RecyclerView) view.findViewById(R.id.rvPlaces);
-        mPlaceAdapter = new PlaceAdapter(mPlaceDetails);
+        rvPlaceDetails.setLayoutManager(layoutManagerPlace);
         rvPlaceDetails.setAdapter(mPlaceAdapter);
-        rvPlaceDetails.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvPlaceDetails.addItemDecoration(itemDecoration);
 
         return view;
     }
 
-    public void resetDayDetails(List<Day> dayDetails) {
-        mDayDetails.clear();
-        mDayDetails.addAll(dayDetails);
-        mDayAdapter = new DayAdapter(mDayDetails);
-        rvDayDetails.setAdapter(mDayAdapter);
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        loadTripPlanFromDatabase();
+
+        if (NetworkAvailabilityCheck.networkAvailable(getActivity())) {
+            loadTripDaysFromRemote();
+        }
     }
 
-    public void resetPlaceDetails(List<Place> placeDetails) {
-        mPlaceDetails.clear();
-        mPlaceDetails.addAll(placeDetails);
-        //rvPlaceDetails.setLayoutManager(new LinearLayoutManager(this));
-        mPlaceAdapter.notifyDataSetChanged();
-        mPlaceAdapter = new PlaceAdapter(mPlaceDetails);
-        rvPlaceDetails.setAdapter(mPlaceAdapter);
-
-    }
-
-    private void onFinishEditAddingNewPlace(String placeName, String travelTime) {
+    @Override
+    public void onFinishEditDialogControl(String placeName, String travelTime) {
         ParseUser user = ParseUser.getCurrentUser();
-        Place placeDetails = new Place();
+        final Place placeDetails = new Place();
         placeDetails.putCreatedUserId(user.getObjectId());
         placeDetails.putPlaceName(placeName);
         placeDetails.putVisitingTime(travelTime);
@@ -164,26 +149,7 @@ public class TripPlanDetailsFragment extends Fragment
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    onDateClicked(mSelectedDayObjectId);
-                }
-            }
-        });
-    }
-
-    //Method to load places data on click
-    public void onDateClicked(String travelDateObjectId) {
-        mSelectedDayObjectId = travelDateObjectId;
-        ParseQuery innerQuery = new ParseQuery(Day.class);
-        innerQuery.whereEqualTo("objectId", travelDateObjectId);
-        ParseQuery query = new ParseQuery(Place.class);
-        query.whereMatchesQuery("parent", innerQuery);
-        query.findInBackground(new FindCallback<Place>() {
-            @Override
-            public void done(List<Place> list, ParseException e) {
-                if (e == null) {
-                    resetPlaceDetails(list);
-                } else {
-                    Log.d("ERROR", "Data not fetched");
+                    addTripPlanPlace(placeDetails);
                 }
             }
         });
@@ -201,8 +167,74 @@ public class TripPlanDetailsFragment extends Fragment
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onFinishEditDialogcontrol(String placeName, String travelTime) {
-        onFinishEditAddingNewPlace("placeName", "travelTime");
+    private void loadTripDaysFromRemote() {
+        ParseQuery<TripPlan> innerQuery = ParseQuery.getQuery(TripPlan.class);
+        innerQuery.whereEqualTo("objectId", mTripPLanObjectId);
+
+        ParseQuery<Day> query = ParseQuery.getQuery(Day.class);
+        query.orderByAscending("travelDay");
+        query.whereMatchesQuery("parent", innerQuery);
+        query.findInBackground(new FindCallback<Day>() {
+            @Override
+            public void done(List<Day> days, ParseException e) {
+                if (e == null) {
+                    populateTripPlanDays(days);
+                } else {
+                    Log.d("ERROR", "Data not fetched");
+                }
+            }
+        });
+    }
+
+    private void loadTripPlacesFromRemote() {
+        ParseQuery<Day> innerQuery = ParseQuery.getQuery(Day.class);
+        innerQuery.whereEqualTo("objectId", mSelectedDayObjectId);
+
+        ParseQuery<Place> query = ParseQuery.getQuery(Place.class);
+        query.whereMatchesQuery("parent", innerQuery);
+        query.findInBackground(new FindCallback<Place>() {
+            @Override
+            public void done(List<Place> places, ParseException e) {
+                if (e == null) {
+                    populateTripPlanPlaces(places);
+                } else {
+                    Log.d("ERROR", "Data not fetched");
+                }
+            }
+        });
+    }
+
+    private void populateTripPlanDays(List<Day> days) {
+        mDayList.clear();
+        mDayList.addAll(days);
+        mDayAdapter.notifyDataSetChanged();
+    }
+
+    private void addTripPlanDay(Day day) {
+        //TODO To be implemented, plus button on RecyclerView Days
+    }
+
+    private void populateTripPlanPlaces(List<Place> places) {
+        mPlaceList.clear();
+        mPlaceList.addAll(places);
+        mPlaceAdapter.notifyDataSetChanged();
+    }
+
+    private void addTripPlanPlace(Place place) {
+        mPlaceList.add(place);
+        mPlaceAdapter.notifyDataSetChanged();
+    }
+
+    private void loadTripPlanFromDatabase() {
+        ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
+        query.fromLocalDatastore();
+        query.getInBackground(mTripPLanObjectId, new GetCallback<TripPlan>() {
+            @Override
+            public void done(TripPlan tripPlan, ParseException e) {
+                if (e == null) {
+                    setTitle(tripPlan.getPlanName());
+                }
+            }
+        });
     }
 }

@@ -246,8 +246,6 @@ public class NewTripFragment extends Fragment {
         planDetails.puCityImageURL("http://thenextweb.com/wp-content/blogs.dir/1/files/2013/09/nyc.jpg");
         planDetails.putEnabledFlag(false);
 
-        //ParseRelation relation = planDetails.getD
-
         planDetails.saveInBackground(new SaveCallback() {
             @Override
             public void done(com.parse.ParseException e) {
