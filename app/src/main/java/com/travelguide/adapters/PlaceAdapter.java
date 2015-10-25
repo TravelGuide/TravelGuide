@@ -1,13 +1,18 @@
 package com.travelguide.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.makeramen.roundedimageview.RoundedDrawable;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 import com.travelguide.R;
 import com.travelguide.models.Place;
 
@@ -15,25 +20,39 @@ import java.util.List;
 
 public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> {
 
-    private List<Place> mPlaces;
+    private final List<Place> mPlaces;
+    private final Context mContext;
+    private final float mRadius;
 
-    public PlaceAdapter(List<Place> places) {
+    public PlaceAdapter(List<Place> places, Context context) {
         this.mPlaces = places;
+        this.mContext = context;
+        mRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30,
+                mContext.getResources().getDisplayMetrics());
     }
 
     @Override
     public PlaceAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
         View placesView = inflater.inflate(R.layout.item_place, parent, false);
-        ViewHolder viewHolder = new ViewHolder(placesView);
-        return viewHolder;
+        return new ViewHolder(placesView);
     }
 
     @Override
     public void onBindViewHolder(PlaceAdapter.ViewHolder holder, int position) {
-        holder.tv_Time.setText(mPlaces.get(position).getVisitingTime());
-        holder.tv_Place.setText(mPlaces.get(position).getPlaceName());
+        Place place = mPlaces.get(position);
+
+        holder.tvPlaceName.setText(place.getPlaceName());
+        holder.tvVisitingTime.setText(place.getVisitingTime());
+
+        //TODO Find a placeholder
+        holder.ivPlace.setImageResource(R.mipmap.ic_launcher);
+
+        Picasso.with(mContext)
+                .load(place.getPlaceImageUrl())
+                .fit()
+                .transform(mTransformation)
+                .into(holder.ivPlace);
     }
 
     @Override
@@ -41,20 +60,39 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
         return mPlaces.size();
     }
 
-    public static  class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView tv_Time;
-        public TextView tv_Place;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView ivPlace;
+        TextView tvPlaceName;
+        TextView tvVisitingTime;
+
         public ViewHolder(View itemView) {
             super(itemView);
-            tv_Time = (TextView) itemView.findViewById(R.id.tv_Time);
-            tv_Place = (TextView) itemView.findViewById(R.id.tv_PlaceName);
-            itemView.setOnClickListener(this);
-        }
-        @Override
-        public void onClick(View v) {
-            int position = getLayoutPosition(); // gets item position
-            Log.d("PlaceAdapter", "position: " + position);
+            ivPlace = (ImageView) itemView.findViewById(R.id.ivPlace);
+            tvPlaceName = (TextView) itemView.findViewById(R.id.tvPlaceName);
+            tvVisitingTime = (TextView) itemView.findViewById(R.id.tvVisitingTime);
         }
     }
+
+    private final Transformation mTransformation = new Transformation() {
+
+        final boolean oval = false;
+
+        @Override
+        public Bitmap transform(Bitmap bitmap) {
+            Bitmap transformed = RoundedDrawable.fromBitmap(bitmap)
+                    .setCornerRadius(mRadius)
+                    .setOval(oval)
+                    .toBitmap();
+            if (!bitmap.equals(transformed)) {
+                bitmap.recycle();
+            }
+            return transformed;
+        }
+
+        @Override
+        public String key() {
+            return "rounded_radius_" + mRadius + "_oval_" + oval;
+        }
+    };
 
 }

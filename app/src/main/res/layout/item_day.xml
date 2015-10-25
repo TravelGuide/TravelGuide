@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_Item_day_day"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:id="@+id/rl_Item_day_day"
     android:background="@drawable/selector_day">
 
     <TextView
@@ -12,7 +12,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/colorPrimary"
         tools:text="16" />
@@ -26,15 +25,4 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
         tools:text="Oct" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
-        android:id="@+id/tv_objectID"
-        android:layout_below="@+id/tvMonth"
-        android:visibility="gone"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
 </RelativeLayout>

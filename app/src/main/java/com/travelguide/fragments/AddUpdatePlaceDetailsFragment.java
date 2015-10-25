@@ -25,7 +25,7 @@ public class AddUpdatePlaceDetailsFragment extends DialogFragment implements Vie
     private EditItemDialogListener listener;
 
     public interface EditItemDialogListener extends Serializable {
-        void onFinishEditDialogcontrol(String placeName, String travelTime);
+        void onFinishEditDialogControl(String placeName, String travelTime);
     }
 
     public AddUpdatePlaceDetailsFragment() {
@@ -68,7 +68,7 @@ public class AddUpdatePlaceDetailsFragment extends DialogFragment implements Vie
         } else {
             getDialog().dismiss();
             if (listener != null) {
-                listener.onFinishEditDialogcontrol(placeName.getText().toString(), travelTime.getText().toString());
+                listener.onFinishEditDialogControl(placeName.getText().toString(), travelTime.getText().toString());
             }
         }
     }
