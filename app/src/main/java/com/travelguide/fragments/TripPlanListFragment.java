@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,7 +28,7 @@ import com.travelguide.models.TripPlan;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TripPlanListFragment extends Fragment {
+public class TripPlanListFragment extends TripBaseFragment {
 
     private static final String TAG = TripPlanListFragment.class.getSimpleName();
 
@@ -92,7 +91,7 @@ public class TripPlanListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        setTitle(getString(R.string.app_name));
         progressDialog.show();
 
         if (NetworkAvailabilityCheck.networkAvailable(getActivity())) {

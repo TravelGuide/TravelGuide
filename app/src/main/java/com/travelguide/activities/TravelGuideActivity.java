@@ -57,7 +57,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
 
     @Override
     public void onTripPlanItemSelected(String tripPlanObjectId) {
-        Toast.makeText(this, tripPlanObjectId + " was clicked!", Toast.LENGTH_SHORT).show();
         TripPlanDetailsFragment fragment = TripPlanDetailsFragment.newInstance(tripPlanObjectId);
         setContentFragment(fragment);
     }

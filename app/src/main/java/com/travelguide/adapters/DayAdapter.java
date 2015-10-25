@@ -12,8 +12,7 @@ import com.travelguide.models.Day;
 
 import java.util.Calendar;
 import java.util.List;
-
-import static com.travelguide.helpers.DateUtils.formatMonthName;
+import java.util.Locale;
 
 public class DayAdapter extends RecyclerView.Adapter<DayAdapter.ViewHolder> {
 
@@ -38,11 +37,11 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.ViewHolder> {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(day.getTravelDate());
 
-        holder.tvDay.setText(String.valueOf(day.getTravelDay()));
-        holder.tvMonth.setText(formatMonthName(calendar.get(Calendar.MONTH)));
-        holder.tvObjectId.setText(day.getObjectId());
+        String dayOfMonth = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+        String month = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault());
 
-        //TODO If you need season name you should look DateUtils class and add a new method if necessary.
+        holder.tvDay.setText(dayOfMonth);
+        holder.tvMonth.setText(month);
     }
 
     @Override
@@ -57,14 +56,12 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.ViewHolder> {
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvDay;
         TextView tvMonth;
-        TextView tvObjectId;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             tvDay = (TextView) itemView.findViewById(R.id.tvDay);
             tvMonth = (TextView) itemView.findViewById(R.id.tvMonth);
-            tvObjectId = (TextView) itemView.findViewById(R.id.tv_objectID);
         }
     }
 }
