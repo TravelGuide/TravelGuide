@@ -30,8 +30,8 @@
         android:hint="@string/hint_plan_name"
         android:singleLine="true" />
 
-    <EditText
-        android:id="@+id/et_PlaceName"
+    <AutoCompleteTextView
+        android:id="@+id/actv_PlaceName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/tv_PlanName"
@@ -58,12 +58,12 @@
         android:id="@+id/tv_EndDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/et_PlaceName"
-        android:layout_alignRight="@+id/et_PlaceName"
-        android:layout_centerVertical="true"
         android:drawablePadding="11dp"
         android:hint="@string/label_End_Date"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/tv_NewPlan"
+        android:layout_toEndOf="@+id/tv_NewPlan" />
 
     <TextView
         android:id="@+id/label"
