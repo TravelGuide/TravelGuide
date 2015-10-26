@@ -19,25 +19,24 @@ The following **required** functionality is completed:
 * [x] Users can sign up for a new **Travel Guide** user account.
 * [x] Users can login to their **Travel Guide** user account.
 * [x] Users should be able to view their own profile showing name, picture, your own plans.
-* [ ] Users can upload their trip experiences, location(*still pending of APIs availability*), days travelled, number of people, pictures, hotel and cost.
 * [x] Users can view others trip/travels plans.
 * [x] Authentication is done using **Facebook/Twitter** via **Parse**.
 * [x] Remote data storage is done using **Parse**.
 * [x] Local data storage is done using **Parse**.
-* [ ] The app includes functionality for **users to search and select places**.
-  * [ ] User can enter place names (suggestion box) and app will fetch place names from **Parse**.
-  * [ ] The app includes functionality for users to use **Location services** to determine place name.
-* [Praveen] The app includes functionality for users to perform filters on search by city name results through in a dialog fragment.
-  * [Praveen] User can **select filters** such as travel days/length of stay, seasons, months, group type (Single, Family).
-* [Rafael] User can scroll (infinite) through **travel plans at a particular location**.
+* [x] The app includes functionality for **users to search and select places**.
+  * [x] User can enter place names (suggestion box) and app will fetch place names from **Parse**.
+  * [Hema] The app includes functionality for users to use **Location services** to determine place name.
+* [x] The app includes functionality for users to perform filters on search by city name results through in a dialog fragment.
+  * [x] User can **select filters** such as travel days/length of stay, seasons, months, group type (Single, Family).
+* [Praveen] User can scroll (infinite) through **travel plans at a particular location**.
   * [x] Fetch plan details from **Parse** based on **User Details**. If no personal plans exist for user than display existed plans from others users.
   * [x] For each plan the app displayed: **graphic, caption, username, trip duration**.
-* [Hema] For each plan displayed, user can select the plan to see following details:
+* [x] For each plan displayed, user can select the plan to see following details:
   * [x] Horizontal Scrolling **list of days, option to follow the plan, option to share the plan**.
-  * [Hema] Clicking on the day we display **place name, visit duration, photos, created by user details and ratings**.
+  * [Rafael] Clicking on the day to edit **place name, visit duration**.
 * [x] Display each user profile image using a **RoundedImageView**.
 * [x] Create a new travel plan: name, travel duration, picture of places, travel type (Single/Group), month of visit (January, February).
-  * [Hema] Inside travel plan creation user can click to add more days to the trip, will show a dialog to fill following fields: **place name, visit duration, photos, description**.
+  * [Rafael] Inside travel plan creation user can click to add more days to the trip, will show a dialog to fill following fields: **place name, visit duration, description**.
     
 The following **optional** features are implemented:
 
