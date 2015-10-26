@@ -1,10 +1,10 @@
 package com.travelguide.activities;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -15,11 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -28,16 +25,18 @@ import com.travelguide.R;
 import com.travelguide.fragments.LoginFragment;
 import com.travelguide.fragments.NewTripFragment;
 import com.travelguide.fragments.ProfileFragment;
+import com.travelguide.fragments.SearchListFragment;
 import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
 import com.travelguide.listener.OnTripPlanListener;
 
 public class TravelGuideActivity extends AppCompatActivity implements
         OnTripPlanListener,
-        ProfileFragment.OnFragmentInteractionListener {
+        ProfileFragment.OnFragmentInteractionListener,
+        FragmentManager.OnBackStackChangedListener {
 
     private MaterialDialog settingsDialog;
-    private LinearLayout llsettingsDialogLayout;
+    private LinearLayout llSettingsDialogLayout;
     private Spinner spnGroup;
     private Spinner spnSeason;
 
@@ -49,12 +48,13 @@ public class TravelGuideActivity extends AppCompatActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_travel_guide);
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
         buildSettingsDialog();
         city = "Any";
         group = "Any";
         season = "Any";
         // setContentFragment(new TripPlanListFragment());
-        setContentFragment(TripPlanListFragment.newInstance(city, group, season));
+        setContentFragment(new TripPlanListFragment());
     }
 
     public void buildSettingsDialog() {
@@ -66,7 +66,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        setContentFragment(TripPlanListFragment.newInstance(city, group, season));
+                        setContentFragment(SearchListFragment.newInstance(city, group, season));
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -76,9 +76,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
                     }
                 })
                 .build();
-        llsettingsDialogLayout = (LinearLayout) settingsDialog.getCustomView();
-        spnGroup = (Spinner) llsettingsDialogLayout.findViewById(R.id.spnGroup);
-        spnSeason = (Spinner) llsettingsDialogLayout.findViewById(R.id.spnSeason);
+        llSettingsDialogLayout = (LinearLayout) settingsDialog.getCustomView();
+        spnGroup = (Spinner) llSettingsDialogLayout.findViewById(R.id.spnGroup);
+        spnSeason = (Spinner) llSettingsDialogLayout.findViewById(R.id.spnSeason);
         setupSpinnerGroup();
         setupSpinnerSeason();
     }
@@ -144,7 +144,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_travel_guide_activity, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -152,9 +152,11 @@ public class TravelGuideActivity extends AppCompatActivity implements
                 if (TextUtils.isEmpty(query))
                     query = "Any";
                 city = query.trim();
-                setContentFragment(TripPlanListFragment.newInstance(city, group, season));
+                searchItem.collapseActionView();
+                setContentFragment(SearchListFragment.newInstance(city, group, season));
                 return true;
             }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
@@ -166,7 +168,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        setDisplayHomeAsUpEnabled(false);
+        if (!(getSupportFragmentManager().getBackStackEntryCount() > 0)) {
+           finish();
+        }
     }
 
     @Override
@@ -204,7 +208,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
         fragmentTransaction.replace(R.id.fragment_frame, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-        setDisplayHomeAsUpEnabled(true);
     }
 
     private void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
@@ -212,4 +215,23 @@ public class TravelGuideActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayHomeAsUpEnabled(showHomeAsUp);
         }
     }
+
+    public void shouldDisplayHomeUp(){
+        //Enable Up button only  if there are entries in the back stack
+        boolean canback = getSupportFragmentManager().getBackStackEntryCount() > 1;
+        setDisplayHomeAsUpEnabled(canback);
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        shouldDisplayHomeUp();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        //This method is called when the up button is pressed. Just the pop back stack.
+        getSupportFragmentManager().popBackStack();
+        return true;
+    }
+
 }
