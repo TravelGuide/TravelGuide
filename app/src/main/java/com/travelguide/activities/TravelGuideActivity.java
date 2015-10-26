@@ -36,7 +36,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         FragmentManager.OnBackStackChangedListener {
 
     private MaterialDialog settingsDialog;
-    private LinearLayout llsettingsDialogLayout;
+    private LinearLayout llSettingsDialogLayout;
     private Spinner spnGroup;
     private Spinner spnSeason;
 
@@ -54,7 +54,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         group = "Any";
         season = "Any";
         // setContentFragment(new TripPlanListFragment());
-        setContentFragment(TripPlanListFragment.newInstance(city, group, season));
+        setContentFragment(new TripPlanListFragment());
     }
 
     public void buildSettingsDialog() {
@@ -76,9 +76,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
                     }
                 })
                 .build();
-        llsettingsDialogLayout = (LinearLayout) settingsDialog.getCustomView();
-        spnGroup = (Spinner) llsettingsDialogLayout.findViewById(R.id.spnGroup);
-        spnSeason = (Spinner) llsettingsDialogLayout.findViewById(R.id.spnSeason);
+        llSettingsDialogLayout = (LinearLayout) settingsDialog.getCustomView();
+        spnGroup = (Spinner) llSettingsDialogLayout.findViewById(R.id.spnGroup);
+        spnSeason = (Spinner) llSettingsDialogLayout.findViewById(R.id.spnSeason);
         setupSpinnerGroup();
         setupSpinnerSeason();
     }

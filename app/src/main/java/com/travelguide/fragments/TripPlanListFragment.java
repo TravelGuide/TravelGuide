@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,32 +40,13 @@ public class TripPlanListFragment extends TripBaseFragment {
     private TextView tvEmpty;
     private RecyclerView rvTripPlans;
 
-    private String city;
-    private String group;
-    private String season;
-
     public TripPlanListFragment() {
 
-    }
-
-    public static TripPlanListFragment newInstance(String city, String group, String season) {
-        TripPlanListFragment tripPlanListFragment = new TripPlanListFragment();
-        Bundle args = new Bundle();
-        args.putString("city", city);
-        args.putString("group", group);
-        args.putString("season", season);
-        tripPlanListFragment.setArguments(args);
-        return tripPlanListFragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            city = getArguments().getString("city");
-            group = getArguments().getString("group");
-            season = getArguments().getString("season");
-        }
     }
 
     @Nullable
@@ -155,7 +135,6 @@ public class TripPlanListFragment extends TripBaseFragment {
 
     private void loadTripPlansFromRemote() {
         ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
-        setWhereClause(query);
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
             public void done(List<TripPlan> tripPlans, ParseException e) {
@@ -178,7 +157,6 @@ public class TripPlanListFragment extends TripBaseFragment {
 
     private void loadTripPlansFromDatabase() {
         ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
-        setWhereClause(query);
         query.fromLocalDatastore();
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
@@ -197,15 +175,6 @@ public class TripPlanListFragment extends TripBaseFragment {
                 }
             }
         });
-    }
-
-    private void setWhereClause(ParseQuery query) {
-        if (!TextUtils.isEmpty(city) && !city.equalsIgnoreCase("Any"))
-            query.whereMatches("cityName", city, "i");
-        if (!TextUtils.isEmpty(group) && !group.equalsIgnoreCase("Any"))
-            query.whereMatches("groupType", group, "i");
-        if (!TextUtils.isEmpty(season) && !season.equalsIgnoreCase("Any"))
-            query.whereMatches("travelSeason", season, "i");
     }
 
     private void savingOnDatabase(List<TripPlan> tripPlans) {

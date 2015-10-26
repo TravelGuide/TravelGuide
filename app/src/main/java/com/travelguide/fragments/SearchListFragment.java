@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class SearchListFragment extends TripBaseFragment {
 
-    private static final String TAG = TripPlanListFragment.class.getSimpleName();
+    private static final String TAG = SearchListFragment.class.getSimpleName();
 
     private OnTripPlanListener mTripPlanListener;
     private TripPlanAdapter mTripPlanAdapter;
