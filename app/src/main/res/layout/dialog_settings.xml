@@ -58,38 +58,4 @@
 
     </LinearLayout>
 
-    <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-        <!--xmlns:tools="http://schemas.android.com/tools"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="10dp"-->
-        <!--android:orientation="horizontal"-->
-        <!--style="?android:attr/buttonBarStyle">-->
-
-        <!--<Button-->
-            <!--android:id="@+id/btnSave"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="40dp"-->
-            <!--android:text="@string/Label_save_button"-->
-            <!--android:gravity="center"-->
-            <!--android:layout_weight="1"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:textSize="20sp"-->
-            <!--android:background="#d3d3d3"-->
-            <!--style="?android:attr/buttonBarButtonStyle" />-->
-
-        <!--<Button-->
-            <!--android:id="@+id/btnCancel"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="40dp"-->
-            <!--android:hint="@string/label_cancel_button"-->
-            <!--android:gravity="center"-->
-            <!--android:layout_weight="1"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:textSize="20sp"-->
-            <!--android:background="#d3d3d3"-->
-            <!--style="?android:attr/buttonBarButtonStyle"/>-->
-
-    <!--</LinearLayout>-->
-
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -148,12 +149,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (query != null)
-                    query = query.trim().toLowerCase();
-                if (query == null || query.trim().equals(""))
+                if (TextUtils.isEmpty(query))
                     query = "Any";
-                city = query;
-                Log.d("CITY", query);
+                city = query.trim();
                 setContentFragment(TripPlanListFragment.newInstance(city, group, season));
                 return true;
             }
@@ -190,7 +188,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
     }
 
     public void onSettingsClick(MenuItem item) {
-        Toast.makeText(this, "Open settings", Toast.LENGTH_SHORT).show();
         showSettingsDialog();
     }
 

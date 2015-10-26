@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,9 +41,9 @@ public class TripPlanListFragment extends TripBaseFragment {
     private TextView tvEmpty;
     private RecyclerView rvTripPlans;
 
-    private static String city;
-    private static String group;
-    private static String season;
+    private String city;
+    private String group;
+    private String season;
 
     public TripPlanListFragment() {
 
@@ -55,10 +56,17 @@ public class TripPlanListFragment extends TripBaseFragment {
         args.putString("group", group);
         args.putString("season", season);
         tripPlanListFragment.setArguments(args);
-        TripPlanListFragment.city = city;
-        TripPlanListFragment.group = group;
-        TripPlanListFragment.season = season;
         return tripPlanListFragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            city = getArguments().getString("city");
+            group = getArguments().getString("group");
+            season = getArguments().getString("season");
+        }
     }
 
     @Nullable
@@ -192,11 +200,11 @@ public class TripPlanListFragment extends TripBaseFragment {
     }
 
     private void setWhereClause(ParseQuery query) {
-        if (city != null && !city.equalsIgnoreCase("Any") && !city.equalsIgnoreCase(""))
+        if (!TextUtils.isEmpty(city) && !city.equalsIgnoreCase("Any"))
             query.whereMatches("cityName", city, "i");
-        if (group != null && !group.equalsIgnoreCase("Any") && !group.equalsIgnoreCase(""))
+        if (!TextUtils.isEmpty(group) && !group.equalsIgnoreCase("Any"))
             query.whereMatches("groupType", group, "i");
-        if (season != null && !season.equalsIgnoreCase("Any") && !season.equalsIgnoreCase(""))
+        if (!TextUtils.isEmpty(season) && !season.equalsIgnoreCase("Any"))
             query.whereMatches("travelSeason", season, "i");
     }
 
