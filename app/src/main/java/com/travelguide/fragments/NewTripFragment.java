@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,16 +16,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.travelguide.R;
 import com.travelguide.adapters.DateSetAdapter;
+import com.travelguide.helpers.GoogleImageSearch;
 import com.travelguide.listener.OnTripPlanListener;
 import com.travelguide.models.Day;
 import com.travelguide.models.TripPlan;
@@ -48,7 +56,7 @@ public class NewTripFragment extends Fragment {
     private TextView startDate;
     private TextView endDate;
     private EditText planName;
-    private EditText destination;
+    private AutoCompleteTextView destination;
     private ProgressDialog progressDialog;
 
     private TripDateViewModel startDateViewModel;
@@ -59,6 +67,8 @@ public class NewTripFragment extends Fragment {
     private String travellerType;
     private String parseNewTripObjectId;
     private Integer totalTravelDays;
+    private ArrayList<String> cityNames;
+
 
     @Nullable
     @Override
@@ -67,8 +77,26 @@ public class NewTripFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_new_plan_creation, container, false);
 
+        cityNames = new ArrayList<String>();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, cityNames);
         planName = (EditText) view.findViewById(R.id.tv_PlanName);
-        destination = (EditText) view.findViewById(R.id.et_PlaceName);
+        destination = (AutoCompleteTextView) view.findViewById(R.id.actv_PlaceName);
+        destination.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (start >= 2) {
+                    fetchCityNames();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
         startDate = (TextView) view.findViewById(R.id.tv_StartDate);
         startDate.setOnClickListener(startDateOnClickListener());
@@ -252,6 +280,8 @@ public class NewTripFragment extends Fragment {
                 if (e == null) {
                     parseNewTripObjectId = planDetails.getObjectId();
                     Log.d(TAG, "The object id is: " + parseNewTripObjectId);
+                    GoogleImageSearch googleImageSearch = new GoogleImageSearch();
+                    googleImageSearch.fetchPlaceImage(destination.getText().toString(), parseNewTripObjectId);
                     saveDayDetails(parseNewTripObjectId, totalTravelDays, planName.getText().toString(), parse(startDate.getText().toString()));
                 }
             }
@@ -296,6 +326,25 @@ public class NewTripFragment extends Fragment {
                         mListener.onTripPlanCreated(parseNewTripObjectId);
                     }
                 }
+            }
+        });
+    }
+
+    private void fetchCityNames() {
+        cityNames.clear();
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("CityDetails");
+        query.whereEqualTo("CountryCode", "US");
+        query.whereEqualTo("TargetType", "City");
+        query.whereContains("CanonicalName", destination.getText().toString());
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                for (int i = 0; i < list.size(); i++) {
+                    cityNames.add(list.get(i).getString("CanonicalName").trim());
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, cityNames);
+                destination.setAdapter(adapter);
+                destination.showDropDown();
             }
         });
     }
