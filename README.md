@@ -33,7 +33,7 @@ The following **required** functionality is completed:
   * [x] For each plan the app displayed: **graphic, caption, username, trip duration**.
 * [x] For each plan displayed, user can select the plan to see following details:
   * [x] Horizontal Scrolling **list of days, option to follow the plan, option to share the plan**.
-  * [Rafael] Clicking on the day we display **place name, visit duration, photos, created by user details**.
+  * [Rafael] Clicking on the day to edit **place name, visit duration**.
 * [x] Display each user profile image using a **RoundedImageView**.
 * [x] Create a new travel plan: name, travel duration, picture of places, travel type (Single/Group), month of visit (January, February).
   * [Rafael] Inside travel plan creation user can click to add more days to the trip, will show a dialog to fill following fields: **place name, visit duration, description**.
