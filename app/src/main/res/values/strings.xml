@@ -22,8 +22,15 @@
     <string name="female">Female</string>
     <string name="couple">Couple</string>
     <string name="family">Family</string>
+    <string name="group">Group</string>
     <string name="creating_plan">Creating Plan…</string>
     <string name="loading_plans">Loading Plans…</string>
     <string name="please_wait">Please wait.</string>
     <string name="no_data_available">No data available.</string>
+    <string name="label_settings">Select filters</string>
+    <string name="label_group_type">Group</string>
+    <string name="label_season">Season</string>
+    <string name="label_save_button">Save</string>
+    <string name="label_cancel_button">@android:string/cancel</string>
+    <string name="action_search">Search</string>
 </resources>

@@ -40,6 +40,27 @@ public class TripPlanListFragment extends TripBaseFragment {
     private TextView tvEmpty;
     private RecyclerView rvTripPlans;
 
+    private static String city;
+    private static String group;
+    private static String season;
+
+    public TripPlanListFragment() {
+
+    }
+
+    public static TripPlanListFragment newInstance(String city, String group, String season) {
+        TripPlanListFragment tripPlanListFragment = new TripPlanListFragment();
+        Bundle args = new Bundle();
+        args.putString("city", city);
+        args.putString("group", group);
+        args.putString("season", season);
+        tripPlanListFragment.setArguments(args);
+        TripPlanListFragment.city = city;
+        TripPlanListFragment.group = group;
+        TripPlanListFragment.season = season;
+        return tripPlanListFragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -126,6 +147,7 @@ public class TripPlanListFragment extends TripBaseFragment {
 
     private void loadTripPlansFromRemote() {
         ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
+        setWhereClause(query);
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
             public void done(List<TripPlan> tripPlans, ParseException e) {
@@ -148,6 +170,7 @@ public class TripPlanListFragment extends TripBaseFragment {
 
     private void loadTripPlansFromDatabase() {
         ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
+        setWhereClause(query);
         query.fromLocalDatastore();
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
@@ -166,6 +189,15 @@ public class TripPlanListFragment extends TripBaseFragment {
                 }
             }
         });
+    }
+
+    private void setWhereClause(ParseQuery query) {
+        if (city != null && !city.equalsIgnoreCase("Any") && !city.equalsIgnoreCase(""))
+            query.whereMatches("cityName", city, "i");
+        if (group != null && !group.equalsIgnoreCase("Any") && !group.equalsIgnoreCase(""))
+            query.whereMatches("groupType", group, "i");
+        if (season != null && !season.equalsIgnoreCase("Any") && !season.equalsIgnoreCase(""))
+            query.whereMatches("travelSeason", season, "i");
     }
 
     private void savingOnDatabase(List<TripPlan> tripPlans) {
