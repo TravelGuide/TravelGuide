@@ -40,7 +40,8 @@ The following **required** functionality is completed:
     
 The following **optional** features are implemented:
 
-* [ ] Users can add other users' trips to their **favorites**.
+* [Praveen] Added Foursquare API for fetch places.
+* [Hemman] Users can add other users' trips to their **favorites**.
 * [ ] Users can **rate** other users' trips (up to 5 stars).
 * [ ] Users can post **reviews** on other users' trips.
 * [ ] **Location based** information is pushed to users' phone.
