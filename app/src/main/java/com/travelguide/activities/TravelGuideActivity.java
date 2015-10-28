@@ -22,6 +22,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.parse.ParseFacebookUtils;
 import com.travelguide.R;
+import com.travelguide.foursquare.constants.FoursquareConstants;
 import com.travelguide.fragments.LoginFragment;
 import com.travelguide.fragments.NewTripFragment;
 import com.travelguide.fragments.ProfileFragment;
@@ -49,6 +50,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_travel_guide);
         getSupportFragmentManager().addOnBackStackChangedListener(this);
+        FoursquareConstants.setClientIdAndSecret(
+                getApplicationContext().getResources().getString(R.string.foursquare_client_id),
+                getApplicationContext().getResources().getString(R.string.foursquare_client_secret));
         buildSettingsDialog();
         city = "Any";
         group = "Any";
@@ -233,5 +237,4 @@ public class TravelGuideActivity extends AppCompatActivity implements
         getSupportFragmentManager().popBackStack();
         return true;
     }
-
 }
