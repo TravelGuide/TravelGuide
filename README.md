@@ -80,7 +80,7 @@ The following **bonus** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://dl.dropboxusercontent.com/u/72672886/TravelGuide-v2.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+-![demo](Walkthrough/Walkthrough.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
