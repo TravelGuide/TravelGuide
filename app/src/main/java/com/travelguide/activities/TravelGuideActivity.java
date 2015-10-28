@@ -27,6 +27,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.parse.ParseFacebookUtils;
 import com.travelguide.R;
+import com.travelguide.foursquare.constants.FoursquareConstants;
 import com.travelguide.fragments.LoginFragment;
 import com.travelguide.fragments.NewTripFragment;
 import com.travelguide.fragments.ProfileFragment;
@@ -76,6 +77,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
         mDrawer.setDrawerListener(drawerToggle);
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);
+        FoursquareConstants.setClientIdAndSecret(
+                getApplicationContext().getResources().getString(R.string.foursquare_client_id),
+                getApplicationContext().getResources().getString(R.string.foursquare_client_secret));
         buildSettingsDialog();
         city = "Any";
         group = "Any";

@@ -25,7 +25,7 @@ import java.util.List;
  * History:
  *   10/20/2015     kprav       Initial Version
  */
-public class NearbyPlaces {
+public class NearbyPlacesGoogle {
 
     public static class NPlace {
         public String iconUrl;

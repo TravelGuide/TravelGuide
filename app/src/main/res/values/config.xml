@@ -2,4 +2,6 @@
 <resources>
     <string name="facebook_app_id">1666229463589747</string>
     <string name="google_places_web_service_api_key">Your Google Places Web Service API Key</string>
+    <string name="foursquare_client_id">Your Foursquare Client ID</string>
+    <string name="foursquare_client_secret">Your Foursquare Client Secret</string>
 </resources>
