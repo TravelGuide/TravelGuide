@@ -25,7 +25,6 @@ The following **required** functionality is completed:
 * [x] Local data storage is done using **Parse**.
 * [x] The app includes functionality for **users to search and select places**.
   * [x] User can enter place names (suggestion box) and app will fetch place names from **Parse**.
-  * [Hema] The app includes functionality for users to use **Location services** to determine place name.
 * [x] The app includes functionality for users to perform filters on search by city name results through in a dialog fragment.
   * [x] User can **select filters** such as travel days/length of stay, seasons, months, group type (Single, Family).
   * [x] Fetch plan details from **Parse** based on **User Details**. If no personal plans exist for user than display existed plans from others users.
@@ -38,6 +37,7 @@ The following **required** functionality is completed:
     
 The following **optional** features are implemented:
 
+* [Hema] The app includes functionality for users to use **Location services** to determine place name.
 * [Praveen] User can scroll (infinite) through **travel plans at a particular location**.
 * [Praveen] Added Foursquare API for fetch places.
 * [Hemman] Users can add other users' trips to their **favorites**.
