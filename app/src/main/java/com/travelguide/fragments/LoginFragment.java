@@ -83,7 +83,7 @@ public class LoginFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.dialogFragment);
+        //setStyle(DialogFragment.STYLE_NORMAL, R.style.dialogFragment);
     }
 
     @Nullable

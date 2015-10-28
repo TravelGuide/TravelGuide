@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/icons"
     android:orientation="vertical">
 
     <LinearLayout
@@ -21,7 +23,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorGray" />
+            android:background="@color/divider" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvPlaces"
@@ -29,15 +31,39 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabNewPlace"
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/multiple_actions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_add_white"
         app:layout_anchor="@id/recyclerViews"
         app:layout_anchorGravity="bottom|right|end"
-        app:layout_behavior="com.travelguide.ui.ScrollAwareFABBehavior" />
+        fab:fab_addButtonColorNormal="@color/accent"
+        fab:fab_addButtonColorPressed="@color/accentPressed"
+        fab:fab_labelStyle="@style/menu_labels_style">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabNewPlace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_icon="@drawable/ic_event_available_white_24dp"
+            fab:fab_colorNormal="@color/accent"
+            fab:fab_colorPressed="@color/accentPressed"
+            fab:fab_size="mini"
+            fab:fab_title="@string/add_new_place" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabNewDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/accent"
+            fab:fab_colorPressed="@color/accentPressed"
+            fab:fab_icon="@drawable/ic_local_activity_white_24dp"
+            fab:fab_size="mini"
+            fab:fab_title="@string/add_new_day" />
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 </android.support.design.widget.CoordinatorLayout>

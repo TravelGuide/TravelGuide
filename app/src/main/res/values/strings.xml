@@ -33,4 +33,9 @@
     <string name="label_save_button">Save</string>
     <string name="label_cancel_button">@android:string/cancel</string>
     <string name="action_search">Search</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="add_new_place">Add New Place</string>
+    <string name="add_new_day">Add New Day</string>
+
 </resources>
