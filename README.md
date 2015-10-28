@@ -28,7 +28,7 @@ The following **required** functionality is completed:
   * [Hema] The app includes functionality for users to use **Location services** to determine place name.
 * [x] The app includes functionality for users to perform filters on search by city name results through in a dialog fragment.
   * [x] User can **select filters** such as travel days/length of stay, seasons, months, group type (Single, Family).
-* [Praveen] User can scroll (infinite) through **travel plans at a particular location**.
+* [Rafael] User can scroll (infinite) through **travel plans at a particular location**.
   * [x] Fetch plan details from **Parse** based on **User Details**. If no personal plans exist for user than display existed plans from others users.
   * [x] For each plan the app displayed: **graphic, caption, username, trip duration**.
 * [x] For each plan displayed, user can select the plan to see following details:
@@ -40,7 +40,8 @@ The following **required** functionality is completed:
     
 The following **optional** features are implemented:
 
-* [ ] Users can add other users' trips to their **favorites**.
+* [Praveen] Added Foursquare API for fetch places.
+* [Hemman] Users can add other users' trips to their **favorites**.
 * [ ] Users can **rate** other users' trips (up to 5 stars).
 * [ ] Users can post **reviews** on other users' trips.
 * [ ] **Location based** information is pushed to users' phone.
