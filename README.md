@@ -25,23 +25,23 @@ The following **required** functionality is completed:
 * [x] Local data storage is done using **Parse**.
 * [x] The app includes functionality for **users to search and select places**.
   * [x] User can enter place names (suggestion box) and app will fetch place names from **Parse**.
-  * [Hema] The app includes functionality for users to use **Location services** to determine place name.
 * [x] The app includes functionality for users to perform filters on search by city name results through in a dialog fragment.
   * [x] User can **select filters** such as travel days/length of stay, seasons, months, group type (Single, Family).
-* [Rafael] User can scroll (infinite) through **travel plans at a particular location**.
   * [x] Fetch plan details from **Parse** based on **User Details**. If no personal plans exist for user than display existed plans from others users.
   * [x] For each plan the app displayed: **graphic, caption, username, trip duration**.
 * [x] For each plan displayed, user can select the plan to see following details:
   * [x] Horizontal Scrolling **list of days, option to follow the plan, option to share the plan**.
-  * [Rafael] Clicking on the day to edit **place name, visit duration**.
 * [x] Display each user profile image using a **RoundedImageView**.
 * [x] Create a new travel plan: name, travel duration, picture of places, travel type (Single/Group), month of visit (January, February).
-  * [Rafael] Inside travel plan creation user can click to add more days to the trip, will show a dialog to fill following fields: **place name, visit duration, description**.
+  * [x] Inside travel plan creation user can click to add more days to the trip, will show a dialog to fill following fields: **place name, visit duration, description**.
     
 The following **optional** features are implemented:
 
+* [Hema] The app includes functionality for users to use **Location services** to determine place name.
+* [Praveen] User can scroll (infinite) through **travel plans at a particular location**.
 * [Praveen] Added Foursquare API for fetch places.
 * [Hemman] Users can add other users' trips to their **favorites**.
+* [Rafael] Clicking on the day to edit **place name, visit duration**.
 * [ ] Users can **rate** other users' trips (up to 5 stars).
 * [ ] Users can post **reviews** on other users' trips.
 * [ ] **Location based** information is pushed to users' phone.
@@ -80,7 +80,7 @@ The following **bonus** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-![demo](Walkthrough/Walkthrough.gif)
+![demo](Walkthrough/TravelGuide-v2.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 

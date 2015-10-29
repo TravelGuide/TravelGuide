@@ -5,31 +5,8 @@
 
     <item
         android:id="@+id/action_search"
-        android:icon="@android:drawable/ic_menu_search"
-        android:orderInCategory="2"
+        android:icon="@drawable/ic_search_white_24dp"
         android:title="@string/action_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
-
-    <item
-        android:id="@+id/action_login"
-        android:onClick="onLoginClick"
-        android:title="@string/action_login"
-        android:orderInCategory="2"
-        app:showAsAction="ifRoom|collapseActionView" />
-
-    <item
-        android:id="@+id/action_profile"
-        android:onClick="onProfileClick"
-        android:title="@string/action_profile"
-        android:orderInCategory="3"
-        app:showAsAction="ifRoom|collapseActionView" />
-
-    <item
-        android:id="@+id/action_settings"
-        android:onClick="onSettingsClick"
-        android:title="@string/action_settings"
-        android:orderInCategory="4"
-        app:showAsAction="ifRoom|collapseActionView" />
-
 </menu>

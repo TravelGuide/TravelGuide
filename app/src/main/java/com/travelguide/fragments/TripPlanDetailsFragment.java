@@ -2,17 +2,20 @@ package com.travelguide.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -31,6 +34,8 @@ import com.travelguide.models.Place;
 import com.travelguide.models.TripPlan;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class TripPlanDetailsFragment extends TripBaseFragment
@@ -40,6 +45,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
 
     private RecyclerView rvDayDetails;
     private RecyclerView rvPlaceDetails;
+    private FloatingActionsMenu floatingActionsMenu;
 
     private String mTripPLanObjectId;
     private String mSelectedDayObjectId;
@@ -70,19 +76,61 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trip_plan_details, container, false);
         setHasOptionsMenu(true);
 
+        floatingActionsMenu = (FloatingActionsMenu) view.findViewById(R.id.multiple_actions);
+
         //Setup FAB New Place
-        FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fabNewPlace);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        final FloatingActionButton fabNewPlace = (FloatingActionButton) view.findViewById(R.id.fabNewPlace);
+        fabNewPlace.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AddUpdatePlaceDetailsFragment addUpdatePlace = AddUpdatePlaceDetailsFragment
                         .newInstance("Add New Place", null, null, TripPlanDetailsFragment.this);
                 addUpdatePlace.show(getFragmentManager(), "add_update_place_details_fragment");
+                floatingActionsMenu.collapseImmediately();
+            }
+        });
+
+        final FloatingActionButton fabNewDay = (FloatingActionButton) view.findViewById(R.id.fabNewDay);
+        fabNewDay.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ParseUser user = ParseUser.getCurrentUser();
+                final Day daysDetails = new Day();
+                daysDetails.putCreatedUserId(user.getObjectId());
+
+                Day day = mDayAdapter.get(mDayAdapter.getItemCount() - 1);
+
+                daysDetails.putTravelDay(mDayAdapter.getItemCount() + 1);
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(day.getTravelDate());
+                cal.add(Calendar.DATE, 1);
+                Date updatedStartDate = cal.getTime();
+
+                daysDetails.putTravelDate(updatedStartDate);
+                daysDetails.put("parent", ParseObject.createWithoutData("PlanDetails", mTripPLanObjectId));
+
+                daysDetails.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            addTripPlanDay(daysDetails);
+                        }
+                    }
+                });
+                daysDetails.pinInBackground();
+
+
+                floatingActionsMenu.collapseImmediately();
             }
         });
 
@@ -211,7 +259,8 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     }
 
     private void addTripPlanDay(Day day) {
-        //TODO To be implemented, plus button on RecyclerView Days
+        mDayList.add(day);
+        mDayAdapter.notifyDataSetChanged();
     }
 
     private void populateTripPlanPlaces(List<Place> places) {

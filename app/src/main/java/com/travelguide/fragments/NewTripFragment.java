@@ -308,7 +308,6 @@ public class NewTripFragment extends Fragment {
             }
             trackCount = trackCount + 1;
             Day daysDetails = new Day();
-            dayList.add(daysDetails);
             daysDetails.putCreatedUserId(user.getObjectId());
             daysDetails.putPlanName(planName);
             daysDetails.putTravelDay(trackCount);

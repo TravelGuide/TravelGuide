@@ -9,7 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/primary"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
@@ -20,7 +20,7 @@
             android:id="@+id/ivCoverPicInProfile"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimary" />
+            android:background="@color/primary" />
 
     </FrameLayout>
 
@@ -53,7 +53,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@color/colorAccent"
+                android:src="@color/accent"
                 app:border_width="1dp" />
 
             <TextView

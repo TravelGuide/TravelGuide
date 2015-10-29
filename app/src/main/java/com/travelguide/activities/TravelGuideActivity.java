@@ -1,14 +1,19 @@
 package com.travelguide.activities;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -33,8 +38,12 @@ import com.travelguide.listener.OnTripPlanListener;
 
 public class TravelGuideActivity extends AppCompatActivity implements
         OnTripPlanListener,
-        ProfileFragment.OnFragmentInteractionListener,
-        FragmentManager.OnBackStackChangedListener {
+        FragmentManager.OnBackStackChangedListener,
+        ProfileFragment.OnFragmentInteractionListener {
+
+    private DrawerLayout mDrawer;
+    private Toolbar toolbar;
+
 
     private MaterialDialog settingsDialog;
     private LinearLayout llSettingsDialogLayout;
@@ -44,11 +53,29 @@ public class TravelGuideActivity extends AppCompatActivity implements
     private String city;
     private String group;
     private String season;
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_travel_guide);
+
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Find our drawer view
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerToggle = setupDrawerToggle();
+
+        // Find our drawer view
+        NavigationView nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        // Setup drawer view
+        setupDrawerContent(nvDrawer);
+
+        // Tie DrawerLayout events to the ActionBarToggle
+        mDrawer.setDrawerListener(drawerToggle);
+
         getSupportFragmentManager().addOnBackStackChangedListener(this);
         FoursquareConstants.setClientIdAndSecret(
                 getApplicationContext().getResources().getString(R.string.foursquare_client_id),
@@ -57,8 +84,64 @@ public class TravelGuideActivity extends AppCompatActivity implements
         city = "Any";
         group = "Any";
         season = "Any";
-        // setContentFragment(new TripPlanListFragment());
         setContentFragment(new TripPlanListFragment());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    private ActionBarDrawerToggle setupDrawerToggle() {
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close);
+    }
+
+    // Make sure this is the method with just `Bundle` as the signature
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        drawerToggle.syncState();
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.login_fragment:
+                new LoginFragment().show(getSupportFragmentManager(), "Login_with_Facebook");
+                break;
+            case R.id.profile_fragment:
+                setContentFragment(new ProfileFragment());
+                break;
+            case R.id.settings_fragment:
+                showSettingsDialog();
+                break;
+        }
+
+        // Highlight the selected item, update the title, and close the drawer
+        menuItem.setChecked(true);
+        setTitle(menuItem.getTitle());
+        mDrawer.closeDrawers();
     }
 
     public void buildSettingsDialog() {
@@ -133,12 +216,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        setDisplayHomeAsUpEnabled(false);
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("ResultCode", Integer.toString(resultCode));
         super.onActivityResult(requestCode, resultCode, data);
@@ -173,7 +250,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
     public void onBackPressed() {
         super.onBackPressed();
         if (!(getSupportFragmentManager().getBackStackEntryCount() > 0)) {
-           finish();
+            finish();
         }
     }
 
@@ -195,18 +272,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
         setContentFragment(fragment);
     }
 
-    public void onSettingsClick(MenuItem item) {
-        showSettingsDialog();
-    }
-
-    public void onLoginClick(MenuItem item) {
-        new LoginFragment().show(getSupportFragmentManager(), "Login_with_Facebook");
-    }
-
-    public void onProfileClick(MenuItem item) {
-        setContentFragment(new ProfileFragment());
-    }
-
     private void setContentFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_frame, fragment);
@@ -220,21 +285,24 @@ public class TravelGuideActivity extends AppCompatActivity implements
         }
     }
 
-    public void shouldDisplayHomeUp(){
-        //Enable Up button only  if there are entries in the back stack
-        boolean canback = getSupportFragmentManager().getBackStackEntryCount() > 1;
-        setDisplayHomeAsUpEnabled(canback);
-    }
-
     @Override
     public void onBackStackChanged() {
-        shouldDisplayHomeUp();
-    }
+        final View.OnClickListener originalToolbarListener = drawerToggle.getToolbarNavigationClickListener();
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        //This method is called when the up button is pressed. Just the pop back stack.
-        getSupportFragmentManager().popBackStack();
-        return true;
+        boolean canBack = getSupportFragmentManager().getBackStackEntryCount() > 1;
+        if (canBack) {
+            drawerToggle.setDrawerIndicatorEnabled(false);
+            setDisplayHomeAsUpEnabled(true);
+            drawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getSupportFragmentManager().popBackStack();
+                }
+            });
+        } else {
+            setDisplayHomeAsUpEnabled(false);
+            drawerToggle.setDrawerIndicatorEnabled(true);
+            drawerToggle.setToolbarNavigationClickListener(originalToolbarListener);
+        }
     }
 }

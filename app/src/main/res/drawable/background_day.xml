@@ -4,7 +4,7 @@
     <solid android:color="@android:color/white" />
     <stroke
         android:width="@dimen/background_day_border_size"
-        android:color="@color/colorAccent" />
+        android:color="@color/primary" />
     <size
         android:width="@dimen/background_day_size"
         android:height="@dimen/background_day_size" />
