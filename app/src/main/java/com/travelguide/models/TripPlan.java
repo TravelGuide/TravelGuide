@@ -33,7 +33,6 @@ public class TripPlan extends ParseObject {
     public String getGroupType() {return getString("groupType");}
     public Boolean getEnabledFlag() {return getBoolean("enabledFlag");}
 
-
     //Saving Data
     public void putCreatedUserId(String createdUserId) { put("createdUserId", createdUserId);}
     public void putCreatedUserName(String createdUserName) { put("createdUserName", createdUserName);}
@@ -50,4 +49,5 @@ public class TripPlan extends ParseObject {
     public void putTripCost(Integer tripCost) {put("tripCost",tripCost);}
     public void putGroupType(String groupType) {put("groupType",groupType);}
     public void putEnabledFlag(Boolean enabledFlag) {put("enabledFlag",enabledFlag);}
+
 }

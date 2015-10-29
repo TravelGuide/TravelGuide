@@ -1,5 +1,7 @@
 package com.travelguide.adapters;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,10 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 import com.travelguide.R;
 import com.travelguide.models.TripPlan;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHolder> {
@@ -34,7 +38,7 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         TripPlan tripPlan = mTripPlans.get(position);
 
         holder.tvPlanName.setText(tripPlan.getPlanName());
@@ -54,6 +58,57 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
                 .placeholder(R.drawable.city_placeholder)
                 .resize(0, 600)
                 .into(holder.ivPlace);
+
+        final ParseUser user = ParseUser.getCurrentUser();
+        ArrayList<String> userFavDetails = (ArrayList) user.get("favTrips");
+        if(userFavDetails.contains(mTripPlans.get(position).getObjectId()))
+        {
+            holder.ivFavIcon.setSelected(true);
+            holder.ivFavIcon.setImageResource(R.drawable.ic_fav_icon_clicked);
+        }
+
+        holder.ivFavIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.isSelected()){
+                    v.setSelected(false);
+                    ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
+                    ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
+                    AnimatorSet set1 = new AnimatorSet();
+                    set1.playTogether(anim1, anim2);
+                    ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
+                    ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
+                    AnimatorSet set2 = new AnimatorSet();
+                    set2.playTogether(anim3, anim4);
+                    AnimatorSet set4 = new AnimatorSet();
+                    set4.playSequentially(set1, set2);
+                    set4.start();
+                    holder.ivFavIcon.setImageResource(R.drawable.ic_fav);
+                    ArrayList<String> userFavDetails = (ArrayList) user.get("favTrips");
+                    userFavDetails.contains("mTripPlans.get(position).getObjectId()");
+                    userFavDetails.remove(mTripPlans.get(position).getObjectId());
+                    user.remove("favTrips");
+                    user.addAllUnique("favTrips", userFavDetails);
+                    user.saveInBackground();
+                }else{
+                    v.setSelected(true);
+                    ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
+                    ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
+                    AnimatorSet set1 = new AnimatorSet();
+                    set1.playTogether(anim1, anim2);
+                    ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
+                    ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
+                    AnimatorSet set2 = new AnimatorSet();
+                    set2.playTogether(anim3, anim4);
+                    AnimatorSet set4 = new AnimatorSet();
+                    set4.playSequentially(set1, set2);
+                    set4.start();
+                    holder.ivFavIcon.setImageResource(R.drawable.ic_fav_icon_clicked);
+                    user.addUnique("favTrips", mTripPlans.get(position).getObjectId());
+                    user.saveInBackground();
+                }
+            }
+        });
     }
 
     @Override
@@ -72,6 +127,7 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
         TextView tvTravelMonth;
         ImageView ivPlace;
         TextView tvPlanName;
+        ImageView ivFavIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -82,6 +138,7 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
             tvTravelMonth = (TextView) itemView.findViewById(R.id.tvTravelMonth);
             ivPlace = (ImageView) itemView.findViewById(R.id.ivPlace);
             tvPlanName = (TextView) itemView.findViewById(R.id.tvPlanName);
+            ivFavIcon = (ImageView) itemView.findViewById(R.id.ivFavorite);
         }
     }
 }

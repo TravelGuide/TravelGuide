@@ -238,20 +238,20 @@ public class NewTripFragment extends Fragment {
     }
 
     private void saveAndStartDetailsFragment() {
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setTitle(R.string.creating_plan);
-        progressDialog.setMessage(getString(R.string.please_wait));
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+            progressDialog = new ProgressDialog(getContext());
+            progressDialog.setTitle(R.string.creating_plan);
+            progressDialog.setMessage(getString(R.string.please_wait));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
 
-        ParseUser user = ParseUser.getCurrentUser();
+            ParseUser user = ParseUser.getCurrentUser();
 
-        final TripPlan planDetails = new TripPlan();
-        planDetails.putCreatedUserId(user.getObjectId());
-        planDetails.putCreatedUserName(user.getUsername());
-        planDetails.putPlanName(planName.getText().toString());
-        planDetails.putCityName(destination.getText().toString());
-        planDetails.putTravelMonthNumber(startDateViewModel.getMonthNumber() + 1);
+            final TripPlan planDetails = new TripPlan();
+            planDetails.putCreatedUserId(user.getObjectId());
+            planDetails.putCreatedUserName(user.getUsername());
+            planDetails.putPlanName(planName.getText().toString());
+            planDetails.putCityName(destination.getText().toString());
+            planDetails.putTravelMonthNumber(startDateViewModel.getMonthNumber() + 1);
         planDetails.putTravelMonth(startDateViewModel.getMonthName());
         planDetails.putTravelSeason(startDateViewModel.getSeasonName());
 
