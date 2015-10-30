@@ -3,7 +3,6 @@
 package com.travelguide.fragments;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -40,6 +39,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.travelguide.R;
 import com.travelguide.helpers.NetworkAvailabilityCheck;
+import com.travelguide.helpers.Preferences;
 
 import org.json.JSONException;
 
@@ -69,8 +69,6 @@ public class LoginFragment extends DialogFragment {
     private String profilePicUrl = null;
     private String coverPicUrl = null;
 
-    private SharedPreferences userInfo;
-
     public static final List<String> permissions = new ArrayList<String>() {{
         add("public_profile");
         add("email");
@@ -97,7 +95,7 @@ public class LoginFragment extends DialogFragment {
         ivCoverPic = (ImageView) view.findViewById(R.id.ivCoverPic);
 
         setHasOptionsMenu(false);
-        createSharedPreferences();
+        //createSharedPreferences();
 
         getDialog().setTitle("Login with Facebook");
         final Drawable d = new ColorDrawable(Color.WHITE);
@@ -113,29 +111,13 @@ public class LoginFragment extends DialogFragment {
                 @Override
                 public void done(ParseException e) {
                     getUserDetailsFromParse();
-                    updateSharedPreferences("userObjectId", parseUser.getObjectId());
+                    Preferences.writeString(getContext(),
+                            Preferences.User.USER_OBJECT_ID, parseUser.getObjectId());
                 }
             });
         }
 
         return view;
-    }
-
-    private void createSharedPreferences() {
-        userInfo = getActivity().getSharedPreferences("userInfo", 0);
-        SharedPreferences.Editor editor = userInfo.edit();
-        editor.putString("userObjectId", userInfo.getString("userObjectId", "missing"));
-        editor.putString("name", userInfo.getString("name", "missing"));
-        editor.putString("email", userInfo.getString("email", "missing"));
-        editor.putString("profilePicUrl", userInfo.getString("profilePicUrl", "missing"));
-        editor.putString("coverPicUrl", userInfo.getString("coverPicUrl", "missing"));
-        editor.apply();
-    }
-
-    private void updateSharedPreferences(String key, String value) {
-        SharedPreferences.Editor editor = userInfo.edit();
-        editor.putString(key, value);
-        editor.apply();
     }
 
     @Override
@@ -205,12 +187,12 @@ public class LoginFragment extends DialogFragment {
 
                             name = response.getJSONObject().getString("name");
                             tvName.setText(name);
-                            updateSharedPreferences("name", name);
+                            Preferences.writeString(getContext(), Preferences.User.NAME, name);
 
                             if (response.getJSONObject().optString("email") != null) {
                                 email = response.getJSONObject().getString("email");
                                 tvEmail.setText(email);
-                                updateSharedPreferences("email", email);
+                                Preferences.writeString(getContext(), Preferences.User.EMAIL, email);
                             } else {
                                 email = "";
                             }
@@ -221,19 +203,22 @@ public class LoginFragment extends DialogFragment {
                             else
                                 coverPicUrl = null;
 
-                            if (!userInfo.getString("profilePicUrl", "missing").equals(profilePicUrl)) {
+                            if (!Preferences.readString(getContext(), Preferences.User.PROFILE_PIC_URL).equals(profilePicUrl)) {
                                 updateCoverPicUrl = false;
                                 Picasso.with(getContext()).load(profilePicUrl).into(ivProfilePic, new Callback() {
                                     @Override
                                     public void onSuccess() {
-                                        updateSharedPreferences("profilePicUrl", profilePicUrl);
+                                        Preferences.writeString(getContext(),
+                                                Preferences.User.PROFILE_PIC_URL, profilePicUrl);
                                         if (coverPicUrl != null) {
-                                            if (!userInfo.getString("coverPicUrl", "missing").equals(coverPicUrl)) {
+
+                                            if (!Preferences.readString(getContext(), Preferences.User.COVER_PIC_URL).equals(coverPicUrl)) {
                                                 // Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic, new Callback() {
                                                 Picasso.with(getContext()).load(coverPicUrl).resize(getView().getWidth(), 0).into(ivCoverPic, new Callback() {
                                                     @Override
                                                     public void onSuccess() {
-                                                        updateSharedPreferences("coverPicUrl", coverPicUrl);
+                                                        Preferences.writeString(getContext(),
+                                                                Preferences.User.COVER_PIC_URL, coverPicUrl);
                                                         saveOrUpdateParseUser(requestType);
                                                     }
 
@@ -260,12 +245,13 @@ public class LoginFragment extends DialogFragment {
                             if (updateCoverPicUrl) {
                                 updateCoverPicUrl = false;
                                 if (coverPicUrl != null) {
-                                    if (!userInfo.getString("coverPicUrl", "missing").equals(coverPicUrl)) {
+                                    if (!Preferences.readString(getContext(), Preferences.User.COVER_PIC_URL).equals(coverPicUrl)) {
                                         // Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic, new Callback() {
                                         Picasso.with(getContext()).load(coverPicUrl).resize(getView().getWidth(), 0).into(ivCoverPic, new Callback() {
                                             @Override
                                             public void onSuccess() {
-                                                updateSharedPreferences("coverPicUrl", coverPicUrl);
+                                                Preferences.writeString(getContext(),
+                                                        Preferences.User.COVER_PIC_URL, coverPicUrl);
                                                 saveOrUpdateParseUser(requestType);
                                             }
 
@@ -295,7 +281,7 @@ public class LoginFragment extends DialogFragment {
 
     private void saveOrUpdateParseUser(RequestType requestType) {
         parseUser = ParseUser.getCurrentUser();
-        updateSharedPreferences("userObjectId", parseUser.getObjectId());
+        Preferences.writeString(getContext(), Preferences.User.USER_OBJECT_ID, parseUser.getObjectId());
         parseUser.setUsername(name);
         parseUser.setEmail(email);
         // Saving profile photo as a ParseFile

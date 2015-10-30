@@ -5,4 +5,7 @@
 
     <dimen name="background_day_size">56dp</dimen>
     <dimen name="background_day_border_size">2dp</dimen>
+
+    <dimen name="background_profile_size">60dp</dimen>
+    <dimen name="background_profile_image_margin_bottom">20dp</dimen>
 </resources>
