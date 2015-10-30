@@ -74,4 +74,17 @@
         android:layout_toRightOf="@id/tvTravelSeason"
         tools:text="Jan" />
 
+    <ImageView
+        android:id="@+id/ivFavorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvTravelMonth"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="28dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/selector_favorite"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
 </RelativeLayout>
