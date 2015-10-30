@@ -2,6 +2,8 @@ package com.travelguide.activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -16,16 +18,21 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
 import com.travelguide.R;
 import com.travelguide.foursquare.constants.FoursquareConstants;
 import com.travelguide.fragments.LoginFragment;
@@ -43,7 +50,10 @@ public class TravelGuideActivity extends AppCompatActivity implements
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
-
+    private ActionBarDrawerToggle drawerToggle;
+    private ImageView ivProfile;
+    private TextView tvProfileUsername;
+    private TextView tvProfileEmail;
 
     private MaterialDialog settingsDialog;
     private LinearLayout llSettingsDialogLayout;
@@ -53,7 +63,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
     private String city;
     private String group;
     private String season;
-    private ActionBarDrawerToggle drawerToggle;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,8 +80,14 @@ public class TravelGuideActivity extends AppCompatActivity implements
 
         // Find our drawer view
         NavigationView nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        View header = LayoutInflater.from(this).inflate(R.layout.nav_header, null);
+        nvDrawer.addHeaderView(header);
         // Setup drawer view
         setupDrawerContent(nvDrawer);
+
+        ivProfile = (ImageView) header.findViewById(R.id.ivProfile);
+        tvProfileUsername = (TextView) header.findViewById(R.id.tvProfileUsername);
+        tvProfileEmail = (TextView) header.findViewById(R.id.tvProfileEmail);
 
         // Tie DrawerLayout events to the ActionBarToggle
         mDrawer.setDrawerListener(drawerToggle);
@@ -85,6 +101,12 @@ public class TravelGuideActivity extends AppCompatActivity implements
         group = "Any";
         season = "Any";
         setContentFragment(new TripPlanListFragment());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setHeaderProfileInfo();
     }
 
     @Override
@@ -103,14 +125,19 @@ public class TravelGuideActivity extends AppCompatActivity implements
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
-        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close);
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close){
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                setHeaderProfileInfo();
+            }
+        };
     }
 
     // Make sure this is the method with just `Bundle` as the signature
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
         drawerToggle.syncState();
     }
 
@@ -303,6 +330,27 @@ public class TravelGuideActivity extends AppCompatActivity implements
             setDisplayHomeAsUpEnabled(false);
             drawerToggle.setDrawerIndicatorEnabled(true);
             drawerToggle.setToolbarNavigationClickListener(originalToolbarListener);
+        }
+    }
+
+    private void setHeaderProfileInfo() {
+        final ParseUser currentUser = ParseUser.getCurrentUser();
+
+        if (currentUser != null) {
+           try {
+                ParseFile parseFile = currentUser.getParseFile("profileThumb");
+                byte[] data = parseFile.getData();
+                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                ivProfile.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            tvProfileUsername.setText(currentUser.getUsername());
+            tvProfileEmail.setText(currentUser.getEmail());
+        } else {
+            tvProfileUsername.setText("");
+            tvProfileEmail.setText("");
         }
     }
 }
