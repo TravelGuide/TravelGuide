@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:background="@drawable/layer_list_item_trip_plan"
     android:orientation="vertical">
-
     <ImageView
         android:id="@+id/ivPlace"
         android:layout_width="wrap_content"
@@ -17,17 +16,19 @@
         android:contentDescription="@null"
         android:scaleType="centerCrop"
         android:src="@drawable/city_placeholder" />
-
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/rlTripPlan"
+    android:layout_below="@+id/ivPlace">
     <TextView
         android:id="@+id/tvPlanName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ivPlace"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         tools:text="Trip to NYC" />
-
     <TextView
         android:id="@+id/tvTotalTravelTime"
         android:layout_width="wrap_content"
@@ -86,5 +87,5 @@
         android:scaleType="fitXY"
         android:src="@drawable/selector_favorite"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+</RelativeLayout>
 </RelativeLayout>
