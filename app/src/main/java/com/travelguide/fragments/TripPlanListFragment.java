@@ -20,6 +20,7 @@ import com.parse.ParseQuery;
 import com.travelguide.R;
 import com.travelguide.adapters.TripPlanAdapter;
 import com.travelguide.decorations.VerticalSpaceItemDecoration;
+import com.travelguide.helpers.EndlessScrollListener;
 import com.travelguide.helpers.ItemClickSupport;
 import com.travelguide.helpers.NetworkAvailabilityCheck;
 import com.travelguide.listener.OnTripPlanListener;
@@ -39,6 +40,9 @@ public class TripPlanListFragment extends TripBaseFragment {
     private MaterialDialog progressDialog;
     private TextView tvEmpty;
     private RecyclerView rvTripPlans;
+
+    ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
+    private boolean status = false;
 
     public TripPlanListFragment() {
 
@@ -65,6 +69,8 @@ public class TripPlanListFragment extends TripBaseFragment {
 
         RecyclerView.ItemDecoration itemDecoration = new VerticalSpaceItemDecoration(25, true, true);
         rvTripPlans.addItemDecoration(itemDecoration);
+
+        setOnEndlessScrollListener(rvTripPlans);
 
         ItemClickSupport.addTo(rvTripPlans).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
@@ -102,12 +108,7 @@ public class TripPlanListFragment extends TripBaseFragment {
         super.onResume();
         setTitle(getString(R.string.app_name));
         progressDialog.show();
-
-        if (NetworkAvailabilityCheck.networkAvailable(getActivity())) {
-            loadTripPlansFromRemote();
-        } else {
-            loadTripPlansFromDatabase();
-        }
+        loadPlans(0);
     }
 
     @Override
@@ -115,6 +116,8 @@ public class TripPlanListFragment extends TripBaseFragment {
         super.onAttach(context);
         try {
             mTripPlanListener = (OnTripPlanListener) context;
+            if (mTripPlans != null)
+                mTripPlans.clear();
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnTripPlanListener");
@@ -128,35 +131,38 @@ public class TripPlanListFragment extends TripBaseFragment {
     }
 
     private void populateTripPlanList(List<TripPlan> tripPlans) {
-        mTripPlans.clear();
         mTripPlans.addAll(tripPlans);
         mTripPlanAdapter.notifyDataSetChanged();
     }
 
-    private void loadTripPlansFromRemote() {
-        ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
+    private boolean loadTripPlansFromRemote() {
+        query.setLimit(3);
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
             public void done(List<TripPlan> tripPlans, ParseException e) {
                 progressDialog.dismiss();
                 if (e == null) {
                     if (tripPlans.isEmpty()) {
-                        showEmptyView();
+                        status = false;
                     } else {
+                        status = true;
                         hideEmptyView();
                         populateTripPlanList(tripPlans);
                         savingOnDatabase(tripPlans);
                     }
                 } else {
-                    showEmptyView();
+                    status = false;
                     Log.e(TAG, "Error fetching remote data: " + e.getMessage());
                 }
+                if (mTripPlans.size() == 0)
+                    showEmptyView();
             }
         });
+        return status;
     }
 
-    private void loadTripPlansFromDatabase() {
-        ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
+    private boolean loadTripPlansFromDatabase() {
+        query.setLimit(3);
         query.fromLocalDatastore();
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
@@ -164,17 +170,22 @@ public class TripPlanListFragment extends TripBaseFragment {
                 progressDialog.dismiss();
                 if (e == null) {
                     if (tripPlans.isEmpty()) {
-                        showEmptyView();
+                        status = false;
                     } else {
+                        status = true;
                         hideEmptyView();
                         populateTripPlanList(tripPlans);
                     }
                 } else {
-                    showEmptyView();
+                    status = false;
                     Log.e(TAG, "Error fetching local data: " + e.getMessage());
+                }
+                if (mTripPlans.size() == 0) {
+                    showEmptyView();
                 }
             }
         });
+        return status;
     }
 
     private void savingOnDatabase(List<TripPlan> tripPlans) {
@@ -189,6 +200,26 @@ public class TripPlanListFragment extends TripBaseFragment {
     private void hideEmptyView() {
         rvTripPlans.setVisibility(View.VISIBLE);
         tvEmpty.setVisibility(View.GONE);
+    }
+
+    private void setOnEndlessScrollListener(RecyclerView recyclerView) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.addOnScrollListener(new EndlessScrollListener(linearLayoutManager) {
+            @Override
+            public boolean onLoadMore(int current_page, int totalItemCount) {
+                return loadPlans(totalItemCount);
+            }
+        });
+    }
+
+    private boolean loadPlans(int totalItemsCount) {
+        query.setSkip(totalItemsCount);
+        if (NetworkAvailabilityCheck.networkAvailable(getActivity())) {
+            return loadTripPlansFromRemote();
+        } else {
+            return loadTripPlansFromDatabase();
+        }
     }
 
 }
