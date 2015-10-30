@@ -1,5 +1,8 @@
 package com.travelguide.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -22,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -125,7 +129,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
-        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close){
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -318,8 +322,25 @@ public class TravelGuideActivity extends AppCompatActivity implements
 
         boolean canBack = getSupportFragmentManager().getBackStackEntryCount() > 1;
         if (canBack) {
-            drawerToggle.setDrawerIndicatorEnabled(false);
-            setDisplayHomeAsUpEnabled(true);
+            ValueAnimator anim = ValueAnimator.ofFloat(0, 1);
+            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    float slideOffset = (Float) valueAnimator.getAnimatedValue();
+                    drawerToggle.onDrawerSlide(mDrawer, slideOffset);
+                }
+            });
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    drawerToggle.setDrawerIndicatorEnabled(false);
+                    setDisplayHomeAsUpEnabled(true);
+                }
+            });
+            anim.setInterpolator(new DecelerateInterpolator());
+            anim.setDuration(500);
+            anim.start();
+
             drawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -329,6 +350,17 @@ public class TravelGuideActivity extends AppCompatActivity implements
         } else {
             setDisplayHomeAsUpEnabled(false);
             drawerToggle.setDrawerIndicatorEnabled(true);
+            ValueAnimator anim = ValueAnimator.ofFloat(1, 0);
+            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    float slideOffset = (Float) valueAnimator.getAnimatedValue();
+                    drawerToggle.onDrawerSlide(mDrawer, slideOffset);
+                }
+            });
+            anim.setInterpolator(new DecelerateInterpolator());
+            anim.setDuration(500);
+            anim.start();
             drawerToggle.setToolbarNavigationClickListener(originalToolbarListener);
         }
     }
@@ -337,7 +369,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         final ParseUser currentUser = ParseUser.getCurrentUser();
 
         if (currentUser != null) {
-           try {
+            try {
                 ParseFile parseFile = currentUser.getParseFile("profileThumb");
                 byte[] data = parseFile.getData();
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
