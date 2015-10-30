@@ -3,6 +3,7 @@ package com.travelguide.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -44,6 +45,8 @@ public class TripPlanListFragment extends TripBaseFragment {
     ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
     private boolean status = false;
 
+    private SwipeRefreshLayout swipeContainer;
+
     public TripPlanListFragment() {
 
     }
@@ -57,6 +60,9 @@ public class TripPlanListFragment extends TripBaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trip_plan_list, container, false);
+
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        setupSwipeRefresh();
 
         mTripPlans = new ArrayList<>();
         mTripPlanAdapter = new TripPlanAdapter(mTripPlans, getContext());
@@ -101,6 +107,24 @@ public class TripPlanListFragment extends TripBaseFragment {
                 .build();
 
         return view;
+    }
+
+    private void setupSwipeRefresh() {
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Make sure to call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                mTripPlans.clear();
+                mTripPlanAdapter.notifyDataSetChanged();
+                loadPlans(0);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
     }
 
     @Override
@@ -154,8 +178,10 @@ public class TripPlanListFragment extends TripBaseFragment {
                     status = false;
                     Log.e(TAG, "Error fetching remote data: " + e.getMessage());
                 }
-                if (mTripPlans.size() == 0)
+                if (mTripPlans.size() == 0) {
                     showEmptyView();
+                }
+                swipeContainer.setRefreshing(false);
             }
         });
         return status;
@@ -183,6 +209,7 @@ public class TripPlanListFragment extends TripBaseFragment {
                 if (mTripPlans.size() == 0) {
                     showEmptyView();
                 }
+                swipeContainer.setRefreshing(false);
             }
         });
         return status;

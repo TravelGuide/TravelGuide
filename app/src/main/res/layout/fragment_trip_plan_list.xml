@@ -7,30 +7,38 @@
     android:background="@color/icons"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvTripPlans"
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipeContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvEmpty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/no_data_available"
-        android:visibility="gone" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvTripPlans"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
 
-    <com.getbase.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabNewTripPlan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:layout_anchor="@id/rvTripPlans"
-        app:layout_anchorGravity="bottom|right|end"
-        fab:fab_colorNormal="@color/accent"
-        fab:fab_colorPressed="@color/accentPressed"
-        fab:fab_icon="@drawable/ic_add_white" />
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_data_available"
+            android:visibility="gone" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabNewTripPlan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:layout_anchor="@id/rvTripPlans"
+            app:layout_anchorGravity="bottom|right|end"
+            fab:fab_colorNormal="@color/accent"
+            fab:fab_colorPressed="@color/accentPressed"
+            fab:fab_icon="@drawable/ic_add_white" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </android.support.design.widget.CoordinatorLayout>
