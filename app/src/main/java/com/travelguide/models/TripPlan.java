@@ -2,8 +2,10 @@ package com.travelguide.models;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by htammare on 10/16/2015.
@@ -49,5 +51,34 @@ public class TripPlan extends ParseObject {
     public void putTripCost(Integer tripCost) {put("tripCost",tripCost);}
     public void putGroupType(String groupType) {put("groupType",groupType);}
     public void putEnabledFlag(Boolean enabledFlag) {put("enabledFlag",enabledFlag);}
+
+    public Boolean isFavorited() {
+        final ParseUser user = ParseUser.getCurrentUser();
+
+        if (user == null) {
+            return false;
+        } else {
+            List<String> userFavDetails = user.getList("favTrips");
+            return userFavDetails.contains(getObjectId());
+        }
+    }
+
+    public void setFavorite(boolean favorite) {
+        final ParseUser user = ParseUser.getCurrentUser();
+
+        if (user == null)
+            return;
+
+        if (favorite) {
+            user.addUnique("favTrips", getObjectId());
+        } else {
+            List<String> userFavDetails = user.getList("favTrips");
+            userFavDetails.remove(getObjectId());
+            user.remove("favTrips");
+            user.addAllUnique("favTrips", userFavDetails);
+        }
+
+        user.saveInBackground();
+    }
 
 }
