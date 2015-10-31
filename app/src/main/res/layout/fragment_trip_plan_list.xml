@@ -7,7 +7,7 @@
     android:background="@color/icons"
     android:orientation="vertical">
 
-    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,17 +28,18 @@
             android:text="@string/no_data_available"
             android:visibility="gone" />
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabNewTripPlan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:layout_anchor="@id/rvTripPlans"
-            app:layout_anchorGravity="bottom|right|end"
-            fab:fab_colorNormal="@color/accent"
-            fab:fab_colorPressed="@color/accentPressed"
-            fab:fab_icon="@drawable/ic_add_white" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabNewTripPlan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_anchor="@id/rvTripPlans"
+        app:layout_anchorGravity="bottom|right|end"
+        fab:fab_colorNormal="@color/accent"
+        fab:fab_colorPressed="@color/accentPressed"
+        fab:fab_icon="@drawable/ic_add_white" />
 
 </android.support.design.widget.CoordinatorLayout>
