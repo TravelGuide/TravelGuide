@@ -8,7 +8,6 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -52,7 +51,8 @@ import com.travelguide.listener.OnTripPlanListener;
 public class TravelGuideActivity extends AppCompatActivity implements
         OnTripPlanListener,
         FragmentManager.OnBackStackChangedListener,
-        ProfileFragment.OnFragmentInteractionListener {
+        ProfileFragment.OnFragmentInteractionListener,
+        LoginFragment.OnLoginLogoutListener {
 
     private DrawerLayout mDrawer;
     private NavigationView nvDrawer;
@@ -169,26 +169,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
     public void selectDrawerItem(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.login_fragment:
-                // new LoginFragment().show(getSupportFragmentManager(), "Login_with_Facebook");
-                // Login status also available in shared preference, but doing it using listener here.
-                // This is useful for later comparison.
-                LoginFragment.newInstance(new LoginFragment.OnLoginLogoutListener() {
-                    @Override
-                    public void onLoginOrLogout(boolean status) {
-                        mLoginStatus = status;
-                        setMenuItemLoginTitle();
-                    }
-
-                    @Override
-                    public int describeContents() {
-                        return 0;
-                    }
-
-                    @Override
-                    public void writeToParcel(Parcel dest, int flags) {
-
-                    }
-                }).show(getSupportFragmentManager(), "Login_with_Facebook");
+                new LoginFragment().show(getSupportFragmentManager(), "Login_with_Facebook");
                 break;
             case R.id.profile_fragment:
                 setContentFragment(new ProfileFragment());
@@ -426,5 +407,11 @@ public class TravelGuideActivity extends AppCompatActivity implements
             item.setTitle(R.string.label_logout);
         else
             item.setTitle(R.string.action_login);
+    }
+
+    @Override
+    public void onLoginOrLogout(boolean status) {
+        mLoginStatus = status;
+        setMenuItemLoginTitle();
     }
 }
