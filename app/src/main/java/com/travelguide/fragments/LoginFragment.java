@@ -315,8 +315,8 @@ public class LoginFragment extends DialogFragment {
                                 }
                             }
 
-//                            btnLogin.setVisibility(View.INVISIBLE);
-//                            btnLogin.setEnabled(false);
+                            // btnLogin.setVisibility(View.INVISIBLE);
+                            // btnLogin.setEnabled(false);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -448,8 +448,8 @@ public class LoginFragment extends DialogFragment {
         tvName.setText(parseUser.getUsername());
         Toast.makeText(getActivity(), "Welcome back " + tvName.getText().toString(), Toast.LENGTH_SHORT).show();
         getUserDetailsFromFB(RequestType.UPDATE);
-//        btnLogin.setVisibility(View.INVISIBLE);
-//        btnLogin.setEnabled(false);
+        // btnLogin.setVisibility(View.INVISIBLE);
+        // btnLogin.setEnabled(false);
     }
 
     enum RequestType {
