@@ -45,14 +45,17 @@ import com.travelguide.fragments.ProfileFragment;
 import com.travelguide.fragments.SearchListFragment;
 import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
+import com.travelguide.helpers.Preferences;
 import com.travelguide.listener.OnTripPlanListener;
 
 public class TravelGuideActivity extends AppCompatActivity implements
         OnTripPlanListener,
         FragmentManager.OnBackStackChangedListener,
-        ProfileFragment.OnFragmentInteractionListener {
+        ProfileFragment.OnFragmentInteractionListener,
+        LoginFragment.OnLoginLogoutListener {
 
     private DrawerLayout mDrawer;
+    private NavigationView nvDrawer;
     private Toolbar toolbar;
     private ActionBarDrawerToggle drawerToggle;
     private ImageView ivProfile;
@@ -68,6 +71,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
     private String group;
     private String season;
 
+    private boolean mLoginStatus = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +87,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         drawerToggle = setupDrawerToggle();
 
         // Find our drawer view
-        NavigationView nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
         View header = LayoutInflater.from(this).inflate(R.layout.nav_header, null);
         nvDrawer.addHeaderView(header);
         // Setup drawer view
@@ -104,13 +108,19 @@ public class TravelGuideActivity extends AppCompatActivity implements
         city = "Any";
         group = "Any";
         season = "Any";
+
+        mLoginStatus = Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS);
+        setMenuItemLoginTitle();
+
         setContentFragment(new TripPlanListFragment());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setHeaderProfileInfo();
+        mLoginStatus = Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS);
+        setMenuItemLoginTitle();
+        setHeaderProfileInfo(true);
     }
 
     @Override
@@ -133,7 +143,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                setHeaderProfileInfo();
+                setHeaderProfileInfo(false);
             }
         };
     }
@@ -365,24 +375,43 @@ public class TravelGuideActivity extends AppCompatActivity implements
         }
     }
 
-    private void setHeaderProfileInfo() {
-        final ParseUser currentUser = ParseUser.getCurrentUser();
+    private void setHeaderProfileInfo(boolean force) {
+        if (force
+                || mLoginStatus != Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS)
+                || (mLoginStatus && TextUtils.isEmpty(tvProfileUsername.getText()))
+                || (!mLoginStatus && !TextUtils.isEmpty(tvProfileUsername.getText()))) {
+            final ParseUser currentUser = ParseUser.getCurrentUser();
+            if (currentUser != null) {
+                try {
+                    ParseFile parseFile = currentUser.getParseFile("profileThumb");
+                    byte[] data = parseFile.getData();
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                    ivProfile.setImageBitmap(bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-        if (currentUser != null) {
-            try {
-                ParseFile parseFile = currentUser.getParseFile("profileThumb");
-                byte[] data = parseFile.getData();
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                ivProfile.setImageBitmap(bitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
+                tvProfileUsername.setText(currentUser.getUsername());
+                tvProfileEmail.setText(currentUser.getEmail());
+            } else {
+                ivProfile.setImageResource(R.drawable.profile_placeholder);
+                tvProfileUsername.setText("");
+                tvProfileEmail.setText("");
             }
-
-            tvProfileUsername.setText(currentUser.getUsername());
-            tvProfileEmail.setText(currentUser.getEmail());
-        } else {
-            tvProfileUsername.setText("");
-            tvProfileEmail.setText("");
         }
+    }
+
+    private void setMenuItemLoginTitle() {
+        MenuItem item = nvDrawer.getMenu().findItem(R.id.login_fragment);
+        if (mLoginStatus)
+            item.setTitle(R.string.label_logout);
+        else
+            item.setTitle(R.string.action_login);
+    }
+
+    @Override
+    public void onLoginOrLogout(boolean status) {
+        mLoginStatus = status;
+        setMenuItemLoginTitle();
     }
 }
