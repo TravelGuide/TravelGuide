@@ -71,7 +71,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
     private String group;
     private String season;
 
-    private boolean loginStatus = false;
+    private boolean mLoginStatus = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,12 +109,8 @@ public class TravelGuideActivity extends AppCompatActivity implements
         group = "Any";
         season = "Any";
 
-        MenuItem item = nvDrawer.getMenu().findItem(R.id.login_fragment);
-        if (Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS))
-            item.setTitle("LOGOUT");
-        else
-            item.setTitle("LOGIN");
-        loginStatus = Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS);
+        mLoginStatus = Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS);
+        setMenuItemLoginTitle();
 
         setContentFragment(new TripPlanListFragment());
     }
@@ -122,12 +118,8 @@ public class TravelGuideActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        MenuItem item = nvDrawer.getMenu().findItem(R.id.login_fragment);
-        if (Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS))
-            item.setTitle("LOGOUT");
-        else
-            item.setTitle("LOGIN");
-        loginStatus = Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS);
+        mLoginStatus = Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS);
+        setMenuItemLoginTitle();
         setHeaderProfileInfo(true);
     }
 
@@ -183,12 +175,8 @@ public class TravelGuideActivity extends AppCompatActivity implements
                 LoginFragment.newInstance(new LoginFragment.OnLoginLogoutListener() {
                     @Override
                     public void onLoginOrLogout(boolean status) {
-                        loginStatus = status;
-                        MenuItem item = nvDrawer.getMenu().findItem(R.id.login_fragment);
-                        if (loginStatus)
-                            item.setTitle("LOGOUT");
-                        else
-                            item.setTitle("LOGIN");
+                        mLoginStatus = status;
+                        setMenuItemLoginTitle();
                     }
 
                     @Override
@@ -408,9 +396,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
 
     private void setHeaderProfileInfo(boolean force) {
         if (force
-                || loginStatus != Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS)
-                || (loginStatus && TextUtils.isEmpty(tvProfileUsername.getText()))
-                || (!loginStatus && !TextUtils.isEmpty(tvProfileUsername.getText()))) {
+                || mLoginStatus != Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS)
+                || (mLoginStatus && TextUtils.isEmpty(tvProfileUsername.getText()))
+                || (!mLoginStatus && !TextUtils.isEmpty(tvProfileUsername.getText()))) {
             final ParseUser currentUser = ParseUser.getCurrentUser();
             if (currentUser != null) {
                 try {
@@ -425,10 +413,18 @@ public class TravelGuideActivity extends AppCompatActivity implements
                 tvProfileUsername.setText(currentUser.getUsername());
                 tvProfileEmail.setText(currentUser.getEmail());
             } else {
-                ivProfile.setImageResource(R.drawable.background_profile);
+                ivProfile.setImageResource(R.drawable.profile_placeholder);
                 tvProfileUsername.setText("");
                 tvProfileEmail.setText("");
             }
         }
+    }
+
+    private void setMenuItemLoginTitle() {
+        MenuItem item = nvDrawer.getMenu().findItem(R.id.login_fragment);
+        if (mLoginStatus)
+            item.setTitle(R.string.label_logout);
+        else
+            item.setTitle(R.string.action_login);
     }
 }
