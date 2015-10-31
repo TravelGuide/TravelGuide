@@ -29,6 +29,7 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
+import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseFile;
@@ -94,6 +95,10 @@ public class LoginFragment extends DialogFragment {
         btnLogin = (Button) view.findViewById(R.id.btnLogin);
         ivCoverPic = (ImageView) view.findViewById(R.id.ivCoverPic);
 
+        if (Preferences.readBoolean(getContext(), Preferences.User.LOG_IN_STATUS)) {
+            btnLogin.setText(R.string.label_logout);
+        }
+
         setHasOptionsMenu(false);
         //createSharedPreferences();
 
@@ -138,28 +143,71 @@ public class LoginFragment extends DialogFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    private void login() {
+        Preferences.writeBoolean(getContext(), Preferences.User.LOG_IN_STATUS, true);
+        btnLogin.setText(R.string.label_logout);
+    }
+
+    private void clearAndLogout() {
+        parseUser = null;
+        tvName.setText("");
+        tvEmail.setText("");
+        ivCoverPic.setImageResource(R.color.primary);
+        ivProfilePic.setImageResource(R.color.accent);
+        btnLogin.setText(R.string.label_login_with_facebook);
+        Preferences.writeString(getContext(), Preferences.User.USER_OBJECT_ID, Preferences.DEF_VALUE);
+        Preferences.writeString(getContext(), Preferences.User.PROFILE_PIC_URL, Preferences.DEF_VALUE);
+        Preferences.writeString(getContext(), Preferences.User.COVER_PIC_URL, Preferences.DEF_VALUE);
+        Preferences.writeString(getContext(), Preferences.User.NAME, Preferences.DEF_VALUE);
+        Preferences.writeString(getContext(), Preferences.User.EMAIL, Preferences.DEF_VALUE);
+        Preferences.writeBoolean(getContext(), Preferences.User.LOG_IN_STATUS, false);
+    }
+
     private void setLoginButtonOnClickListener() {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseFacebookUtils.logInWithReadPermissionsInBackground(getActivity(), permissions, new LogInCallback() {
-                    @Override
-                    public void done(ParseUser user, ParseException err) {
-                        if (user == null) {
-                            Log.d("CANCEL", "The user cancelled the Facebook login.");
-                        } else if (user.isNew()) {
-                            Log.d("SIGN IN", "User signed up and logged in through Facebook!");
-                            getUserDetailsFromFB(RequestType.NEW);
-                        } else {
-                            Log.d("LOGGED IN", "User logged in through Facebook!");
-                            getUserDetailsFromParse();
-                            getUserDetailsFromFB(RequestType.UPDATE);
+                if (!Preferences.readBoolean(getContext(), Preferences.User.LOG_IN_STATUS)) {
+                    ParseFacebookUtils.logInWithReadPermissionsInBackground(getActivity(), permissions, new LogInCallback() {
+                        @Override
+                        public void done(ParseUser user, ParseException err) {
+                            if (err == null) {
+                                if (user == null) {
+                                    Log.d("CANCEL", "The user cancelled the Facebook login.");
+                                    clearAndLogout();
+                                } else if (user.isNew()) {
+                                    Log.d("SIGN IN", "User signed up and logged in through Facebook!");
+                                    getUserDetailsFromFB(RequestType.NEW);
+                                    login();
+                                } else {
+                                    Log.d("LOGGED IN", "User logged in through Facebook!");
+                                    getUserDetailsFromParse();
+                                    getUserDetailsFromFB(RequestType.UPDATE);
+                                    login();
+                                }
+                            }
+                            if (err != null) {
+                                clearAndLogout();
+                                err.printStackTrace();
+                            }
                         }
-                        if (err != null) {
-                            err.printStackTrace();
-                        }
+                    });
+                } else {
+                    if (parseUser != null
+                            && ParseFacebookUtils.isLinked(parseUser)
+                            &&  Preferences.readBoolean(getContext(), Preferences.User.LOG_IN_STATUS)) {
+                        ParseUser.logOutInBackground(new LogOutCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e != null) {
+                                    e.printStackTrace();
+                                } else {
+                                    clearAndLogout();
+                                }
+                            }
+                        });
                     }
-                });
+                }
             }
         });
     }
@@ -267,8 +315,8 @@ public class LoginFragment extends DialogFragment {
                                 }
                             }
 
-                            btnLogin.setVisibility(View.INVISIBLE);
-                            btnLogin.setEnabled(false);
+//                            btnLogin.setVisibility(View.INVISIBLE);
+//                            btnLogin.setEnabled(false);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -315,6 +363,7 @@ public class LoginFragment extends DialogFragment {
         //     coverPicture = new ParseFile(fileName + "_cover.jpg", data);
         // }
         if (requestType == RequestType.NEW) {
+            parseUser.put("favTrips", new ArrayList<String>());
             saveNewParseUser(parseUser, profilePicture, coverPicture);
         } else {
             updateExistingParseUser(parseUser, profilePicture, coverPicture);
@@ -399,8 +448,8 @@ public class LoginFragment extends DialogFragment {
         tvName.setText(parseUser.getUsername());
         Toast.makeText(getActivity(), "Welcome back " + tvName.getText().toString(), Toast.LENGTH_SHORT).show();
         getUserDetailsFromFB(RequestType.UPDATE);
-        btnLogin.setVisibility(View.INVISIBLE);
-        btnLogin.setEnabled(false);
+//        btnLogin.setVisibility(View.INVISIBLE);
+//        btnLogin.setEnabled(false);
     }
 
     enum RequestType {

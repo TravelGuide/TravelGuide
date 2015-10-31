@@ -6,6 +6,7 @@
     <string name="action_done">Done</string>
     <string name="new_travel">New Travel</string>
     <string name="label_login_with_facebook">Login with Facebook</string>
+    <string name="label_logout">Logout</string>
     <string name="new_trip">New Trip</string>
     <string name="hint_destination">Destination</string>
     <string name="hint_plan_name">Plan Name … </string>
