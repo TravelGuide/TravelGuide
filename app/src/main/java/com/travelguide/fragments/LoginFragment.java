@@ -150,7 +150,10 @@ public class LoginFragment extends DialogFragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void login() {
+    private void login(RequestType requestType) {
+        if (requestType == RequestType.UPDATE)
+            getUserDetailsFromParse();
+        getUserDetailsFromFB(requestType);
         Preferences.writeBoolean(getContext(), Preferences.User.LOG_IN_STATUS, true);
         btnLogin.setText(R.string.label_logout);
         if (mLoginLogoutListener != null) {
@@ -158,22 +161,49 @@ public class LoginFragment extends DialogFragment {
         }
     }
 
-    private void clearAndLogout() {
+    public void logout(ParseUser parseUser, final Context context, final boolean clearViews) {
+        if (parseUser != null
+                && ParseFacebookUtils.isLinked(parseUser)
+                &&  Preferences.readBoolean(context, Preferences.User.LOG_IN_STATUS)) {
+            ParseUser.logOutInBackground(new LogOutCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        e.printStackTrace();
+                    } else {
+                        String userName = Preferences.readString(context, Preferences.User.NAME);
+                        clearViewsAndPrefs(context, clearViews);
+                        Toast.makeText(context, "User " + userName + " logged out!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
+    private void clearViewsAndPrefs(Context context, boolean clearViews) {
+        if (clearViews)
+            clearViews();
         parseUser = null;
+        Preferences.writeString(context, Preferences.User.USER_OBJECT_ID, Preferences.DEF_VALUE);
+        Preferences.writeString(context, Preferences.User.PROFILE_PIC_URL, Preferences.DEF_VALUE);
+        Preferences.writeString(context, Preferences.User.COVER_PIC_URL, Preferences.DEF_VALUE);
+        Preferences.writeString(context, Preferences.User.NAME, Preferences.DEF_VALUE);
+        Preferences.writeString(context, Preferences.User.EMAIL, Preferences.DEF_VALUE);
+        Preferences.writeBoolean(context, Preferences.User.LOG_IN_STATUS, false);
+        if (mLoginLogoutListener == null) {
+            attachListener(context);
+        }
+        if (mLoginLogoutListener != null) {
+            mLoginLogoutListener.onLoginOrLogout(false);
+        }
+    }
+
+    private void clearViews() {
         tvName.setText("");
         tvEmail.setText("");
         ivCoverPic.setImageResource(R.color.primary);
         ivProfilePic.setImageResource(R.color.accent);
         btnLogin.setText(R.string.label_login_with_facebook);
-        Preferences.writeString(getContext(), Preferences.User.USER_OBJECT_ID, Preferences.DEF_VALUE);
-        Preferences.writeString(getContext(), Preferences.User.PROFILE_PIC_URL, Preferences.DEF_VALUE);
-        Preferences.writeString(getContext(), Preferences.User.COVER_PIC_URL, Preferences.DEF_VALUE);
-        Preferences.writeString(getContext(), Preferences.User.NAME, Preferences.DEF_VALUE);
-        Preferences.writeString(getContext(), Preferences.User.EMAIL, Preferences.DEF_VALUE);
-        Preferences.writeBoolean(getContext(), Preferences.User.LOG_IN_STATUS, false);
-        if (mLoginLogoutListener != null) {
-            mLoginLogoutListener.onLoginOrLogout(false);
-        }
     }
 
     private void setLoginButtonOnClickListener() {
@@ -187,39 +217,23 @@ public class LoginFragment extends DialogFragment {
                             if (err == null) {
                                 if (user == null) {
                                     Log.d("CANCEL", "The user cancelled the Facebook login.");
-                                    clearAndLogout();
+                                    clearViewsAndPrefs(getContext(), true);
                                 } else if (user.isNew()) {
                                     Log.d("SIGN IN", "User signed up and logged in through Facebook!");
-                                    getUserDetailsFromFB(RequestType.NEW);
-                                    login();
+                                    login(RequestType.NEW);
                                 } else {
                                     Log.d("LOGGED IN", "User logged in through Facebook!");
-                                    getUserDetailsFromParse();
-                                    getUserDetailsFromFB(RequestType.UPDATE);
-                                    login();
+                                    login(RequestType.UPDATE);
                                 }
                             }
                             if (err != null) {
-                                clearAndLogout();
+                                clearViewsAndPrefs(getContext(), true);
                                 err.printStackTrace();
                             }
                         }
                     });
                 } else {
-                    if (parseUser != null
-                            && ParseFacebookUtils.isLinked(parseUser)
-                            &&  Preferences.readBoolean(getContext(), Preferences.User.LOG_IN_STATUS)) {
-                        ParseUser.logOutInBackground(new LogOutCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e != null) {
-                                    e.printStackTrace();
-                                } else {
-                                    clearAndLogout();
-                                }
-                            }
-                        });
-                    }
+                    logout(parseUser, getContext(), true);
                 }
             }
         });
@@ -469,15 +483,19 @@ public class LoginFragment extends DialogFragment {
         NEW, UPDATE;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void attachListener(Context context) {
         try {
             mLoginLogoutListener = (OnLoginLogoutListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnTripPlanListener");
+                    + " must implement OnLoginLogoutListener");
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        attachListener(context);
     }
 
     @Override
