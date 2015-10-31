@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -45,6 +46,7 @@ import com.travelguide.fragments.ProfileFragment;
 import com.travelguide.fragments.SearchListFragment;
 import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
+import com.travelguide.helpers.Preferences;
 import com.travelguide.listener.OnTripPlanListener;
 
 public class TravelGuideActivity extends AppCompatActivity implements
@@ -53,6 +55,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         ProfileFragment.OnFragmentInteractionListener {
 
     private DrawerLayout mDrawer;
+    private NavigationView nvDrawer;
     private Toolbar toolbar;
     private ActionBarDrawerToggle drawerToggle;
     private ImageView ivProfile;
@@ -68,6 +71,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
     private String group;
     private String season;
 
+    private boolean loginStatus = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +87,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         drawerToggle = setupDrawerToggle();
 
         // Find our drawer view
-        NavigationView nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
         View header = LayoutInflater.from(this).inflate(R.layout.nav_header, null);
         nvDrawer.addHeaderView(header);
         // Setup drawer view
@@ -104,13 +108,27 @@ public class TravelGuideActivity extends AppCompatActivity implements
         city = "Any";
         group = "Any";
         season = "Any";
+
+        MenuItem item = nvDrawer.getMenu().findItem(R.id.login_fragment);
+        if (Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS))
+            item.setTitle("LOGOUT");
+        else
+            item.setTitle("LOGIN");
+        loginStatus = Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS);
+
         setContentFragment(new TripPlanListFragment());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setHeaderProfileInfo();
+        MenuItem item = nvDrawer.getMenu().findItem(R.id.login_fragment);
+        if (Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS))
+            item.setTitle("LOGOUT");
+        else
+            item.setTitle("LOGIN");
+        loginStatus = Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS);
+        setHeaderProfileInfo(true);
     }
 
     @Override
@@ -133,7 +151,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                setHeaderProfileInfo();
+                setHeaderProfileInfo(false);
             }
         };
     }
@@ -159,7 +177,30 @@ public class TravelGuideActivity extends AppCompatActivity implements
     public void selectDrawerItem(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.login_fragment:
-                new LoginFragment().show(getSupportFragmentManager(), "Login_with_Facebook");
+                // new LoginFragment().show(getSupportFragmentManager(), "Login_with_Facebook");
+                // Login status also available in shared preference, but doing it using listener here.
+                // This is useful for later comparison.
+                LoginFragment.newInstance(new LoginFragment.OnLoginLogoutListener() {
+                    @Override
+                    public void onLoginOrLogout(boolean status) {
+                        loginStatus = status;
+                        MenuItem item = nvDrawer.getMenu().findItem(R.id.login_fragment);
+                        if (loginStatus)
+                            item.setTitle("LOGOUT");
+                        else
+                            item.setTitle("LOGIN");
+                    }
+
+                    @Override
+                    public int describeContents() {
+                        return 0;
+                    }
+
+                    @Override
+                    public void writeToParcel(Parcel dest, int flags) {
+
+                    }
+                }).show(getSupportFragmentManager(), "Login_with_Facebook");
                 break;
             case R.id.profile_fragment:
                 setContentFragment(new ProfileFragment());
@@ -365,24 +406,29 @@ public class TravelGuideActivity extends AppCompatActivity implements
         }
     }
 
-    private void setHeaderProfileInfo() {
-        final ParseUser currentUser = ParseUser.getCurrentUser();
+    private void setHeaderProfileInfo(boolean force) {
+        if (force
+                || loginStatus != Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS)
+                || (loginStatus && TextUtils.isEmpty(tvProfileUsername.getText()))
+                || (!loginStatus && !TextUtils.isEmpty(tvProfileUsername.getText()))) {
+            final ParseUser currentUser = ParseUser.getCurrentUser();
+            if (currentUser != null) {
+                try {
+                    ParseFile parseFile = currentUser.getParseFile("profileThumb");
+                    byte[] data = parseFile.getData();
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                    ivProfile.setImageBitmap(bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-        if (currentUser != null) {
-            try {
-                ParseFile parseFile = currentUser.getParseFile("profileThumb");
-                byte[] data = parseFile.getData();
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                ivProfile.setImageBitmap(bitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
+                tvProfileUsername.setText(currentUser.getUsername());
+                tvProfileEmail.setText(currentUser.getEmail());
+            } else {
+                ivProfile.setImageResource(R.drawable.background_profile);
+                tvProfileUsername.setText("");
+                tvProfileEmail.setText("");
             }
-
-            tvProfileUsername.setText(currentUser.getUsername());
-            tvProfileEmail.setText(currentUser.getEmail());
-        } else {
-            tvProfileUsername.setText("");
-            tvProfileEmail.setText("");
         }
     }
 }

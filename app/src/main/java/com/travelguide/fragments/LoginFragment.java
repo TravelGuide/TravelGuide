@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -70,6 +71,8 @@ public class LoginFragment extends DialogFragment {
     private String profilePicUrl = null;
     private String coverPicUrl = null;
 
+    private OnLoginLogoutListener listener;
+
     public static final List<String> permissions = new ArrayList<String>() {{
         add("public_profile");
         add("email");
@@ -79,9 +82,22 @@ public class LoginFragment extends DialogFragment {
 
     }
 
+    public static LoginFragment newInstance(OnLoginLogoutListener listener) {
+        LoginFragment loginFragment = new LoginFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("listener", listener);
+        loginFragment.setArguments(args);
+        return loginFragment;
+    }
+
+    public interface OnLoginLogoutListener extends Parcelable {
+        public void onLoginOrLogout(boolean status);
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        listener = getArguments().getParcelable("listener");
         //setStyle(DialogFragment.STYLE_NORMAL, R.style.dialogFragment);
     }
 
@@ -146,6 +162,9 @@ public class LoginFragment extends DialogFragment {
     private void login() {
         Preferences.writeBoolean(getContext(), Preferences.User.LOG_IN_STATUS, true);
         btnLogin.setText(R.string.label_logout);
+        if (listener != null) {
+            listener.onLoginOrLogout(true);
+        }
     }
 
     private void clearAndLogout() {
@@ -161,6 +180,9 @@ public class LoginFragment extends DialogFragment {
         Preferences.writeString(getContext(), Preferences.User.NAME, Preferences.DEF_VALUE);
         Preferences.writeString(getContext(), Preferences.User.EMAIL, Preferences.DEF_VALUE);
         Preferences.writeBoolean(getContext(), Preferences.User.LOG_IN_STATUS, false);
+        if (listener != null) {
+            listener.onLoginOrLogout(false);
+        }
     }
 
     private void setLoginButtonOnClickListener() {
