@@ -420,12 +420,18 @@ public class TravelGuideActivity extends AppCompatActivity implements
         }
     }
 
+    private void showOrHideProfileButton(boolean show) {
+        MenuItem menuItem = nvDrawer.getMenu().findItem(R.id.profile_fragment);
+        menuItem.setVisible(show);
+    }
+
     private void setMenuItemLoginTitle() {
         MenuItem item = nvDrawer.getMenu().findItem(R.id.login_fragment);
         if (mLoginStatus)
             item.setTitle(R.string.label_logout);
         else
             item.setTitle(R.string.action_login);
+        showOrHideProfileButton(mLoginStatus);
     }
 
     @Override
