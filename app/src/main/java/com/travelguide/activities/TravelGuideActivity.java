@@ -3,6 +3,7 @@ package com.travelguide.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -47,6 +48,8 @@ import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
 import com.travelguide.helpers.Preferences;
 import com.travelguide.listener.OnTripPlanListener;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class TravelGuideActivity extends AppCompatActivity implements
         OnTripPlanListener,
@@ -112,7 +115,20 @@ public class TravelGuideActivity extends AppCompatActivity implements
         mLoginStatus = Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS);
         setMenuItemLoginTitle();
 
+        // To set a global custom font for the app, add font.ttf under assets
+        // and uncomment following call.
+        // CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+        //                 .setDefaultFontPath("fonts/mistral.ttf")
+        //                 .setFontAttrId(R.attr.fontPath)
+        //                 .build()
+        // );
+
         setContentFragment(new TripPlanListFragment());
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     @Override
@@ -169,7 +185,10 @@ public class TravelGuideActivity extends AppCompatActivity implements
     public void selectDrawerItem(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.login_fragment:
-                new LoginFragment().show(getSupportFragmentManager(), "Login_with_Facebook");
+                if (!mLoginStatus)
+                    new LoginFragment().show(getSupportFragmentManager(), "Login_with_Facebook");
+                else
+                    new LoginFragment().logout(ParseUser.getCurrentUser(), this);
                 break;
             case R.id.profile_fragment:
                 setContentFragment(new ProfileFragment());

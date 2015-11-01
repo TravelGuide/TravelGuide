@@ -1,16 +1,13 @@
-
-
 package com.travelguide.fragments;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -19,9 +16,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -38,6 +35,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.travelguide.R;
+import com.travelguide.helpers.DeviceDimensionsHelper;
 import com.travelguide.helpers.NetworkAvailabilityCheck;
 import com.travelguide.helpers.Preferences;
 
@@ -47,8 +45,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 /**
  * @author kprav
  *
@@ -57,10 +53,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class LoginFragment extends DialogFragment {
 
-    private CircleImageView ivProfilePic;
-    private ImageView ivCoverPic;
-    private TextView tvName;
-    private TextView tvEmail;
     private Button btnLogin;
 
     private ParseUser parseUser;
@@ -69,7 +61,11 @@ public class LoginFragment extends DialogFragment {
     private String profilePicUrl = null;
     private String coverPicUrl = null;
 
+    private ImageView ivProfilePic;
+    private ImageView ivCoverPic;
+
     private OnLoginLogoutListener mLoginLogoutListener;
+    private boolean saveOrUpdate = false;
 
     public static final List<String> permissions = new ArrayList<String>() {{
         add("public_profile");
@@ -94,40 +90,54 @@ public class LoginFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
-        ivProfilePic = (CircleImageView) view.findViewById(R.id.ivProfilePic);
-        tvName = (TextView) view.findViewById(R.id.tvName);
-        tvEmail = (TextView) view.findViewById(R.id.tvEmail);
-        btnLogin = (Button) view.findViewById(R.id.btnLogin);
+        ivProfilePic = (ImageView) view.findViewById(R.id.ivProfilePic);
         ivCoverPic = (ImageView) view.findViewById(R.id.ivCoverPic);
+        btnLogin = (Button) view.findViewById(R.id.btnLogin);
 
         if (Preferences.readBoolean(getContext(), Preferences.User.LOG_IN_STATUS)) {
             btnLogin.setText(R.string.label_logout);
         }
 
         setHasOptionsMenu(false);
-        //createSharedPreferences();
-
-        getDialog().setTitle("Login with Facebook");
-        final Drawable d = new ColorDrawable(Color.WHITE);
-        d.setAlpha(225);
-        getDialog().getWindow().setBackgroundDrawable(d);
 
         btnLogin.setEnabled(true);
         btnLogin.setVisibility(View.VISIBLE);
         setLoginButtonOnClickListener();
 
-        if (ParseUser.getCurrentUser() != null) {
-            ParseFacebookUtils.linkWithReadPermissionsInBackground(ParseUser.getCurrentUser(), getActivity(), permissions, new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    getUserDetailsFromParse();
-                    Preferences.writeString(getContext(),
-                            Preferences.User.USER_OBJECT_ID, parseUser.getObjectId());
-                }
-            });
-        }
+        // To refresh user from parse followed by refreshing user from FB. Not used currently, but left for possible future use
+        // if (ParseUser.getCurrentUser() != null) {
+        //     ParseFacebookUtils.linkWithReadPermissionsInBackground(ParseUser.getCurrentUser(), getActivity(), permissions, new SaveCallback() {
+        //         @Override
+        //         public void done(ParseException e) {
+        //             getUserDetailsFromParse();
+        //             Preferences.writeString(getContext(),
+        //                     Preferences.User.USER_OBJECT_ID, parseUser.getObjectId());
+        //         }
+        //     });
+        // }
 
         return view;
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+
+        // Request a dialog without the title
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        // Make dialog background translucent, leaving it opaque for now
+        // final Drawable d = new ColorDrawable(Color.WHITE);
+        // d.setAlpha(225);
+        // dialog.getWindow().setBackgroundDrawable(d);
+
+        // Set dialog size
+        int layoutWidth = DeviceDimensionsHelper.getDisplayWidth(getActivity());
+        int layoutHeight = DeviceDimensionsHelper.getDisplayHeight(getActivity());
+        dialog.getWindow().setLayout((6 * layoutWidth) / 7, (4 * layoutHeight) / 5);
+
+        return dialog;
     }
 
     @Override
@@ -141,37 +151,51 @@ public class LoginFragment extends DialogFragment {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getFragmentManager().popBackStack();
-                ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void login() {
-        Preferences.writeBoolean(getContext(), Preferences.User.LOG_IN_STATUS, true);
-        btnLogin.setText(R.string.label_logout);
-        if (mLoginLogoutListener != null) {
-            mLoginLogoutListener.onLoginOrLogout(true);
+    private void login(RequestType requestType) {
+        if (requestType == RequestType.UPDATE)
+            getUserDetailsFromParse();
+        if (requestType == RequestType.NEW)
+            getUserDetailsFromFB(requestType);
+    }
+
+    public void logout(ParseUser parseUser, final Context context) {
+        if (parseUser != null
+                && ParseFacebookUtils.isLinked(parseUser)
+                && Preferences.readBoolean(context, Preferences.User.LOG_IN_STATUS)) {
+            ParseUser.logOutInBackground(new LogOutCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        e.printStackTrace();
+                    } else {
+                        String userName = Preferences.readString(context, Preferences.User.NAME);
+                        clearPrefs(context);
+                        Toast.makeText(context, "User " + userName + " logged out!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
     }
 
-    private void clearAndLogout() {
+    private void clearPrefs(Context context) {
         parseUser = null;
-        tvName.setText("");
-        tvEmail.setText("");
-        ivCoverPic.setImageResource(R.color.primary);
-        ivProfilePic.setImageResource(R.color.accent);
-        btnLogin.setText(R.string.label_login_with_facebook);
-        Preferences.writeString(getContext(), Preferences.User.USER_OBJECT_ID, Preferences.DEF_VALUE);
-        Preferences.writeString(getContext(), Preferences.User.PROFILE_PIC_URL, Preferences.DEF_VALUE);
-        Preferences.writeString(getContext(), Preferences.User.COVER_PIC_URL, Preferences.DEF_VALUE);
-        Preferences.writeString(getContext(), Preferences.User.NAME, Preferences.DEF_VALUE);
-        Preferences.writeString(getContext(), Preferences.User.EMAIL, Preferences.DEF_VALUE);
-        Preferences.writeBoolean(getContext(), Preferences.User.LOG_IN_STATUS, false);
-        if (mLoginLogoutListener != null) {
-            mLoginLogoutListener.onLoginOrLogout(false);
+        Preferences.writeString(context, Preferences.User.USER_OBJECT_ID, Preferences.DEF_VALUE);
+        Preferences.writeString(context, Preferences.User.PROFILE_PIC_URL, Preferences.DEF_VALUE);
+        Preferences.writeString(context, Preferences.User.COVER_PIC_URL, Preferences.DEF_VALUE);
+        Preferences.writeString(context, Preferences.User.NAME, Preferences.DEF_VALUE);
+        Preferences.writeString(context, Preferences.User.EMAIL, Preferences.DEF_VALUE);
+        Preferences.writeBoolean(context, Preferences.User.LOG_IN_STATUS, false);
+        if (mLoginLogoutListener == null) {
+            attachListener(context);
         }
+        dismissDialog(context);
     }
 
     private void setLoginButtonOnClickListener() {
@@ -185,39 +209,23 @@ public class LoginFragment extends DialogFragment {
                             if (err == null) {
                                 if (user == null) {
                                     Log.d("CANCEL", "The user cancelled the Facebook login.");
-                                    clearAndLogout();
+                                    clearPrefs(getContext());
                                 } else if (user.isNew()) {
                                     Log.d("SIGN IN", "User signed up and logged in through Facebook!");
-                                    getUserDetailsFromFB(RequestType.NEW);
-                                    login();
+                                    login(RequestType.NEW);
                                 } else {
                                     Log.d("LOGGED IN", "User logged in through Facebook!");
-                                    getUserDetailsFromParse();
-                                    getUserDetailsFromFB(RequestType.UPDATE);
-                                    login();
+                                    login(RequestType.UPDATE);
                                 }
                             }
                             if (err != null) {
-                                clearAndLogout();
+                                clearPrefs(getContext());
                                 err.printStackTrace();
                             }
                         }
                     });
                 } else {
-                    if (parseUser != null
-                            && ParseFacebookUtils.isLinked(parseUser)
-                            &&  Preferences.readBoolean(getContext(), Preferences.User.LOG_IN_STATUS)) {
-                        ParseUser.logOutInBackground(new LogOutCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e != null) {
-                                    e.printStackTrace();
-                                } else {
-                                    clearAndLogout();
-                                }
-                            }
-                        });
-                    }
+                    logout(parseUser, getContext());
                 }
             }
         });
@@ -243,23 +251,23 @@ public class LoginFragment extends DialogFragment {
                             Log.d("response", response.toString());
 
                             boolean updateCoverPicUrl = true;
+                            saveOrUpdate = true;
 
                             name = response.getJSONObject().getString("name");
-                            tvName.setText(name);
                             Preferences.writeString(getContext(), Preferences.User.NAME, name);
 
                             if (response.getJSONObject().optString("email") != null) {
                                 email = response.getJSONObject().getString("email");
-                                tvEmail.setText(email);
                                 Preferences.writeString(getContext(), Preferences.User.EMAIL, email);
                             } else {
                                 email = "";
                             }
 
                             profilePicUrl = response.getJSONObject().getJSONObject("picture").getJSONObject("data").getString("url");
-                            if (response.getJSONObject().optJSONObject("cover") != null)
+
+                            if (response.getJSONObject().optJSONObject("cover") != null) {
                                 coverPicUrl = response.getJSONObject().getJSONObject("cover").getString("source");
-                            else
+                            } else
                                 coverPicUrl = null;
 
                             if (!Preferences.readString(getContext(), Preferences.User.PROFILE_PIC_URL).equals(profilePicUrl)) {
@@ -267,17 +275,13 @@ public class LoginFragment extends DialogFragment {
 //                                Picasso.with(getContext()).load(profilePicUrl).into(ivProfilePic, new Callback() {
 //                                    @Override
 //                                    public void onSuccess() {
-//                                        Preferences.writeString(getContext(),
-//                                                Preferences.User.PROFILE_PIC_URL, profilePicUrl);
+//                                        Preferences.writeString(getContext(), Preferences.User.PROFILE_PIC_URL, profilePicUrl);
 //                                        if (coverPicUrl != null) {
-//
 //                                            if (!Preferences.readString(getContext(), Preferences.User.COVER_PIC_URL).equals(coverPicUrl)) {
-//                                                // Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic, new Callback() {
-//                                                Picasso.with(getContext()).load(coverPicUrl).resize(getView().getWidth(), 0).into(ivCoverPic, new Callback() {
+//                                                Picasso.with(getContext()).load(coverPicUrl).into(ivCoverPic, new Callback() {
 //                                                    @Override
 //                                                    public void onSuccess() {
-//                                                        Preferences.writeString(getContext(),
-//                                                                Preferences.User.COVER_PIC_URL, coverPicUrl);
+//                                                        Preferences.writeString(getContext(), Preferences.User.COVER_PIC_URL, coverPicUrl);
 //                                                        saveOrUpdateParseUser(requestType);
 //                                                    }
 //
@@ -299,35 +303,40 @@ public class LoginFragment extends DialogFragment {
 //                                        // saveOrUpdateParseUser(requestType);
 //                                    }
 //                                });
+                            } else {
+                                saveOrUpdate = false;
                             }
 
                             if (updateCoverPicUrl) {
                                 updateCoverPicUrl = false;
                                 if (coverPicUrl != null) {
                                     if (!Preferences.readString(getContext(), Preferences.User.COVER_PIC_URL).equals(coverPicUrl)) {
-                                        // Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic, new Callback() {
+                                        saveOrUpdate = true;
 //                                        Picasso.with(getContext()).load(coverPicUrl).resize(getView().getWidth(), 0).into(ivCoverPic, new Callback() {
 //                                            @Override
 //                                            public void onSuccess() {
-//                                                Preferences.writeString(getContext(),
-//                                                        Preferences.User.COVER_PIC_URL, coverPicUrl);
+//                                                Preferences.writeString(getContext(), Preferences.User.COVER_PIC_URL, coverPicUrl);
 //                                                saveOrUpdateParseUser(requestType);
 //                                            }
-//
 //                                            @Override
 //                                            public void onError() {
 //                                                saveOrUpdateParseUser(requestType);
 //                                            }
 //                                        });
+                                    } else {
+                                        saveOrUpdate = false;
                                     }
                                 } else {
+                                    saveOrUpdate = true;
                                     ivCoverPic.setImageResource(android.R.color.transparent);
                                     saveOrUpdateParseUser(requestType);
                                 }
                             }
 
-                            // btnLogin.setVisibility(View.INVISIBLE);
-                            // btnLogin.setEnabled(false);
+                            Preferences.writeBoolean(getContext(), Preferences.User.LOG_IN_STATUS, true);
+                            if (!saveOrUpdate) {
+                                dismissDialog(getContext());
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -403,6 +412,7 @@ public class LoginFragment extends DialogFragment {
                     @Override
                     public void done(ParseException e) {
                         Toast.makeText(getActivity(), "New user: " + name + " Signed up", Toast.LENGTH_SHORT).show();
+                        dismissDialog(getContext());
                     }
                 });
             }
@@ -421,15 +431,16 @@ public class LoginFragment extends DialogFragment {
                     if (coverPicture != null)
                         user.put("coverPic", coverPicture);
                     else {
-                        Toast.makeText(getActivity(), "NULL & REMOVED", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getActivity(), "NULL & REMOVED", Toast.LENGTH_SHORT).show();
                         user.remove("coverPic");
                     }
                     user.saveInBackground();
-                    Toast.makeText(getActivity(), "Existing User: " + name + " Updated", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getActivity(), "Existing User: " + name + " Updated", Toast.LENGTH_SHORT).show();
                 }
                 if (e != null) {
                     e.printStackTrace();
                 }
+                dismissDialog(getContext());
             }
         });
     }
@@ -455,27 +466,27 @@ public class LoginFragment extends DialogFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        tvEmail.setText(parseUser.getEmail());
-        tvName.setText(parseUser.getUsername());
-        Toast.makeText(getActivity(), "Welcome back " + tvName.getText().toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Welcome back " + parseUser.getUsername(), Toast.LENGTH_SHORT).show();
         getUserDetailsFromFB(RequestType.UPDATE);
-        // btnLogin.setVisibility(View.INVISIBLE);
-        // btnLogin.setEnabled(false);
     }
 
     enum RequestType {
         NEW, UPDATE;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void attachListener(Context context) {
         try {
             mLoginLogoutListener = (OnLoginLogoutListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnTripPlanListener");
+                    + " must implement OnLoginLogoutListener");
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        attachListener(context);
     }
 
     @Override
@@ -483,4 +494,12 @@ public class LoginFragment extends DialogFragment {
         super.onDetach();
         mLoginLogoutListener = null;
     }
+
+    private void dismissDialog(Context context) {
+        if (mLoginLogoutListener != null)
+            mLoginLogoutListener.onLoginOrLogout(Preferences.readBoolean(context, Preferences.User.LOG_IN_STATUS));
+        if (getDialog() != null)
+            dismiss();
+    }
+
 }

@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,18 +17,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.bumptech.glide.Glide;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseQuery;
+import com.parse.ParseObject;
 import com.travelguide.R;
 import com.travelguide.adapters.TripPlanAdapter;
-import com.travelguide.decorations.VerticalSpaceItemDecoration;
+import com.travelguide.adapters.TripPlanPagerAdapter;
 import com.travelguide.helpers.DeviceDimensionsHelper;
 import com.travelguide.helpers.ItemClickSupport;
 import com.travelguide.models.TripPlan;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -44,6 +42,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment {
     private static final String TAG = ProfileFragment.class.getSimpleName();
 
+    private View view;
+
     private CircleImageView ivProfilePic;
     private ImageView ivCoverPic;
     private TextView tvName;
@@ -58,8 +58,10 @@ public class ProfileFragment extends Fragment {
     private SharedPreferences userInfo;
 
     private OnFragmentInteractionListener mListener;
-    private TripPlanAdapter mTripPlanAdapter;
-    private List<TripPlan> mTripPlans;
+
+    private ViewPager vpPager;
+    private TripPlanPagerAdapter viewPagerAdapter;
+    private PagerSlidingTabStrip tabsStrip;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,7 +78,7 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        view = inflater.inflate(R.layout.fragment_profile, container, false);
         ivCoverPic = (ImageView) view.findViewById(R.id.ivCoverPicInProfile);
         ivProfilePic = (CircleImageView) view.findViewById(R.id.ivProfilePicInProfile);
         tvName = (TextView) view.findViewById(R.id.tvNameInProfile);
@@ -84,35 +86,36 @@ public class ProfileFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-
         tvName.setText(name);
         tvEmail.setText(email);
         Glide.with(getContext()).load(profilePicUrl).into(ivProfilePic);
         Glide.with(getContext()).load(coverPicUrl).override(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic);
 
-        RecyclerView rvTripPlans = (RecyclerView) view.findViewById(R.id.rvTripPlansInProfile);
-        mTripPlans = new ArrayList<>();
-        mTripPlanAdapter = new TripPlanAdapter(mTripPlans, getContext());
-        // Attach the adapter to the recyclerview to populate items
-        rvTripPlans.setAdapter(mTripPlanAdapter);
-        // Set layout manager to position the items
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        rvTripPlans.setLayoutManager(layoutManager);
-
-        RecyclerView.ItemDecoration itemDecoration = new VerticalSpaceItemDecoration(20, true, true);
-        rvTripPlans.addItemDecoration(itemDecoration);
-
-        ItemClickSupport.addTo(rvTripPlans).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                String tripPlanObjectId = mTripPlanAdapter.get(position).getObjectId();
-                if (mListener != null) {
-                    mListener.onTripPlanItemSelected(tripPlanObjectId);
-                }
-            }
-        });
+        loadFragments(view);
 
         return view;
+    }
+
+    private void loadFragments(View view) {
+        // Get the viewpager and setup a PageChangeListener
+        vpPager = (ViewPager) view.findViewById(R.id.viewpager);
+        // Get the view pager adapter for the pager
+        viewPagerAdapter = new TripPlanPagerAdapter(getActivity().getSupportFragmentManager());
+        vpPager.setAdapter(viewPagerAdapter);
+        // Find the sliding tabstrips
+        tabsStrip = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
+        // Attach the tabstrip to the view pager
+        tabsStrip.setViewPager(vpPager);
+        setupPageChangeListener();
+    }
+
+    private void setupPageChangeListener() {
+        tabsStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(final int position) {
+                Log.d(TAG, "PageChanged");
+            }
+        });
     }
 
     @Override
@@ -136,34 +139,8 @@ public class ProfileFragment extends Fragment {
         coverPicUrl = userInfo.getString("coverPicUrl", "missing");
     }
 
-    private void populateTripPlanList() {
-        // Construct query to execute
-        ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
-        query.whereEqualTo("createdUserId", userObjectId);
-        query.findInBackground(new FindCallback<TripPlan>() {
-            @Override
-            public void done(List<TripPlan> tripPlans, ParseException e) {
-                if (e == null) {
-                    mTripPlans.clear();
-                    mTripPlans.addAll(tripPlans);
-                    mTripPlanAdapter.notifyDataSetChanged();
-                    savingOnDatabase(tripPlans);
-                } else {
-                    Log.d(TAG, "Error: " + e.getMessage());
-                }
-            }
-        });
-    }
-
     private void savingOnDatabase(List<TripPlan> tripPlans) {
-        for (TripPlan tp : tripPlans)
-            tp.pinInBackground();
-        //TODO Investigate why "ParseObject.saveAll(tripPlans);" not working.
-//        try {
-//            ParseObject.saveAll(tripPlans);
-//        } catch (ParseException e1) {
-//            e1.printStackTrace();
-//        }
+        ParseObject.pinAllInBackground(tripPlans);
     }
 
     public interface OnFragmentInteractionListener {
@@ -173,7 +150,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        populateTripPlanList();
+        if (view != null)
+            loadFragments(view);
     }
 
     @Override
@@ -201,5 +179,17 @@ public class ProfileFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void addItemClickSupport(RecyclerView rvTripPlans, final TripPlanAdapter mTripPlanAdapter) {
+        ItemClickSupport.addTo(rvTripPlans).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                String tripPlanObjectId = mTripPlanAdapter.get(position).getObjectId();
+                if (mListener != null) {
+                    mListener.onTripPlanItemSelected(tripPlanObjectId);
+                }
+            }
+        });
     }
 }
