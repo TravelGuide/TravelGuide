@@ -334,6 +334,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
 
     private void setContentFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
         fragmentTransaction.replace(R.id.fragment_frame, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();

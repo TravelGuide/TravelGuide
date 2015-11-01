@@ -12,8 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.parse.FindCallback;
@@ -46,6 +48,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     private RecyclerView rvDayDetails;
     private RecyclerView rvPlaceDetails;
     private FloatingActionsMenu floatingActionsMenu;
+    private ImageView ivPlace;
 
     private String mTripPLanObjectId;
     private String mSelectedDayObjectId;
@@ -86,6 +89,8 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trip_plan_details, container, false);
         setHasOptionsMenu(true);
+
+        ivPlace = (ImageView) view.findViewById(R.id.ivPlace);
 
         floatingActionsMenu = (FloatingActionsMenu) view.findViewById(R.id.multiple_actions);
 
@@ -282,6 +287,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
             public void done(TripPlan tripPlan, ParseException e) {
                 if (e == null) {
                     setTitle(tripPlan.getPlanName());
+                    Glide.with(getContext()).load(tripPlan.getCityImageUrl()).into(ivPlace);
                 }
             }
         });
