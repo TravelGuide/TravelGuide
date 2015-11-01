@@ -91,19 +91,41 @@
 
     </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvTripPlansInProfile"
+    <View
+        android:id="@+id/separator_line"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/cvCardViewInProfile" />
-
-    <TextView
-        android:id="@+id/tvEmptyInProfile"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/no_data_available"
+        android:layout_height="1dp"
         android:layout_below="@id/cvCardViewInProfile"
-        android:visibility="gone" />
+        android:layout_marginBottom="4dp"
+        android:background="@color/divider" />
+
+    <com.astuetz.PagerSlidingTabStrip
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:textSize="14sp"
+        app:pstsShouldExpand="true"
+        app:pstsTextAllCaps="true"
+        android:textColor="@color/primary_text"
+        app:pstsDividerColor="@color/divider"
+        app:pstsIndicatorColor="@color/accent"
+        app:pstsUnderlineColor="@color/primary_light"
+        android:layout_below="@id/separator_line"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tabs"
+        android:background="@android:color/white"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
