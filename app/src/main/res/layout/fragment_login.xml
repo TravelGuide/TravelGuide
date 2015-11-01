@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -39,15 +38,18 @@
 
         <Button
             android:id="@+id/btnLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="230dp"
+            android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_marginBottom="24dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/log_in_with_facebook"
+            android:background="@color/blue"
+            android:drawableLeft="@drawable/fb_logo"
+            android:drawablePadding="-15dp"
+            android:drawableStart="@drawable/fb_logo"
             android:gravity="center"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:text="@string/log_in_facebook"
+            android:textAllCaps="false"
             android:textColor="@android:color/white" />
     </LinearLayout>
 
