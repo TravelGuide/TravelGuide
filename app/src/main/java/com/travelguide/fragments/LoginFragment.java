@@ -132,10 +132,10 @@ public class LoginFragment extends DialogFragment {
         // Request a dialog without the title
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        // Make dialog background translucent
-        final Drawable d = new ColorDrawable(Color.WHITE);
-        d.setAlpha(225);
-        dialog.getWindow().setBackgroundDrawable(d);
+        // Make dialog background translucent, leaving it opaque for now
+        // final Drawable d = new ColorDrawable(Color.WHITE);
+        // d.setAlpha(225);
+        // dialog.getWindow().setBackgroundDrawable(d);
 
         // Set dialog size
         int layoutWidth = DeviceDimensionsHelper.getDisplayWidth(getActivity());
