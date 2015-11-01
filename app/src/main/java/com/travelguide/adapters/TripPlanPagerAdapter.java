@@ -3,6 +3,7 @@ package com.travelguide.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.travelguide.fragments.FavoriteItemsFragment;
 import com.travelguide.fragments.ProfileItemsFragment;
 
 // Return the order of the fragments in the view pager
@@ -22,7 +23,7 @@ public class TripPlanPagerAdapter extends SmartFragmentStatePagerAdapter {
         if (position == 0) {
             fragment = new ProfileItemsFragment();
         } else if (position == 1) {
-            fragment = new ProfileItemsFragment();
+            fragment = new FavoriteItemsFragment();
         } else {
             return null;
         }
