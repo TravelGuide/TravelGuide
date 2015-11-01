@@ -42,15 +42,7 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
         final TripPlan tripPlan = mTripPlans.get(position);
 
         holder.tvPlanName.setText(tripPlan.getPlanName());
-        //holder.tvPlanName.setVisibility(View.INVISIBLE);//TODO Change color instead of disable
-
         holder.ivPlace.setImageResource(R.drawable.city_placeholder);
-
-//        Picasso.with(mContext)
-//                .load(tripPlan.getCityImageUrl())
-//                .placeholder(R.drawable.city_placeholder)
-//                .resize(0, 600)
-//                .into(target);
 
         Glide.with(mContext)
                 .load(tripPlan.getCityImageUrl())
@@ -67,7 +59,6 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
                     @Override
                     protected void setResource(GlideDrawable resource) {
                         holder.ivPlace.setImageDrawable(resource);
-                        //holder.tvPlanName.setVisibility(View.VISIBLE);
                     }
                 });
 
