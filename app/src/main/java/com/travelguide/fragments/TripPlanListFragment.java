@@ -42,7 +42,6 @@ public class TripPlanListFragment extends TripBaseFragment {
     private TextView tvEmpty;
     private RecyclerView rvTripPlans;
 
-    ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
     private boolean status = false;
 
     private SwipeRefreshLayout swipeContainer;
@@ -116,7 +115,6 @@ public class TripPlanListFragment extends TripBaseFragment {
                 // Make sure to call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
                 mTripPlans.clear();
-                mTripPlanAdapter.notifyDataSetChanged();
                 loadPlans(0);
             }
         });
@@ -131,8 +129,12 @@ public class TripPlanListFragment extends TripBaseFragment {
     public void onResume() {
         super.onResume();
         setTitle(getString(R.string.app_name));
-        progressDialog.show();
-        loadPlans(0);
+        if (!isVisible()) {
+            progressDialog.show();
+            loadPlans(0);
+        } else {
+            loadTripPlansFromDatabase();
+        }
     }
 
     @Override
@@ -159,8 +161,9 @@ public class TripPlanListFragment extends TripBaseFragment {
         mTripPlanAdapter.notifyDataSetChanged();
     }
 
-    private boolean loadTripPlansFromRemote() {
-        query.setLimit(3);
+    private boolean loadTripPlansFromRemote(int totalItemsCount) {
+        ParseQuery<TripPlan> query = getQuery();
+        query.setSkip(totalItemsCount);
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
             public void done(List<TripPlan> tripPlans, ParseException e) {
@@ -188,7 +191,7 @@ public class TripPlanListFragment extends TripBaseFragment {
     }
 
     private boolean loadTripPlansFromDatabase() {
-        query.setLimit(3);
+        ParseQuery<TripPlan> query = getQuery();
         query.fromLocalDatastore();
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
@@ -241,12 +244,18 @@ public class TripPlanListFragment extends TripBaseFragment {
     }
 
     private boolean loadPlans(int totalItemsCount) {
-        query.setSkip(totalItemsCount);
         if (NetworkAvailabilityCheck.networkAvailable(getActivity())) {
-            return loadTripPlansFromRemote();
+            return loadTripPlansFromRemote(totalItemsCount);
         } else {
             return loadTripPlansFromDatabase();
         }
+    }
+
+    private ParseQuery<TripPlan> getQuery() {
+        ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
+        query.setLimit(3);
+        query.addDescendingOrder("createdAt");
+        return query;
     }
 
 }
