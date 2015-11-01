@@ -3,6 +3,7 @@ package com.travelguide.adapters;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +59,7 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
                 .into(holder.ivPlace);
 
         holder.ivFavIcon.setSelected(tripPlan.isFavorited());
+        holder.ivPlace.setColorFilter(Color.argb(150, 50, 50, 50));
     }
 
     @Override

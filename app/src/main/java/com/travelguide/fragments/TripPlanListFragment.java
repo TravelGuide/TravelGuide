@@ -73,7 +73,7 @@ public class TripPlanListFragment extends TripBaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvTripPlans.setLayoutManager(layoutManager);
 
-        RecyclerView.ItemDecoration itemDecoration = new VerticalSpaceItemDecoration(25, true, true);
+        RecyclerView.ItemDecoration itemDecoration = new VerticalSpaceItemDecoration(5, true, true);
         rvTripPlans.addItemDecoration(itemDecoration);
 
         setOnEndlessScrollListener(rvTripPlans);
