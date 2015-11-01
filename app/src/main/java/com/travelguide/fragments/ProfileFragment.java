@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.astuetz.PagerSlidingTabStrip;
 import com.bumptech.glide.Glide;
 import com.parse.ParseObject;
+import com.squareup.picasso.Picasso;
 import com.travelguide.R;
 import com.travelguide.adapters.TripPlanAdapter;
 import com.travelguide.adapters.TripPlanPagerAdapter;
@@ -89,7 +90,8 @@ public class ProfileFragment extends Fragment {
         tvName.setText(name);
         tvEmail.setText(email);
         Glide.with(getContext()).load(profilePicUrl).into(ivProfilePic);
-        Glide.with(getContext()).load(coverPicUrl).override(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic);
+        // Glide.with(getContext()).load(coverPicUrl).override(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic);
+        Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic);
 
         loadFragments(view);
 
