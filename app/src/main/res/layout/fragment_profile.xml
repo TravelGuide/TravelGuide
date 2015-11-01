@@ -97,4 +97,13 @@
         android:layout_height="match_parent"
         android:layout_below="@id/cvCardViewInProfile" />
 
+    <TextView
+        android:id="@+id/tvEmptyInProfile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_data_available"
+        android:layout_below="@id/cvCardViewInProfile"
+        android:visibility="gone" />
+
 </RelativeLayout>

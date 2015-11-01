@@ -17,8 +17,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 import com.travelguide.R;
@@ -26,6 +28,7 @@ import com.travelguide.adapters.TripPlanAdapter;
 import com.travelguide.decorations.VerticalSpaceItemDecoration;
 import com.travelguide.helpers.DeviceDimensionsHelper;
 import com.travelguide.helpers.ItemClickSupport;
+import com.travelguide.helpers.NetworkAvailabilityCheck;
 import com.travelguide.models.TripPlan;
 
 import java.util.ArrayList;
@@ -48,6 +51,9 @@ public class ProfileFragment extends Fragment {
     private ImageView ivCoverPic;
     private TextView tvName;
     private TextView tvEmail;
+    private TextView tvEmpty;
+    private RecyclerView rvTripPlans;
+    private MaterialDialog progressDialog;
 
     private String userObjectId = null;
     private String name = null;
@@ -84,18 +90,17 @@ public class ProfileFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-
         tvName.setText(name);
         tvEmail.setText(email);
         Picasso.with(getContext()).load(profilePicUrl).into(ivProfilePic);
         Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic);
 
-        RecyclerView rvTripPlans = (RecyclerView) view.findViewById(R.id.rvTripPlansInProfile);
         mTripPlans = new ArrayList<>();
         mTripPlanAdapter = new TripPlanAdapter(mTripPlans, getContext());
-        // Attach the adapter to the recyclerview to populate items
+
+        rvTripPlans = (RecyclerView) view.findViewById(R.id.rvTripPlansInProfile);
         rvTripPlans.setAdapter(mTripPlanAdapter);
-        // Set layout manager to position the items
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvTripPlans.setLayoutManager(layoutManager);
 
@@ -111,6 +116,14 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+
+        tvEmpty = (TextView) view.findViewById(R.id.tvEmptyInProfile);
+
+        progressDialog = new MaterialDialog.Builder(getContext())
+                .title(R.string.loading_plans)
+                .content(R.string.please_wait)
+                .progress(true, 0)
+                .build();
 
         return view;
     }
@@ -136,14 +149,15 @@ public class ProfileFragment extends Fragment {
         coverPicUrl = userInfo.getString("coverPicUrl", "missing");
     }
 
-    private void populateTripPlanList() {
-        // Construct query to execute
+    private void loadTripPlansFromRemote() {
         ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
         query.whereEqualTo("createdUserId", userObjectId);
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
             public void done(List<TripPlan> tripPlans, ParseException e) {
+                progressDialog.dismiss();
                 if (e == null) {
+                    hideEmptyView();
                     mTripPlans.clear();
                     mTripPlans.addAll(tripPlans);
                     mTripPlanAdapter.notifyDataSetChanged();
@@ -151,19 +165,38 @@ public class ProfileFragment extends Fragment {
                 } else {
                     Log.d(TAG, "Error: " + e.getMessage());
                 }
+                if (mTripPlans.size() == 0) {
+                    showEmptyView();
+                }
+            }
+        });
+    }
+
+    private void loadTripPlansFromDatabase() {
+        ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
+        query.whereEqualTo("createdUserId", userObjectId);
+        query.fromLocalDatastore();
+        query.findInBackground(new FindCallback<TripPlan>() {
+            @Override
+            public void done(List<TripPlan> tripPlans, ParseException e) {
+                progressDialog.dismiss();
+                if (e == null) {
+                    hideEmptyView();
+                    mTripPlans.clear();
+                    mTripPlans.addAll(tripPlans);
+                    mTripPlanAdapter.notifyDataSetChanged();
+                } else {
+                    Log.d(TAG, "Error: " + e.getMessage());
+                }
+                if (mTripPlans.size() == 0) {
+                    showEmptyView();
+                }
             }
         });
     }
 
     private void savingOnDatabase(List<TripPlan> tripPlans) {
-        for (TripPlan tp : tripPlans)
-            tp.pinInBackground();
-        //TODO Investigate why "ParseObject.saveAll(tripPlans);" not working.
-//        try {
-//            ParseObject.saveAll(tripPlans);
-//        } catch (ParseException e1) {
-//            e1.printStackTrace();
-//        }
+        ParseObject.pinAllInBackground(tripPlans);
     }
 
     public interface OnFragmentInteractionListener {
@@ -173,7 +206,12 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        populateTripPlanList();
+        progressDialog.show();
+        if (NetworkAvailabilityCheck.networkAvailable(getActivity())) {
+            loadTripPlansFromRemote();
+        } else {
+            loadTripPlansFromDatabase();
+        }
     }
 
     @Override
@@ -201,5 +239,15 @@ public class ProfileFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void showEmptyView() {
+        rvTripPlans.setVisibility(View.GONE);
+        tvEmpty.setVisibility(View.VISIBLE);
+    }
+
+    private void hideEmptyView() {
+        rvTripPlans.setVisibility(View.VISIBLE);
+        tvEmpty.setVisibility(View.GONE);
     }
 }
