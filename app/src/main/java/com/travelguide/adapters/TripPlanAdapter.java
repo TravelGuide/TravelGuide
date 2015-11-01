@@ -69,6 +69,11 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
         return mTripPlans.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return mTripPlans.get(position).getCreatedAt().getTime();
+    }
+
     public TripPlan get(int position) {
         return mTripPlans.get(position);
     }
