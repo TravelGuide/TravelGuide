@@ -159,7 +159,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                setHeaderProfileInfo(false);
             }
         };
     }
@@ -433,5 +432,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
     public void onLoginOrLogout(boolean status) {
         mLoginStatus = status;
         setMenuItemLoginTitle();
+        setHeaderProfileInfo(false);
     }
 }
