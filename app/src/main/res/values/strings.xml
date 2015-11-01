@@ -39,6 +39,7 @@
     <string name="add_new_place">Add New Place</string>
     <string name="add_new_day">Add New Day</string>
     <string name="login_header">Log in and start customizing your trips for the best experience!</string>
-    <string name="termsAndPrivacy">By logging in you agree to the TravelGuide Terms of Service and Privacy Policy</string>
+    <string name="termsAndPrivacy">By logging in you agree to the TravelGuide Terms of Service and Privacy Policy.</string>
+    <string name="log_in_facebook">Log In With Facebook</string>
 
 </resources>

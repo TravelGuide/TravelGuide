@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/icons"
@@ -14,6 +15,14 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ivPlace"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="@android:color/black"
+            android:transitionName="place"
+            tools:ignore="UnusedAttribute" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvContacts"
@@ -65,5 +74,21 @@
             fab:fab_title="@string/add_new_day" />
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+    <!--<ImageView-->
+    <!--android:id="@+id/ivFavorite"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignBottom="@+id/tvTravelMonth"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_alignParentEnd="false"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:contentDescription="@null"-->
+    <!--android:paddingRight="22dp"-->
+    <!--android:scaleType="fitXY"-->
+    <!--android:src="@drawable/selector_favorite"-->
+    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+    <!--android:visibility="gone" />-->
 
 </android.support.design.widget.CoordinatorLayout>

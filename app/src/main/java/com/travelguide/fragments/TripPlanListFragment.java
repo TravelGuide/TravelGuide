@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -67,12 +68,13 @@ public class TripPlanListFragment extends TripBaseFragment {
         mTripPlanAdapter = new TripPlanAdapter(mTripPlans, getContext());
 
         rvTripPlans = (RecyclerView) view.findViewById(R.id.rvTripPlans);
+        rvTripPlans.setItemAnimator(new DefaultItemAnimator());
         rvTripPlans.setAdapter(mTripPlanAdapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvTripPlans.setLayoutManager(layoutManager);
 
-        RecyclerView.ItemDecoration itemDecoration = new VerticalSpaceItemDecoration(25, true, true);
+        RecyclerView.ItemDecoration itemDecoration = new VerticalSpaceItemDecoration(5, true, true);
         rvTripPlans.addItemDecoration(itemDecoration);
 
         setOnEndlessScrollListener(rvTripPlans);
@@ -115,7 +117,6 @@ public class TripPlanListFragment extends TripBaseFragment {
                 // Make sure to call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
                 mTripPlans.clear();
-                mTripPlanAdapter.notifyDataSetChanged();
                 loadPlans(0);
             }
         });
@@ -130,8 +131,12 @@ public class TripPlanListFragment extends TripBaseFragment {
     public void onResume() {
         super.onResume();
         setTitle(getString(R.string.app_name));
-        progressDialog.show();
-        loadPlans(0);
+        if (!isVisible()) {
+            progressDialog.show();
+            loadPlans(0);
+        } else {
+            loadTripPlansFromDatabase();
+        }
     }
 
     @Override
@@ -158,8 +163,9 @@ public class TripPlanListFragment extends TripBaseFragment {
         mTripPlanAdapter.notifyDataSetChanged();
     }
 
-    private boolean loadTripPlansFromRemote(ParseQuery<TripPlan> query) {
-        query.setLimit(3);
+    private boolean loadTripPlansFromRemote(int totalItemsCount) {
+        ParseQuery<TripPlan> query = getQuery();
+        query.setSkip(totalItemsCount);
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
             public void done(List<TripPlan> tripPlans, ParseException e) {
@@ -186,8 +192,8 @@ public class TripPlanListFragment extends TripBaseFragment {
         return status;
     }
 
-    private boolean loadTripPlansFromDatabase(ParseQuery<TripPlan> query) {
-        query.setLimit(3);
+    private boolean loadTripPlansFromDatabase() {
+        ParseQuery<TripPlan> query = getQuery();
         query.fromLocalDatastore();
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
@@ -240,14 +246,18 @@ public class TripPlanListFragment extends TripBaseFragment {
     }
 
     private boolean loadPlans(int totalItemsCount) {
-        // Create new query object for every request to avoid network conflicts.
-        ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
-        query.setSkip(totalItemsCount);
         if (NetworkAvailabilityCheck.networkAvailable(getActivity())) {
-            return loadTripPlansFromRemote(query);
+            return loadTripPlansFromRemote(totalItemsCount);
         } else {
-            return loadTripPlansFromDatabase(query);
+            return loadTripPlansFromDatabase();
         }
+    }
+
+    private ParseQuery<TripPlan> getQuery() {
+        ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
+        query.setLimit(3);
+        query.addDescendingOrder("createdAt");
+        return query;
     }
 
 }

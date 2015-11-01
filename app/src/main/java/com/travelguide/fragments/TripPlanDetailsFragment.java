@@ -12,8 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.parse.FindCallback;
@@ -46,6 +48,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     private RecyclerView rvDayDetails;
     private RecyclerView rvPlaceDetails;
     private FloatingActionsMenu floatingActionsMenu;
+    private ImageView ivPlace;
 
     private String mTripPLanObjectId;
     private String mSelectedDayObjectId;
@@ -86,6 +89,8 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trip_plan_details, container, false);
         setHasOptionsMenu(true);
+
+        ivPlace = (ImageView) view.findViewById(R.id.ivPlace);
 
         floatingActionsMenu = (FloatingActionsMenu) view.findViewById(R.id.multiple_actions);
 
@@ -282,8 +287,47 @@ public class TripPlanDetailsFragment extends TripBaseFragment
             public void done(TripPlan tripPlan, ParseException e) {
                 if (e == null) {
                     setTitle(tripPlan.getPlanName());
+                    Glide.with(getContext()).load(tripPlan.getCityImageUrl()).into(ivPlace);
                 }
             }
         });
     }
+
+    //            ivFavIcon = (ImageView) itemView.findViewById(R.id.ivFavorite);
+//            ivFavIcon.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    int position = getLayoutPosition();
+//                    TripPlan tripPlan = mTripPlans.get(position);
+//
+//                    v.setSelected(!v.isSelected());
+//                    tripPlan.setFavorite(v.isSelected());
+//
+//                    if (v.isSelected()) {
+//                        ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
+//                        ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
+//                        AnimatorSet set1 = new AnimatorSet();
+//                        set1.playTogether(anim1, anim2);
+//                        ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
+//                        ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
+//                        AnimatorSet set2 = new AnimatorSet();
+//                        set2.playTogether(anim3, anim4);
+//                        AnimatorSet set4 = new AnimatorSet();
+//                        set4.playSequentially(set1, set2);
+//                        set4.start();
+//                    } else {
+//                        ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
+//                        ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
+//                        AnimatorSet set1 = new AnimatorSet();
+//                        set1.playTogether(anim1, anim2);
+//                        ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
+//                        ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
+//                        AnimatorSet set2 = new AnimatorSet();
+//                        set2.playTogether(anim3, anim4);
+//                        AnimatorSet set4 = new AnimatorSet();
+//                        set4.playSequentially(set1, set2);
+//                        set4.start();
+//                    }
+//                }
+//            });
 }
