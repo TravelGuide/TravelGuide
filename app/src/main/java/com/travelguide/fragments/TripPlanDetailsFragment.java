@@ -286,4 +286,42 @@ public class TripPlanDetailsFragment extends TripBaseFragment
             }
         });
     }
+
+    //            ivFavIcon = (ImageView) itemView.findViewById(R.id.ivFavorite);
+//            ivFavIcon.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    int position = getLayoutPosition();
+//                    TripPlan tripPlan = mTripPlans.get(position);
+//
+//                    v.setSelected(!v.isSelected());
+//                    tripPlan.setFavorite(v.isSelected());
+//
+//                    if (v.isSelected()) {
+//                        ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
+//                        ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
+//                        AnimatorSet set1 = new AnimatorSet();
+//                        set1.playTogether(anim1, anim2);
+//                        ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
+//                        ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
+//                        AnimatorSet set2 = new AnimatorSet();
+//                        set2.playTogether(anim3, anim4);
+//                        AnimatorSet set4 = new AnimatorSet();
+//                        set4.playSequentially(set1, set2);
+//                        set4.start();
+//                    } else {
+//                        ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
+//                        ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
+//                        AnimatorSet set1 = new AnimatorSet();
+//                        set1.playTogether(anim1, anim2);
+//                        ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
+//                        ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
+//                        AnimatorSet set2 = new AnimatorSet();
+//                        set2.playTogether(anim3, anim4);
+//                        AnimatorSet set4 = new AnimatorSet();
+//                        set4.playSequentially(set1, set2);
+//                        set4.start();
+//                    }
+//                }
+//            });
 }

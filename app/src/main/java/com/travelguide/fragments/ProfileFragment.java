@@ -17,10 +17,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.squareup.picasso.Picasso;
 import com.travelguide.R;
 import com.travelguide.adapters.TripPlanAdapter;
 import com.travelguide.decorations.VerticalSpaceItemDecoration;
@@ -87,8 +87,8 @@ public class ProfileFragment extends Fragment {
 
         tvName.setText(name);
         tvEmail.setText(email);
-        Picasso.with(getContext()).load(profilePicUrl).into(ivProfilePic);
-        Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic);
+        Glide.with(getContext()).load(profilePicUrl).into(ivProfilePic);
+        Glide.with(getContext()).load(coverPicUrl).override(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic);
 
         RecyclerView rvTripPlans = (RecyclerView) view.findViewById(R.id.rvTripPlansInProfile);
         mTripPlans = new ArrayList<>();

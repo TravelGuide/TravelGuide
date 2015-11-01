@@ -37,8 +37,6 @@ import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 import com.travelguide.R;
 import com.travelguide.helpers.NetworkAvailabilityCheck;
 import com.travelguide.helpers.Preferences;
@@ -266,41 +264,41 @@ public class LoginFragment extends DialogFragment {
 
                             if (!Preferences.readString(getContext(), Preferences.User.PROFILE_PIC_URL).equals(profilePicUrl)) {
                                 updateCoverPicUrl = false;
-                                Picasso.with(getContext()).load(profilePicUrl).into(ivProfilePic, new Callback() {
-                                    @Override
-                                    public void onSuccess() {
-                                        Preferences.writeString(getContext(),
-                                                Preferences.User.PROFILE_PIC_URL, profilePicUrl);
-                                        if (coverPicUrl != null) {
-
-                                            if (!Preferences.readString(getContext(), Preferences.User.COVER_PIC_URL).equals(coverPicUrl)) {
-                                                // Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic, new Callback() {
-                                                Picasso.with(getContext()).load(coverPicUrl).resize(getView().getWidth(), 0).into(ivCoverPic, new Callback() {
-                                                    @Override
-                                                    public void onSuccess() {
-                                                        Preferences.writeString(getContext(),
-                                                                Preferences.User.COVER_PIC_URL, coverPicUrl);
-                                                        saveOrUpdateParseUser(requestType);
-                                                    }
-
-                                                    @Override
-                                                    public void onError() {
-                                                        saveOrUpdateParseUser(requestType);
-                                                    }
-                                                });
-                                            }
-                                        } else {
-                                            ivCoverPic.setImageResource(android.R.color.transparent);
-                                            saveOrUpdateParseUser(requestType);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError() {
-                                        // TODO: Handle Error
-                                        // saveOrUpdateParseUser(requestType);
-                                    }
-                                });
+//                                Picasso.with(getContext()).load(profilePicUrl).into(ivProfilePic, new Callback() {
+//                                    @Override
+//                                    public void onSuccess() {
+//                                        Preferences.writeString(getContext(),
+//                                                Preferences.User.PROFILE_PIC_URL, profilePicUrl);
+//                                        if (coverPicUrl != null) {
+//
+//                                            if (!Preferences.readString(getContext(), Preferences.User.COVER_PIC_URL).equals(coverPicUrl)) {
+//                                                // Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic, new Callback() {
+//                                                Picasso.with(getContext()).load(coverPicUrl).resize(getView().getWidth(), 0).into(ivCoverPic, new Callback() {
+//                                                    @Override
+//                                                    public void onSuccess() {
+//                                                        Preferences.writeString(getContext(),
+//                                                                Preferences.User.COVER_PIC_URL, coverPicUrl);
+//                                                        saveOrUpdateParseUser(requestType);
+//                                                    }
+//
+//                                                    @Override
+//                                                    public void onError() {
+//                                                        saveOrUpdateParseUser(requestType);
+//                                                    }
+//                                                });
+//                                            }
+//                                        } else {
+//                                            ivCoverPic.setImageResource(android.R.color.transparent);
+//                                            saveOrUpdateParseUser(requestType);
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onError() {
+//                                        // TODO: Handle Error
+//                                        // saveOrUpdateParseUser(requestType);
+//                                    }
+//                                });
                             }
 
                             if (updateCoverPicUrl) {
@@ -308,19 +306,19 @@ public class LoginFragment extends DialogFragment {
                                 if (coverPicUrl != null) {
                                     if (!Preferences.readString(getContext(), Preferences.User.COVER_PIC_URL).equals(coverPicUrl)) {
                                         // Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic, new Callback() {
-                                        Picasso.with(getContext()).load(coverPicUrl).resize(getView().getWidth(), 0).into(ivCoverPic, new Callback() {
-                                            @Override
-                                            public void onSuccess() {
-                                                Preferences.writeString(getContext(),
-                                                        Preferences.User.COVER_PIC_URL, coverPicUrl);
-                                                saveOrUpdateParseUser(requestType);
-                                            }
-
-                                            @Override
-                                            public void onError() {
-                                                saveOrUpdateParseUser(requestType);
-                                            }
-                                        });
+//                                        Picasso.with(getContext()).load(coverPicUrl).resize(getView().getWidth(), 0).into(ivCoverPic, new Callback() {
+//                                            @Override
+//                                            public void onSuccess() {
+//                                                Preferences.writeString(getContext(),
+//                                                        Preferences.User.COVER_PIC_URL, coverPicUrl);
+//                                                saveOrUpdateParseUser(requestType);
+//                                            }
+//
+//                                            @Override
+//                                            public void onError() {
+//                                                saveOrUpdateParseUser(requestType);
+//                                            }
+//                                        });
                                     }
                                 } else {
                                     ivCoverPic.setImageResource(android.R.color.transparent);

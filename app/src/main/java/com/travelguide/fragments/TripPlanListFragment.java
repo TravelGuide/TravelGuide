@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -68,6 +69,7 @@ public class TripPlanListFragment extends TripBaseFragment {
         mTripPlanAdapter = new TripPlanAdapter(mTripPlans, getContext());
 
         rvTripPlans = (RecyclerView) view.findViewById(R.id.rvTripPlans);
+        rvTripPlans.setItemAnimator(new DefaultItemAnimator());
         rvTripPlans.setAdapter(mTripPlanAdapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

@@ -1,7 +1,5 @@
 package com.travelguide.adapters;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.ImageViewTarget;
 import com.travelguide.R;
 import com.travelguide.models.TripPlan;
 
@@ -41,25 +42,35 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
         final TripPlan tripPlan = mTripPlans.get(position);
 
         holder.tvPlanName.setText(tripPlan.getPlanName());
-
-        String totalTravelTime = mContext.getResources()
-                .getQuantityString(R.plurals.days, tripPlan.getTripTime(), tripPlan.getTripTime());
-
-        holder.tvTotalTravelTime.setText(totalTravelTime);
-        holder.tvGroupType.setText(tripPlan.getGroupType());
-        holder.tvTravelSeason.setText(tripPlan.getTravelSeason());
-        holder.tvTravelMonth.setText(tripPlan.getTravelMonth());
+        //holder.tvPlanName.setVisibility(View.INVISIBLE);//TODO Change color instead of disable
 
         holder.ivPlace.setImageResource(R.drawable.city_placeholder);
 
-        Picasso.with(mContext)
+//        Picasso.with(mContext)
+//                .load(tripPlan.getCityImageUrl())
+//                .placeholder(R.drawable.city_placeholder)
+//                .resize(0, 600)
+//                .into(target);
+
+        Glide.with(mContext)
                 .load(tripPlan.getCityImageUrl())
                 .placeholder(R.drawable.city_placeholder)
-                .resize(0, 600)
-                .into(holder.ivPlace);
+                .centerCrop()
+                .crossFade(600)
+                .into(new ImageViewTarget<GlideDrawable>(holder.ivPlace) {
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                        super.onResourceReady(resource, glideAnimation);
+                        holder.ivPlace.setColorFilter(Color.argb(150, 50, 50, 50));
+                    }
 
-        holder.ivFavIcon.setSelected(tripPlan.isFavorited());
-        holder.ivPlace.setColorFilter(Color.argb(150, 50, 50, 50));
+                    @Override
+                    protected void setResource(GlideDrawable resource) {
+                        holder.ivPlace.setImageDrawable(resource);
+                        //holder.tvPlanName.setVisibility(View.VISIBLE);
+                    }
+                });
+
     }
 
     @Override
@@ -72,60 +83,14 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTotalTravelTime;
-        TextView tvGroupType;
-        TextView tvTravelSeason;
-        TextView tvTravelMonth;
         ImageView ivPlace;
         TextView tvPlanName;
-        ImageView ivFavIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            tvTotalTravelTime = (TextView) itemView.findViewById(R.id.tvTotalTravelTime);
-            tvGroupType = (TextView) itemView.findViewById(R.id.tvGroupType);
-            tvTravelSeason = (TextView) itemView.findViewById(R.id.tvTravelSeason);
-            tvTravelMonth = (TextView) itemView.findViewById(R.id.tvTravelMonth);
             ivPlace = (ImageView) itemView.findViewById(R.id.ivPlace);
             tvPlanName = (TextView) itemView.findViewById(R.id.tvPlanName);
-            ivFavIcon = (ImageView) itemView.findViewById(R.id.ivFavorite);
-            ivFavIcon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getLayoutPosition();
-                    TripPlan tripPlan = mTripPlans.get(position);
-
-                    v.setSelected(!v.isSelected());
-                    tripPlan.setFavorite(v.isSelected());
-
-                    if (v.isSelected()) {
-                        ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
-                        ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
-                        AnimatorSet set1 = new AnimatorSet();
-                        set1.playTogether(anim1, anim2);
-                        ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
-                        ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
-                        AnimatorSet set2 = new AnimatorSet();
-                        set2.playTogether(anim3, anim4);
-                        AnimatorSet set4 = new AnimatorSet();
-                        set4.playSequentially(set1, set2);
-                        set4.start();
-                    } else {
-                        ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
-                        ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
-                        AnimatorSet set1 = new AnimatorSet();
-                        set1.playTogether(anim1, anim2);
-                        ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
-                        ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
-                        AnimatorSet set2 = new AnimatorSet();
-                        set2.playTogether(anim3, anim4);
-                        AnimatorSet set4 = new AnimatorSet();
-                        set4.playSequentially(set1, set2);
-                        set4.start();
-                    }
-                }
-            });
         }
     }
 }

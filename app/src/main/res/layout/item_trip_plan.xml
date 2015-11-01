@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@drawable/layer_list_item_trip_plan"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_plan_item"
     android:orientation="vertical">
 
     <ImageView
@@ -18,83 +18,15 @@
         android:scaleType="centerCrop"
         android:src="@drawable/city_placeholder" />
 
-
     <TextView
         android:id="@+id/tvPlanName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/ivPlace"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="56dp"
+        android:layout_centerVertical="true"
         android:gravity="center_vertical"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/icons"
         tools:text="Trip to NYC" />
-
-    <TextView
-        android:id="@+id/tvTotalTravelTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvPlanName"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:visibility="gone"
-        tools:text="72 hours" />
-
-    <TextView
-        android:id="@+id/tvGroupType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvPlanName"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/tvTotalTravelTime"
-        android:layout_toRightOf="@+id/tvTotalTravelTime"
-        android:visibility="gone"
-        tools:text="Family" />
-
-    <TextView
-        android:id="@+id/tvTravelSeason"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvPlanName"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/tvGroupType"
-        android:layout_toRightOf="@+id/tvGroupType"
-        android:visibility="gone"
-        tools:text="Winter" />
-
-    <TextView
-        android:id="@+id/tvTravelMonth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvPlanName"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@id/tvTravelSeason"
-        android:layout_toRightOf="@id/tvTravelSeason"
-        android:visibility="gone"
-        tools:text="Jan" />
-
-    <ImageView
-        android:id="@+id/ivFavorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tvTravelMonth"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
-        android:contentDescription="@null"
-        android:paddingRight="22dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/selector_favorite"
-        android:visibility="gone"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>
