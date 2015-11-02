@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -63,7 +64,8 @@ public class ProfileFragment extends Fragment {
 
     private ViewPager vpPager;
     private TripPlanPagerAdapter viewPagerAdapter;
-    private PagerSlidingTabStrip tabsStrip;
+    // private PagerSlidingTabStrip tabsStrip;
+    private TabLayout tabsStrip;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,11 +108,14 @@ public class ProfileFragment extends Fragment {
         viewPagerAdapter = new TripPlanPagerAdapter(getChildFragmentManager());
         vpPager.setAdapter(viewPagerAdapter);
         // Find the sliding tabstrips
-        tabsStrip = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
+        // tabsStrip = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
+        tabsStrip = (TabLayout) view.findViewById(R.id.tabs);
         // Attach the tabstrip to the view pager
-        tabsStrip.setViewPager(vpPager);
+        // tabsStrip.setViewPager(vpPager);
+        tabsStrip.setupWithViewPager(vpPager);
+        // tabsStrip.setViewPager(vpPager);
         setupViewPagerTransformer();
-        setupPageChangeListener();
+        // setupPageChangeListener();
     }
 
     private void setupViewPagerTransformer() {
@@ -120,14 +125,14 @@ public class ProfileFragment extends Fragment {
         vpPager.setClipChildren(false);
     }
 
-    private void setupPageChangeListener() {
-        tabsStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(final int position) {
-                Log.d(TAG, "PageChanged");
-            }
-        });
-    }
+    // private void setupPageChangeListener() {
+    //     tabsStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+    //         @Override
+    //         public void onPageSelected(final int position) {
+    //             Log.d(TAG, "PageChanged");
+    //         }
+    //     });
+    // }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
