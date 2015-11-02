@@ -310,6 +310,19 @@ public class TravelGuideActivity extends AppCompatActivity implements
                 return false;
             }
         });
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionClick(int position) {
+                MatrixCursor cursor = (MatrixCursor) searchView.getSuggestionsAdapter().getItem(position);
+                int indexColumnSuggestion = cursor.getColumnIndex("City");
+                searchView.setQuery(cursor.getString(indexColumnSuggestion), false);
+                return true;
+            }
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+        });
         return true;
     }
 
