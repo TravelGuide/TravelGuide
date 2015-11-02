@@ -103,7 +103,7 @@ public class ProfileFragment extends Fragment {
         // Get the viewpager and setup a PageChangeListener
         vpPager = (ViewPager) view.findViewById(R.id.viewpager);
         // Get the view pager adapter for the pager
-        viewPagerAdapter = new TripPlanPagerAdapter(getActivity().getSupportFragmentManager());
+        viewPagerAdapter = new TripPlanPagerAdapter(getChildFragmentManager());
         vpPager.setAdapter(viewPagerAdapter);
         // Find the sliding tabstrips
         tabsStrip = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
