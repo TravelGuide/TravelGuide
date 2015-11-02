@@ -1,6 +1,7 @@
 package com.travelguide.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -9,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.makeramen.roundedimageview.RoundedDrawable;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 import com.travelguide.R;
 import com.travelguide.models.Place;
 
@@ -44,13 +47,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
 
         //TODO Find a placeholder
         //holder.ivPlace.setImageResource(R.mipmap.ic_launcher);
-
-       // Picasso.with(mContext)
-        //        .load(place.getPlaceImageUrl())
-         //       .fit()
-            //    .into(holder.ivPlace);
-
-        Picasso.with(mContext).load(place.getPlaceImageUrl()).placeholder(R.drawable.ic_local_activity_white_24dp).into(holder.ivPlace);
+        Picasso.with(mContext).load(place.getPlaceImageUrl()).fit().placeholder(R.drawable.ic_fav).transform(mTransformation).into(holder.ivPlace);
     }
 
     @Override
@@ -71,26 +68,26 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
         }
     }
 
-//    private final Transformation mTransformation = new Transformation() {
-//
-//        final boolean oval = false;
-//
-//        @Override
-//        public Bitmap transform(Bitmap bitmap) {
-//            Bitmap transformed = RoundedDrawable.fromBitmap(bitmap)
-//                    .setCornerRadius(mRadius)
-//                    .setOval(oval)
-//                    .toBitmap();
-//            if (!bitmap.equals(transformed)) {
-//                bitmap.recycle();
-//            }
-//            return transformed;
-//        }
-//
-//        @Override
-//        public String key() {
-//            return "rounded_radius_" + mRadius + "_oval_" + oval;
-//        }
-//    };
+    private final Transformation mTransformation = new Transformation() {
+
+       final boolean oval = false;
+
+        @Override
+        public Bitmap transform(Bitmap bitmap) {
+            Bitmap transformed = RoundedDrawable.fromBitmap(bitmap)
+                    .setCornerRadius(mRadius)
+                    .setOval(oval)
+                    .toBitmap();
+            if (!bitmap.equals(transformed)) {
+               bitmap.recycle();
+            }
+            return transformed;
+        }
+
+        @Override
+        public String key() {
+            return "rounded_radius_" + mRadius + "_oval_" + oval;
+        }
+    };
 
 }
