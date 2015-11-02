@@ -27,6 +27,7 @@ import com.travelguide.adapters.TripPlanPagerAdapter;
 import com.travelguide.helpers.DeviceDimensionsHelper;
 import com.travelguide.helpers.ItemClickSupport;
 import com.travelguide.models.TripPlan;
+import com.travelguide.ui.RotationPageTransformer;
 
 import java.util.List;
 
@@ -108,7 +109,15 @@ public class ProfileFragment extends Fragment {
         tabsStrip = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
         // Attach the tabstrip to the view pager
         tabsStrip.setViewPager(vpPager);
+        setupViewPagerTransformer();
         setupPageChangeListener();
+    }
+
+    private void setupViewPagerTransformer() {
+        vpPager.setPageTransformer(true, new RotationPageTransformer(165));
+        vpPager.setOffscreenPageLimit(1);
+        //vpPager.setPageMargin(10);
+        vpPager.setClipChildren(false);
     }
 
     private void setupPageChangeListener() {
