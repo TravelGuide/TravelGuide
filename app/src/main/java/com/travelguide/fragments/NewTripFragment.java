@@ -334,7 +334,8 @@ public class NewTripFragment extends Fragment {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("CityDetails");
         query.whereEqualTo("CountryCode", "US");
         query.whereEqualTo("TargetType", "City");
-        query.whereContains("CanonicalName", destination.getText().toString());
+        // query.whereContains("CanonicalName", destination.getText().toString());
+        query.whereStartsWith("CanonicalName", destination.getText().toString());
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {

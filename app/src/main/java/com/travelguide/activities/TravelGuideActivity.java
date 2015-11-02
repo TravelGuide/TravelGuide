@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -35,8 +37,12 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.travelguide.R;
 import com.travelguide.foursquare.constants.FoursquareConstants;
@@ -48,6 +54,9 @@ import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
 import com.travelguide.helpers.Preferences;
 import com.travelguide.listener.OnTripPlanListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -155,13 +164,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
-        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                setHeaderProfileInfo(false);
-            }
-        };
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close);
     }
 
     // Make sure this is the method with just `Bundle` as the signature
@@ -300,10 +303,63 @@ public class TravelGuideActivity extends AppCompatActivity implements
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (!TextUtils.isEmpty(newText) && newText.length() > 2) {
+                    loadCitySuggestions(searchView, newText);
+                    return true;
+                }
+                return false;
+            }
+        });
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionClick(int position) {
+                MatrixCursor cursor = (MatrixCursor) searchView.getSuggestionsAdapter().getItem(position);
+                int indexColumnSuggestion = cursor.getColumnIndex("City");
+                searchView.setQuery(cursor.getString(indexColumnSuggestion), false);
+                return true;
+            }
+            @Override
+            public boolean onSuggestionSelect(int position) {
                 return false;
             }
         });
         return true;
+    }
+
+    private void loadCitySuggestions(final SearchView searchView, String input) {
+        final ArrayList<String> cityList = new ArrayList<>();
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("CityDetails");
+        query.whereEqualTo("CountryCode", "US");
+        query.whereEqualTo("TargetType", "City");
+        query.whereStartsWith("CanonicalName", input);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                for (int i = 0; i < list.size(); i++) {
+                    cityList.add(list.get(i).getString("CanonicalName").trim());
+                }
+                SimpleCursorAdapter adapter = createCursorAdapter(cityList);
+                if (searchView != null)
+                    searchView.setSuggestionsAdapter(adapter);
+            }
+        });
+    }
+
+    private SimpleCursorAdapter createCursorAdapter(ArrayList<String> cityList) {
+        String[] columnNames = {"_id", "city"};
+        MatrixCursor cursor = new MatrixCursor(columnNames);
+        String[] cityArray = new String[cityList.size()];
+        cityArray = cityList.toArray(cityArray);
+        String[] row = new String[2];
+        int id = 0;
+        for (String city : cityArray) {
+            row[0] = Integer.toString(id++);
+            row[1] = city;
+            cursor.addRow(row);
+        }
+        String[] from = {"city"};
+        int[] to = new int[]{android.R.id.text1};
+        return new SimpleCursorAdapter(this, R.layout.serach_view_suggestion_list, cursor, from, to, 0);
     }
 
     @Override
@@ -421,17 +477,25 @@ public class TravelGuideActivity extends AppCompatActivity implements
         }
     }
 
+    private void showOrHideProfileButton(boolean show) {
+        MenuItem menuItem = nvDrawer.getMenu().findItem(R.id.profile_fragment);
+        menuItem.setVisible(show);
+    }
+
     private void setMenuItemLoginTitle() {
         MenuItem item = nvDrawer.getMenu().findItem(R.id.login_fragment);
         if (mLoginStatus)
             item.setTitle(R.string.label_logout);
         else
             item.setTitle(R.string.action_login);
+        showOrHideProfileButton(mLoginStatus);
     }
 
     @Override
     public void onLoginOrLogout(boolean status) {
         mLoginStatus = status;
         setMenuItemLoginTitle();
+        setHeaderProfileInfo(false);
     }
+
 }

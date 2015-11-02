@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -68,6 +69,8 @@ public class LoginFragment extends DialogFragment {
 
     private OnLoginLogoutListener mLoginLogoutListener;
     private boolean saveOrUpdate = false;
+
+    private MaterialDialog progressDialog;
 
     public static final List<String> permissions = new ArrayList<String>() {{
         add("public_profile");
@@ -117,6 +120,12 @@ public class LoginFragment extends DialogFragment {
         //         }
         //     });
         // }
+
+        progressDialog = new MaterialDialog.Builder(getContext())
+                .title(R.string.logging_in)
+                .content(R.string.please_wait)
+                .progress(true, 0)
+                .build();
 
         return view;
     }
@@ -204,6 +213,7 @@ public class LoginFragment extends DialogFragment {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog.show();
                 if (!Preferences.readBoolean(getContext(), Preferences.User.LOG_IN_STATUS)) {
                     ParseFacebookUtils.logInWithReadPermissionsInBackground(getActivity(), permissions, new LogInCallback() {
                         @Override
@@ -498,6 +508,8 @@ public class LoginFragment extends DialogFragment {
     }
 
     private void dismissDialog(Context context) {
+        if (progressDialog != null)
+            progressDialog.dismiss();
         if (mLoginLogoutListener != null)
             mLoginLogoutListener.onLoginOrLogout(Preferences.readBoolean(context, Preferences.User.LOG_IN_STATUS));
         if (getDialog() != null)
