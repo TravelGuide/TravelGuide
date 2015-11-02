@@ -29,6 +29,7 @@ import com.travelguide.R;
 import com.travelguide.adapters.DayAdapter;
 import com.travelguide.adapters.PlaceAdapter;
 import com.travelguide.decorations.DividerItemDecoration;
+import com.travelguide.helpers.GoogleImageSearch;
 import com.travelguide.helpers.ItemClickSupport;
 import com.travelguide.helpers.NetworkAvailabilityCheck;
 import com.travelguide.models.Day;
@@ -192,7 +193,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     }
 
     @Override
-    public void onFinishEditDialogControl(String placeName, String travelTime) {
+    public void onFinishEditDialogControl(final String placeName, String travelTime) {
         ParseUser user = ParseUser.getCurrentUser();
         final Place placeDetails = new Place();
         placeDetails.putCreatedUserId(user.getObjectId());
@@ -205,6 +206,8 @@ public class TripPlanDetailsFragment extends TripBaseFragment
             public void done(ParseException e) {
                 if (e == null) {
                     addTripPlanPlace(placeDetails);
+                    GoogleImageSearch googleImageSearch = new GoogleImageSearch();
+                    googleImageSearch.fetchPlaceImage(placeName.toString(), placeDetails.getObjectId(), "CityDetails");
                 }
             }
         });
