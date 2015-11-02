@@ -66,6 +66,7 @@ public class TripPlanListFragment extends TripBaseFragment {
 
         mTripPlans = new ArrayList<>();
         mTripPlanAdapter = new TripPlanAdapter(mTripPlans, getContext());
+        mTripPlanAdapter.setHasStableIds(true);
 
         rvTripPlans = (RecyclerView) view.findViewById(R.id.rvTripPlans);
         rvTripPlans.setItemAnimator(new DefaultItemAnimator());
@@ -117,6 +118,7 @@ public class TripPlanListFragment extends TripBaseFragment {
                 // Make sure to call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
                 mTripPlans.clear();
+                mTripPlanAdapter.notifyDataSetChanged();
                 loadPlans(0);
             }
         });
