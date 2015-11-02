@@ -52,6 +52,8 @@ public class TripPlanDetailsFragment extends TripBaseFragment
 
     private String mTripPLanObjectId;
     private String mSelectedDayObjectId;
+    private String cityName;
+
 
     private List<Day> mDayList;
     private List<Place> mPlaceList;
@@ -99,7 +101,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         fabNewPlace.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AddUpdatePlaceDetailsFragment addUpdatePlace = AddUpdatePlaceDetailsFragment
-                        .newInstance("Add New Place", null, null, TripPlanDetailsFragment.this);
+                        .newInstance("Add New Place", null, null, TripPlanDetailsFragment.this,cityName);
                 addUpdatePlace.show(getFragmentManager(), "add_update_place_details_fragment");
                 floatingActionsMenu.collapseImmediately();
             }
@@ -288,6 +290,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                 if (e == null) {
                     setTitle(tripPlan.getPlanName());
                     Glide.with(getContext()).load(tripPlan.getCityImageUrl()).into(ivPlace);
+                    cityName = tripPlan.getCityName();
                 }
             }
         });
