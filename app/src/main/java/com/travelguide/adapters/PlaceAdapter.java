@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.travelguide.R;
 import com.travelguide.models.Place;
 
@@ -42,13 +43,14 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
         holder.tvVisitingTime.setText(place.getVisitingTime());
 
         //TODO Find a placeholder
-        holder.ivPlace.setImageResource(R.mipmap.ic_launcher);
+        //holder.ivPlace.setImageResource(R.mipmap.ic_launcher);
 
-//        Picasso.with(mContext)
-//                .load(place.getPlaceImageUrl())
-//                .fit()
-//                .transform(mTransformation)
-//                .into(holder.ivPlace);
+       // Picasso.with(mContext)
+        //        .load(place.getPlaceImageUrl())
+         //       .fit()
+            //    .into(holder.ivPlace);
+
+        Picasso.with(mContext).load(place.getPlaceImageUrl()).placeholder(R.drawable.ic_local_activity_white_24dp).into(holder.ivPlace);
     }
 
     @Override
