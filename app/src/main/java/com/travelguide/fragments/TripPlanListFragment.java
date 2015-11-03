@@ -141,12 +141,8 @@ public class TripPlanListFragment extends TripBaseFragment {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         }
-        if (!isVisible()) {
-            progressDialog.show();
-            loadPlans(0);
-        } else {
-            loadTripPlansFromDatabase();
-        }
+        progressDialog.show();
+        loadPlans(0);
     }
 
     @Override
@@ -202,8 +198,9 @@ public class TripPlanListFragment extends TripBaseFragment {
         return status;
     }
 
-    private boolean loadTripPlansFromDatabase() {
+    private boolean loadTripPlansFromDatabase(int totalItemsCount) {
         ParseQuery<TripPlan> query = getQuery();
+        query.setSkip(totalItemsCount);
         query.fromLocalDatastore();
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
@@ -259,7 +256,7 @@ public class TripPlanListFragment extends TripBaseFragment {
         if (NetworkAvailabilityCheck.networkAvailable(getActivity())) {
             return loadTripPlansFromRemote(totalItemsCount);
         } else {
-            return loadTripPlansFromDatabase();
+            return loadTripPlansFromDatabase(totalItemsCount);
         }
     }
 
