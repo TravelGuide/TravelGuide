@@ -5,17 +5,21 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -37,6 +41,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -44,6 +49,7 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 import com.travelguide.R;
 import com.travelguide.foursquare.constants.FoursquareConstants;
 import com.travelguide.fragments.LoginFragment;
@@ -52,19 +58,23 @@ import com.travelguide.fragments.ProfileFragment;
 import com.travelguide.fragments.SearchListFragment;
 import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
+import com.travelguide.helpers.DeviceDimensionsHelper;
 import com.travelguide.helpers.Preferences;
+import com.travelguide.layouts.CustomCoordinatorLayout;
 import com.travelguide.listener.OnTripPlanListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class TravelGuideActivity extends AppCompatActivity implements
         OnTripPlanListener,
         FragmentManager.OnBackStackChangedListener,
         ProfileFragment.OnFragmentInteractionListener,
-        LoginFragment.OnLoginLogoutListener {
+        LoginFragment.OnLoginLogoutListener,
+        AppBarLayout.OnOffsetChangedListener {
 
     private DrawerLayout mDrawer;
     private NavigationView nvDrawer;
@@ -74,6 +84,14 @@ public class TravelGuideActivity extends AppCompatActivity implements
     private TextView tvProfileUsername;
     private TextView tvProfileEmail;
 
+    private CustomCoordinatorLayout coordinatorLayout;
+    private CollapsingToolbarLayout collapsingToolbar;
+    private AppBarLayout appBar;
+    private CircleImageView ivProfilePic;
+    private ImageView ivCoverPic;
+    private TextView tvName;
+    private TextView tvEmail;
+
     private MaterialDialog settingsDialog;
     private LinearLayout llSettingsDialogLayout;
     private Spinner spnGroup;
@@ -82,6 +100,11 @@ public class TravelGuideActivity extends AppCompatActivity implements
     private String city;
     private String group;
     private String season;
+
+    private String name = null;
+    private String email = null;
+    private String profilePicUrl = null;
+    private String coverPicUrl = null;
 
     private boolean mLoginStatus = false;
 
@@ -93,6 +116,21 @@ public class TravelGuideActivity extends AppCompatActivity implements
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Set the collapsing Toolbar animation views
+        coordinatorLayout = (CustomCoordinatorLayout) findViewById(R.id.main_content);
+        appBar = (AppBarLayout) findViewById(R.id.appbar);
+        appBar.addOnOffsetChangedListener(this);
+        collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle(getResources().getString(R.string.app_name));
+
+        // The backdrop imageview for collapsing toolbar
+        // ivBackdrop = (ImageView) findViewById(R.id.ivBackdrop);
+        ivCoverPic = (ImageView) findViewById(R.id.ivCoverPicInProfile);
+        ivProfilePic = (CircleImageView) findViewById(R.id.ivProfilePicInProfile);
+        tvName = (TextView) findViewById(R.id.tvNameInProfile);
+        tvEmail = (TextView) findViewById(R.id.tvEmailInProfile);
+        loadBackdrop();
 
         // Find our drawer view
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -127,7 +165,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         // To set a global custom font for the app, add font.ttf under assets
         // and uncomment following call.
         // CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-        //                 .setDefaultFontPath("fonts/mistral.ttf")
+        //                 .setDefaultFontPath("fonts/font.ttf")
         //                 .setFontAttrId(R.attr.fontPath)
         //                 .build()
         // );
@@ -146,6 +184,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         mLoginStatus = Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS);
         setMenuItemLoginTitle();
         setHeaderProfileInfo(true);
+        loadBackdrop();
     }
 
     @Override
@@ -318,6 +357,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
                 searchView.setQuery(cursor.getString(indexColumnSuggestion), false);
                 return true;
             }
+
             @Override
             public boolean onSuggestionSelect(int position) {
                 return false;
@@ -394,6 +434,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         fragmentTransaction.replace(R.id.fragment_frame, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+        allowCollapsingToolbarScroll(fragment);
     }
 
     private void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
@@ -449,6 +490,8 @@ public class TravelGuideActivity extends AppCompatActivity implements
             anim.start();
             drawerToggle.setToolbarNavigationClickListener(originalToolbarListener);
         }
+
+        allowCollapsingToolbarScroll(getSupportFragmentManager().findFragmentById(R.id.fragment_frame));
     }
 
     private void setHeaderProfileInfo(boolean force) {
@@ -498,4 +541,51 @@ public class TravelGuideActivity extends AppCompatActivity implements
         setHeaderProfileInfo(false);
     }
 
+    private void getSharedPreferences() {
+//        SharedPreferences userInfo = getSharedPreferences("userInfo", 0);
+//        name = userInfo.getString("name", "missing");
+//        email = userInfo.getString("email", "missing");
+//        profilePicUrl = userInfo.getString("profilePicUrl", "missing");
+//        coverPicUrl = userInfo.getString("coverPicUrl", "missing");
+        name = Preferences.readString(this, Preferences.User.NAME);
+        email = Preferences.readString(this, Preferences.User.EMAIL);
+        profilePicUrl = Preferences.readString(this, Preferences.User.PROFILE_PIC_URL);
+        coverPicUrl = Preferences.readString(this, Preferences.User.COVER_PIC_URL);
+    }
+
+    private void loadBackdrop() {
+        getSharedPreferences();
+        if (!name.equals(Preferences.DEF_VALUE))
+            tvName.setText(name);
+        if (!email.equals(Preferences.DEF_VALUE))
+            tvEmail.setText(email);
+        if (!profilePicUrl.equals(Preferences.DEF_VALUE))
+            Glide.with(this).load(profilePicUrl).into(ivProfilePic);
+        if (!coverPicUrl.equals(Preferences.DEF_VALUE))
+            Picasso.with(this).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(this), 0).into(ivCoverPic);
+    }
+
+    private void allowCollapsingToolbarScroll(Fragment fragment) {
+        if (fragment != null && fragment instanceof ProfileFragment) {
+            appBar.setExpanded(true, true);
+            coordinatorLayout.setAllowForScroll(true);
+        } else {
+            appBar.setExpanded(false, false);
+            coordinatorLayout.setAllowForScroll(false);
+        }
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_frame);
+        if (collapsingToolbar.getHeight() + verticalOffset < 2 * ViewCompat.getMinimumHeight(collapsingToolbar)) {
+            if (fragment != null && fragment instanceof ProfileFragment)
+                collapsingToolbar.setTitle(name);
+            else
+                collapsingToolbar.setTitle(getString(R.string.app_name));
+        }
+        else {
+            collapsingToolbar.setTitle("");
+        }
+    }
 }
