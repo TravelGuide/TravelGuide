@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
@@ -59,12 +58,14 @@ import com.travelguide.fragments.SearchListFragment;
 import com.travelguide.fragments.TripPlanDetailsFragment;
 import com.travelguide.fragments.TripPlanListFragment;
 import com.travelguide.helpers.DeviceDimensionsHelper;
+import com.travelguide.helpers.NetworkAvailabilityCheck;
 import com.travelguide.helpers.Preferences;
 import com.travelguide.layouts.CustomCoordinatorLayout;
 import com.travelguide.listener.OnTripPlanListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -334,7 +335,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
             public boolean onQueryTextSubmit(String query) {
                 if (TextUtils.isEmpty(query))
                     query = "Any";
-                city = query.trim();
+                city = formatQueryForSearch(query.trim());
                 searchItem.collapseActionView();
                 setContentFragment(SearchListFragment.newInstance(city, group, season));
                 return true;
@@ -343,8 +344,10 @@ public class TravelGuideActivity extends AppCompatActivity implements
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (!TextUtils.isEmpty(newText) && newText.length() > 2) {
-                    loadCitySuggestions(searchView, newText);
-                    return true;
+                    if (NetworkAvailabilityCheck.networkAvailable(TravelGuideActivity.this)) {
+                        loadCitySuggestions(searchView, formatQueryForSuggestions(newText));
+                        return true;
+                    }
                 }
                 return false;
             }
@@ -353,7 +356,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
             @Override
             public boolean onSuggestionClick(int position) {
                 MatrixCursor cursor = (MatrixCursor) searchView.getSuggestionsAdapter().getItem(position);
-                int indexColumnSuggestion = cursor.getColumnIndex("City");
+                int indexColumnSuggestion = cursor.getColumnIndex("city");
                 searchView.setQuery(cursor.getString(indexColumnSuggestion), false);
                 return true;
             }
@@ -375,14 +378,50 @@ public class TravelGuideActivity extends AppCompatActivity implements
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-                for (int i = 0; i < list.size(); i++) {
-                    cityList.add(list.get(i).getString("CanonicalName").trim());
+                if (list != null && list.size() > 0) {
+                    for (int i = 0; i < list.size(); i++) {
+                        cityList.add(list.get(i).getString("CanonicalName").trim());
+                    }
+                    SimpleCursorAdapter adapter = createCursorAdapter(cityList);
+                    if (searchView != null)
+                        searchView.setSuggestionsAdapter(adapter);
                 }
-                SimpleCursorAdapter adapter = createCursorAdapter(cityList);
-                if (searchView != null)
-                    searchView.setSuggestionsAdapter(adapter);
             }
         });
+    }
+
+    // Capitalize each word
+    private String formatQueryForSuggestions(String query) {
+        StringTokenizer st = new StringTokenizer(query, " ");
+        if (st.hasMoreTokens()) {
+            query = "";
+        }
+        while (st.hasMoreTokens()) {
+            String str = st.nextToken();
+            query = query + str.substring(0,1).toUpperCase() + str.substring(1) + " ";
+        }
+
+        st = new StringTokenizer(query, ",");
+        if (st.hasMoreTokens()) {
+            query = "";
+        }
+        while (st.hasMoreTokens()) {
+            String str = st.nextToken();
+            query = query + str.substring(0,1).toUpperCase() + str.substring(1);
+            if (st.hasMoreTokens())
+                query = query + ",";
+        }
+
+        Log.d("CITY", query);
+        return query.trim();
+    }
+
+    // Strip everything after comma
+    private String formatQueryForSearch(String query) {
+        int indexOfComma = query.indexOf(",");
+        if (indexOfComma != -1)
+            query = query.substring(0, query.indexOf(","));
+        return query;
     }
 
     private SimpleCursorAdapter createCursorAdapter(ArrayList<String> cityList) {
