@@ -412,7 +412,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
                 query = query + ",";
         }
 
-        Log.d("CITY", query);
         return query.trim();
     }
 
