@@ -281,7 +281,7 @@ public class NewTripFragment extends Fragment {
                     parseNewTripObjectId = planDetails.getObjectId();
                     Log.d(TAG, "The object id is: " + parseNewTripObjectId);
                     GoogleImageSearch googleImageSearch = new GoogleImageSearch();
-                    googleImageSearch.fetchPlaceImage(destination.getText().toString(), parseNewTripObjectId);
+                    googleImageSearch.fetchPlaceImage(destination.getText().toString(), parseNewTripObjectId,"PlanDetails");
                     saveDayDetails(parseNewTripObjectId, totalTravelDays, planName.getText().toString(), parse(startDate.getText().toString()));
                 }
             }
