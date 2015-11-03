@@ -84,7 +84,7 @@ public class AddUpdatePlaceDetailsFragment extends DialogFragment implements Vie
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (start >= 3) {
+                if (start >= 0) {
                     getPlaceDetails();
                 }
             }
@@ -113,30 +113,32 @@ public class AddUpdatePlaceDetailsFragment extends DialogFragment implements Vie
         Double longitude = null;
         Geocoder gc = new Geocoder(getContext(), Locale.ENGLISH);
         List<Address> address;
-        try {
-            address = gc.getFromLocationName(getArguments().getString("cityName", "NYC"), 1);
-            if (address.size() > 0) {
-                placeNames.clear();
-                //Log.e("Lat", Double.toString(address.get(0).getLatitude()));
-                //Log.e("Long", Double.toString(address.get(0).getLongitude()));
-                latitude = address.get(0).getLatitude();
-                longitude = address.get(0).getLongitude();
-                NearbyPlacesFoursquare.getNearbyPlaces(getActivity(), latitude, longitude,
-                        new NearbyPlacesFoursquare.OnPlacesFetchListener() {
-                            @Override
-                            public void onPlacesFetched(TreeMap<String, Location> places) {
-                                for (Map.Entry<String, Location> place : places.entrySet()) {
-                                    //Log.d("Place", place.getValue().getLatitude() + "\t" + place.getValue().getLongitude() + "\t" + place.getKey());
-                                    placeNames.add(place.getKey());
+        if (placeNames.size() == 0) {
+            try {
+                address = gc.getFromLocationName(getArguments().getString("cityName", "NYC"), 1);
+                if (address.size() > 0) {
+                    placeNames.clear();
+                    //Log.e("Lat", Double.toString(address.get(0).getLatitude()));
+                    //Log.e("Long", Double.toString(address.get(0).getLongitude()));
+                    latitude = address.get(0).getLatitude();
+                    longitude = address.get(0).getLongitude();
+                    NearbyPlacesFoursquare.getNearbyPlaces(getActivity(), latitude, longitude,
+                            new NearbyPlacesFoursquare.OnPlacesFetchListener() {
+                                @Override
+                                public void onPlacesFetched(TreeMap<String, Location> places) {
+                                    for (Map.Entry<String, Location> place : places.entrySet()) {
+                                        //Log.d("Place", place.getValue().getLatitude() + "\t" + place.getValue().getLongitude() + "\t" + place.getKey());
+                                        placeNames.add(place.getKey());
+                                    }
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, placeNames);
+                                    placeName.setAdapter(adapter);
+                                    placeName.showDropDown();
                                 }
-                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, placeNames);
-                                placeName.setAdapter(adapter);
-                                placeName.showDropDown();
-                            }
-                        });
+                            });
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
