@@ -36,7 +36,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * @author USPRKAN
+ * @author kprav
  *
  * History:
  *   18-Oct-2015    kprav       Initial Version
