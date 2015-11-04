@@ -47,7 +47,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
 
         //TODO Find a placeholder
         //holder.ivPlace.setImageResource(R.mipmap.ic_launcher);
-        Picasso.with(mContext).load(place.getPlaceImageUrl()).fit().placeholder(R.drawable.ic_fav).transform(mTransformation).into(holder.ivPlace);
+        Picasso.with(mContext).load(place.getPlaceImageUrl()).fit().placeholder(R.drawable.ic_fav_icon).transform(mTransformation).into(holder.ivPlace);
     }
 
     @Override

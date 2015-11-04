@@ -2,13 +2,12 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/icons"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/recyclerViews"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,25 +19,44 @@
             android:id="@+id/ivPlace"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:background="@android:color/black"
-            android:transitionName="place"
-            tools:ignore="UnusedAttribute" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/city_placeholder" />
+
+        <ImageView
+            android:id="@+id/ivFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ivPlace"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="16dp"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/selector_favorite"
+            android:visibility="visible" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvContacts"
             android:layout_width="match_parent"
-            android:layout_height="70dp" />
+            android:layout_height="70dp"
+            android:layout_below="@+id/ivPlace" />
 
-        <LinearLayout
+        <View
+            android:id="@+id/line"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_below="@+id/rvContacts"
             android:background="@color/divider" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvPlaces"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:layout_below="@+id/line" />
+    </RelativeLayout>
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/multiple_actions"
@@ -74,21 +92,5 @@
             fab:fab_title="@string/add_new_day" />
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
-
-    <!--<ImageView-->
-    <!--android:id="@+id/ivFavorite"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignBottom="@+id/tvTravelMonth"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:layout_alignParentEnd="false"-->
-    <!--android:layout_alignParentRight="true"-->
-    <!--android:layout_margin="16dp"-->
-    <!--android:contentDescription="@null"-->
-    <!--android:paddingRight="22dp"-->
-    <!--android:scaleType="fitXY"-->
-    <!--android:src="@drawable/selector_favorite"-->
-    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-    <!--android:visibility="gone" />-->
 
 </android.support.design.widget.CoordinatorLayout>

@@ -15,15 +15,4 @@
         <item name="android:textColor">@color/icons</item>
     </style>
 
-    <style name="MyCustomBetterPickersRadialTimePickerDialog">
-        <item name="bpMainColor1">@color/custom_tp_main1</item>
-        <item name="bpMainColor2">@color/custom_tp_main2</item>
-        <item name="bpAccentColor">@color/custom_tp_accent</item>
-        <item name="bpMainTextColor">@color/custom_tp_text</item>
-        <item name="bpDoneTextColor">@color/custom_tp_text</item>
-        <item name="bpLineColor">@color/custom_tp_main2</item>
-        <item name="bpDoneBackgroundColor">@android:color/black</item>
-        <item name="bpSelectionAlpha">102</item>
-    </style>
-
 </resources>
