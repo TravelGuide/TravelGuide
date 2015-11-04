@@ -169,14 +169,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
         mLoginStatus = Preferences.readBoolean(this, Preferences.User.LOG_IN_STATUS);
         setMenuItemLoginTitle();
 
-        // To set a global custom font for the app, add font.ttf under assets
-        // and uncomment following call.
-        // CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-        //                 .setDefaultFontPath("fonts/font.ttf")
-        //                 .setFontAttrId(R.attr.fontPath)
-        //                 .build()
-        // );
-
         setContentFragment(R.id.fragment_frame, new TripPlanListFragment());
     }
 
@@ -608,13 +600,13 @@ public class TravelGuideActivity extends AppCompatActivity implements
 
     private void loadBackdrop() {
         getSharedPreferences();
-        if (!name.equals(Preferences.DEF_VALUE))
+        if (!Preferences.DEF_VALUE.equals(name))
             tvName.setText(name);
-        if (!email.equals(Preferences.DEF_VALUE))
+        if (!Preferences.DEF_VALUE.equals(email))
             tvEmail.setText(email);
-        if (!profilePicUrl.equals(Preferences.DEF_VALUE))
+        if (!Preferences.DEF_VALUE.equals(profilePicUrl))
             Glide.with(this).load(profilePicUrl).into(ivProfilePic);
-        if (!coverPicUrl.equals(Preferences.DEF_VALUE))
+        if (!Preferences.DEF_VALUE.equals(coverPicUrl))
             Picasso.with(this).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(this), 0).into(ivCoverPic);
     }
 

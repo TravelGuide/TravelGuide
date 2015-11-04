@@ -53,8 +53,6 @@ public class ProfileFragment extends Fragment {
     private TripPlanPagerAdapter viewPagerAdapter;
     private TabLayout tabsStrip;
 
-    // private PagerSlidingTabStrip tabsStrip;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,10 +81,6 @@ public class ProfileFragment extends Fragment {
         tabsStrip = (TabLayout) view.findViewById(R.id.tabs);
         tabsStrip.setupWithViewPager(vpPager);
         setupParallaxPagerTransformerForViewPager();
-        // tabsStrip = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
-        // tabsStrip.setViewPager(vpPager);
-        // tabsStrip.setViewPager(vpPager);
-        // setupPageChangeListener();
     }
 
     private void setupParallaxPagerTransformerForViewPager() {
@@ -94,22 +88,6 @@ public class ProfileFragment extends Fragment {
         pt.setBorder(20);
         vpPager.setPageTransformer(false, pt);
     }
-
-    private void setupRotationPageTransformerForViewPager() {
-        vpPager.setPageTransformer(true, new RotationPageTransformer(165));
-        vpPager.setOffscreenPageLimit(1);
-        vpPager.setPageMargin(10);
-        vpPager.setClipChildren(false);
-    }
-
-    // private void setupPageChangeListener() {
-    //     tabsStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-    //         @Override
-    //         public void onPageSelected(final int position) {
-    //             Log.d(TAG, "PageChanged");
-    //         }
-    //     });
-    // }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
