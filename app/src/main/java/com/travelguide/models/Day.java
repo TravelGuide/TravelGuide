@@ -12,6 +12,8 @@ import java.util.Date;
 @ParseClassName("DayDetails")
 public class Day extends ParseObject{
 
+    private boolean selected;
+
     //Constructor
     public Day(){
         super();
@@ -28,4 +30,12 @@ public class Day extends ParseObject{
     public void putTravelDate(Date travelDate) {put("travelDate",travelDate);}
     public void putCreatedUserId(String createdUserId) { put("createdUserId", createdUserId);}
     public void putPlanName(String planName) {put("planName",planName);}
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 }
