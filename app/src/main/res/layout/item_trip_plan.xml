@@ -38,7 +38,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/icons"
         tools:text="NYC,NY"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:layout_marginTop="18dp"
         android:layout_below="@+id/tvPlanName"
         android:layout_centerHorizontal="true" />
