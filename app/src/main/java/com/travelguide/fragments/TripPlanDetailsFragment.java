@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -180,11 +179,9 @@ public class TripPlanDetailsFragment extends TripBaseFragment
 
         ItemClickSupport.addTo(rvDayDetails).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                mSelectedDayObjectId = mDayAdapter.get(position).getObjectId();
-                Toast.makeText(getContext(), "mSelectedDayObjectId: " + mSelectedDayObjectId,
-                        Toast.LENGTH_LONG).show();
-                loadTripPlacesFromRemote();
+            public void onItemClicked(RecyclerView recyclerView, int position, View view) {
+                Day day = mDayAdapter.get(position);
+                selectDay(day, true);
             }
         });
 
@@ -292,14 +289,33 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         });
     }
 
+    private void selectDay(Day day, boolean notify) {
+        for (Day d: mDayList){
+            if (!d.getObjectId().equals(day.getObjectId())) {
+                d.setSelected(false);
+            }
+        }
+        day.setSelected(true);
+        mSelectedDayObjectId = day.getObjectId();
+        loadTripPlacesFromRemote();
+        if (notify)
+            mDayAdapter.notifyDataSetChanged();
+    }
+
     private void populateTripPlanDays(List<Day> days) {
         mDayList.clear();
         mDayList.addAll(days);
+        if (!mDayList.isEmpty()) {
+            Day day = mDayList.get(0);
+            selectDay(day, false);
+        }
         mDayAdapter.notifyDataSetChanged();
     }
 
     private void addTripPlanDay(Day day) {
         mDayList.add(day);
+        Day last = mDayList.get(mDayList.size() - 1);
+        selectDay(last, false);
         mDayAdapter.notifyDataSetChanged();
     }
 
