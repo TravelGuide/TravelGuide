@@ -89,6 +89,7 @@ public class FavoriteItemsFragment extends ProfileFragment {
         List<Object> favTrips =  parseUser.getList("favTrips");
         ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
         query.whereContainedIn("objectId", favTrips);
+        query.addDescendingOrder("createdAt");
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
             public void done(List<TripPlan> tripPlans, ParseException e) {
@@ -114,6 +115,7 @@ public class FavoriteItemsFragment extends ProfileFragment {
         List<Object> favTrips =  parseUser.getList("favTrips");
         ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
         query.whereContainedIn("objectId", favTrips);
+        query.addDescendingOrder("createdAt");
         query.fromLocalDatastore();
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
