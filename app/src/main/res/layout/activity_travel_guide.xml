@@ -148,6 +148,13 @@
 
     </com.travelguide.layouts.CustomCoordinatorLayout>
 
+    <FrameLayout
+        android:id="@+id/fragment_frame_fullscreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:visibility="gone" />
+
     <android.support.design.widget.NavigationView
         android:id="@+id/nvView"
         android:layout_width="wrap_content"
