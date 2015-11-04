@@ -48,9 +48,10 @@ public class FullscreenFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_fullscreen, container, false);
-        FullscreenPagerAdapter fullscreenPagerAdapter = new FullscreenPagerAdapter(getContext(), imageUrlSet);
         ViewPager fullscreenViewPager = (ViewPager) view.findViewById(R.id.viewPagerFullScreen);
+        FullscreenPagerAdapter fullscreenPagerAdapter = new FullscreenPagerAdapter(getContext(), fullscreenViewPager, imageUrlSet);
         fullscreenViewPager.setAdapter(fullscreenPagerAdapter);
+        fullscreenViewPager.setCurrentItem(0);
         setupParallaxPagerTransformerForViewPager(fullscreenViewPager);
         return view;
     }
