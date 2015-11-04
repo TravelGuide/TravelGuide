@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.travelguide.R;
+import com.xgc1986.parallaxPagerTransformer.ParallaxPagerTransformer;
 
 import java.util.ArrayList;
 
@@ -49,7 +50,14 @@ public class FullscreenFragment extends Fragment {
         FullscreenPagerAdapter fullscreenPagerAdapter = new FullscreenPagerAdapter(getContext(), imageUrlSet);
         ViewPager fullscreenViewPager = (ViewPager) view.findViewById(R.id.viewPagerFullScreen);
         fullscreenViewPager.setAdapter(fullscreenPagerAdapter);
+        setupParallaxPagerTransformerForViewPager(fullscreenViewPager);
         return view;
+    }
+
+    private void setupParallaxPagerTransformerForViewPager(ViewPager fullscreenViewPager) {
+        ParallaxPagerTransformer pt = new ParallaxPagerTransformer(R.id.ivPagerImage);
+        pt.setBorder(20);
+        fullscreenViewPager.setPageTransformer(false, pt);
     }
 
     @Override
