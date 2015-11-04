@@ -23,8 +23,11 @@ public class GoogleImageSearch {
     private String imageURL;
     private String queryFromDetails;
 
+    public interface OnImageFetchListener {
+        public void onImageFetched(String url);
+    }
 
-    public void fetchPlaceImage(String searchString, final String parseObjectId,String queryFrom) {
+    public void fetchPlaceImage(String searchString, final String parseObjectId,String queryFrom, final OnImageFetchListener listener) {
         String sizeOfList = "&rsz=1";
         final String imageSize = "&imgsz=Medium";
         queryFromDetails = queryFrom;
@@ -39,6 +42,8 @@ public class GoogleImageSearch {
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject imageData = results.getJSONObject(i);
                         imageURL = imageData.getString("url");
+                        if (listener != null)
+                            listener.onImageFetched(imageURL);
                         if(queryFromDetails.contains("PlanDetails")){
                             ParseQuery<ParseObject> query = ParseQuery.getQuery("PlanDetails");
                             query.whereEqualTo("objectId", parseObjectId);

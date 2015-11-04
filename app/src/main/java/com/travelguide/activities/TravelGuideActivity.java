@@ -39,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -463,9 +464,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onTripPlanCreated(String tripPlanObjectId) {
+    public void onTripPlanCreated(String tripPlanObjectId, String imageUrl) {
         //Opening details passing ID of new item
-        TripPlanDetailsFragment fragment = TripPlanDetailsFragment.newInstance(tripPlanObjectId);
+        TripPlanDetailsFragment fragment = TripPlanDetailsFragment.newInstance(tripPlanObjectId, imageUrl);
         setContentFragment(R.id.fragment_frame, fragment);
     }
 
