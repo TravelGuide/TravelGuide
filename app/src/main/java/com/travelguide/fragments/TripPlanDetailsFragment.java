@@ -2,10 +2,10 @@ package com.travelguide.fragments;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -126,7 +127,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         fabNewPlace.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AddUpdatePlaceDetailsFragment addUpdatePlace = AddUpdatePlaceDetailsFragment
-                        .newInstance("Add New Place", null, null, TripPlanDetailsFragment.this, mTripPlan.getCityName());
+                        .newInstance(TripPlanDetailsFragment.this, mTripPlan.getCityName());
                 addUpdatePlace.show(getFragmentManager(), "add_update_place_details_fragment");
                 floatingActionsMenu.collapseImmediately();
             }
@@ -161,7 +162,6 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                 });
                 daysDetails.pinInBackground();
 
-
                 floatingActionsMenu.collapseImmediately();
             }
         });
@@ -176,6 +176,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         rvDayDetails = (RecyclerView) view.findViewById(R.id.rvContacts);
         rvDayDetails.setLayoutManager(layoutManagerDay);
         rvDayDetails.setAdapter(mDayAdapter);
+        rvDayDetails.setItemAnimator(new DefaultItemAnimator());
 
         ItemClickSupport.addTo(rvDayDetails).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
@@ -198,7 +199,15 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         rvPlaceDetails = (RecyclerView) view.findViewById(R.id.rvPlaces);
         rvPlaceDetails.setLayoutManager(layoutManagerPlace);
         rvPlaceDetails.setAdapter(mPlaceAdapter);
+        rvPlaceDetails.setItemAnimator(new DefaultItemAnimator());
         rvPlaceDetails.addItemDecoration(itemDecoration);
+
+        ItemClickSupport.addTo(rvPlaceDetails).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                Toast.makeText(getActivity(), "Day", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return view;
     }
@@ -229,7 +238,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                 if (e == null) {
                     addTripPlanPlace(placeDetails);
                     GoogleImageSearch googleImageSearch = new GoogleImageSearch();
-                    googleImageSearch.fetchPlaceImage(placeName.toString(), placeDetails.getObjectId(), "CityDetails", new GoogleImageSearch.OnImageFetchListener() {
+                    googleImageSearch.fetchPlaceImage(placeName, placeDetails.getObjectId(), "CityDetails", new GoogleImageSearch.OnImageFetchListener() {
                         @Override
                         public void onImageFetched(String url) {
                             // do nothing
