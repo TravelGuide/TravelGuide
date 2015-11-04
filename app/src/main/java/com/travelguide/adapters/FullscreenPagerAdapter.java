@@ -1,4 +1,4 @@
-package com.travelguide.fragments;
+package com.travelguide.adapters;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * History:
  *   11/03/2015     kprav       Initial Version
  */
-class FullscreenPagerAdapter extends PagerAdapter {
+public class FullscreenPagerAdapter extends PagerAdapter {
 
     private Context mContext;
     private LayoutInflater mLayoutInflater;
