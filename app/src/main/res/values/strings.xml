@@ -4,14 +4,13 @@
     <string name="action_login">Login</string>
     <string name="action_profile">Profile</string>
     <string name="action_done">Done</string>
-    <string name="new_travel">New Travel</string>
     <string name="label_login_with_facebook">Login with Facebook</string>
     <string name="label_logout">Logout</string>
     <string name="new_trip">New Trip</string>
     <string name="hint_destination">Destination</string>
-    <string name="hint_plan_name">Plan Name… </string>
-    <string name="label_Start_Date">Trip Start Date</string>
-    <string name="label_End_Date">Trip End Date</string>
+    <string name="hint_plan_name">Name</string>
+    <string name="label_Start_Date">Date</string>
+    <string name="label_End_Date">Date</string>
     <string name="label_save">Save</string>
     <string name="label_cancel">Cancel</string>
     <string name="hint_place_name">Enter place name…</string>
@@ -44,5 +43,9 @@
     <string name="logging_in">Logging in…</string>
     <string name="email">Email</string>
     <string name="name">Name</string>
-
+    <string name="type">Type</string>
+    <string name="time">Time</string>
+    <string name="start">START</string>
+    <string name="end">END</string>
+    <string name="single">Single</string>
 </resources>

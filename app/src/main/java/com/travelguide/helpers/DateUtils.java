@@ -11,7 +11,7 @@ public class DateUtils {
 
     public static Date parse(String date) {
         try {
-            return getSimpleDateFormat().parse(date);
+            return getWeekDayDateFormat().parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -22,7 +22,15 @@ public class DateUtils {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
 
-        return getSimpleDateFormat().format(calendar.getTime());
+        return getWeekDayDateFormat().format(calendar.getTime());
+    }
+
+    public static String formatTime(int hourOfDay, int minute) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
+
+        return getTimeFormat().format(calendar.getTime());
     }
 
     public static int daysDifference(Date startDate, Date endDate) {
@@ -58,7 +66,15 @@ public class DateUtils {
         return null;
     }
 
-    private static SimpleDateFormat getSimpleDateFormat() {
-        return new SimpleDateFormat("MMM/dd/yyyy", Locale.getDefault());
+    private static SimpleDateFormat getTimeFormat() {
+        return new SimpleDateFormat("h:mm a", Locale.getDefault());
     }
+
+    private static SimpleDateFormat getWeekDayDateFormat() {
+        return new SimpleDateFormat("ccc, MMM d, yyyy", Locale.getDefault());
+    }
+
+//    private static SimpleDateFormat getSimpleDateFormat() {
+//        return new SimpleDateFormat("MMM/dd/yyyy", Locale.getDefault());
+//    }
 }

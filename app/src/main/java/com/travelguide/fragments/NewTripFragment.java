@@ -5,10 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,11 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
+import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -30,7 +30,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.travelguide.R;
-import com.travelguide.adapters.DateSetAdapter;
+import com.travelguide.adapters.TextWatcherAdapter;
 import com.travelguide.helpers.GoogleImageSearch;
 import com.travelguide.listener.OnTripPlanListener;
 import com.travelguide.models.Day;
@@ -49,12 +49,14 @@ import static com.travelguide.helpers.DateUtils.parse;
 /**
  * Created by htammare on 10/20/2015.
  */
-public class NewTripFragment extends Fragment {
+public class NewTripFragment extends TripBaseFragment {
 
     private static final String TAG = NewTripFragment.class.getSimpleName();
 
     private TextView startDate;
+    private TextView startTime;
     private TextView endDate;
+    private TextView endTime;
     private EditText planName;
     private AutoCompleteTextView destination;
     private ProgressDialog progressDialog;
@@ -74,35 +76,33 @@ public class NewTripFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        setTitle(getString(R.string.new_trip));
 
         View view = inflater.inflate(R.layout.fragment_new_plan_creation, container, false);
 
-        cityNames = new ArrayList<String>();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, cityNames);
-        planName = (EditText) view.findViewById(R.id.tv_PlanName);
-        destination = (AutoCompleteTextView) view.findViewById(R.id.actv_PlaceName);
-        destination.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+        cityNames = new ArrayList<>();
+        planName = (EditText) view.findViewById(R.id.tvPlanName);
+        destination = (AutoCompleteTextView) view.findViewById(R.id.actvPlaceName);
+        destination.addTextChangedListener(new TextWatcherAdapter() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (start >= 2) {
                     fetchCityNames();
                 }
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
         });
 
-        startDate = (TextView) view.findViewById(R.id.tv_StartDate);
+        startDate = (TextView) view.findViewById(R.id.tvStartDate);
         startDate.setOnClickListener(startDateOnClickListener());
 
-        endDate = (TextView) view.findViewById(R.id.tv_EndDate);
+        startTime = (TextView) view.findViewById(R.id.tvStartTime);
+        startTime.setOnClickListener(startTimeOnClickListener());
+
+        endDate = (TextView) view.findViewById(R.id.tvEndDate);
         endDate.setOnClickListener(endDateOnClickListener());
+
+        endTime = (TextView) view.findViewById(R.id.tvEndTime);
+        endTime.setOnClickListener(endTimeOnClickListener());
 
         RadioGroup rgGroupType = (RadioGroup) view.findViewById(R.id.rgGroupType);
         rgGroupType.setOnCheckedChangeListener(groupTypeOnCheckedChangeListener());
@@ -154,11 +154,8 @@ public class NewTripFragment extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.rbMale:
-                        travellerType = getString(R.string.male);
-                        break;
-                    case R.id.rbFemale:
-                        travellerType = getString(R.string.female);
+                    case R.id.rbSingle:
+                        travellerType = getString(R.string.single);
                         break;
                     case R.id.rbCouple:
                         travellerType = getString(R.string.couple);
@@ -176,19 +173,37 @@ public class NewTripFragment extends Fragment {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerFragment datePickerFragment = DatePickerFragment.newInstance(endDateSelected());
-                datePickerFragment.show(getFragmentManager(), "datePicker");
+                showDatePickerDialog(new CalendarDatePickerDialogFragment.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
+                        if (endDateViewModel == null) {
+                            endDateViewModel = new TripDateViewModel();
+                        }
+                        endDateViewModel.setYear(year);
+                        endDateViewModel.setMonthOfYear(monthOfYear);
+                        endDateViewModel.setDayOfMonth(dayOfMonth);
+                        endDate.setText(endDateViewModel.getFormattedDate());
+                    }
+                });
             }
         };
     }
 
-    private DateSetAdapter endDateSelected() {
-        return new DateSetAdapter() {
+    private View.OnClickListener endTimeOnClickListener() {
+        return new View.OnClickListener() {
             @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                endDateViewModel = new TripDateViewModel(year, monthOfYear, dayOfMonth);
-                endDate.setText(endDateViewModel.getFormattedDate());
-                Log.d(TAG, "endDateSelected: " + endDateViewModel);
+            public void onClick(View v) {
+                showTimePickerDialog(new RadialTimePickerDialogFragment.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(RadialTimePickerDialogFragment dialog, int hourOfDay, int minute) {
+                        if (endDateViewModel == null) {
+                            endDateViewModel = new TripDateViewModel();
+                        }
+                        endDateViewModel.setHourOfDay(hourOfDay);
+                        endDateViewModel.setMinute(minute);
+                        endTime.setText(endDateViewModel.getFormattedTime());
+                    }
+                });
             }
         };
     }
@@ -197,19 +212,37 @@ public class NewTripFragment extends Fragment {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerFragment datePickerFragment = DatePickerFragment.newInstance(startDateSelected());
-                datePickerFragment.show(getFragmentManager(), "datePicker");
+                showDatePickerDialog(new CalendarDatePickerDialogFragment.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
+                        if (startDateViewModel == null) {
+                            startDateViewModel = new TripDateViewModel();
+                        }
+                        startDateViewModel.setYear(year);
+                        startDateViewModel.setMonthOfYear(monthOfYear);
+                        startDateViewModel.setDayOfMonth(dayOfMonth);
+                        startDate.setText(startDateViewModel.getFormattedDate());
+                    }
+                });
             }
         };
     }
 
-    private DateSetAdapter startDateSelected() {
-        return new DateSetAdapter() {
+    private View.OnClickListener startTimeOnClickListener() {
+        return new View.OnClickListener() {
             @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                startDateViewModel = new TripDateViewModel(year, monthOfYear, dayOfMonth);
-                startDate.setText(startDateViewModel.getFormattedDate());
-                Log.d(TAG, "startDateSelected: " + startDateViewModel);
+            public void onClick(View v) {
+                showTimePickerDialog(new RadialTimePickerDialogFragment.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(RadialTimePickerDialogFragment dialog, int hourOfDay, int minute) {
+                        if (startDateViewModel == null) {
+                            startDateViewModel = new TripDateViewModel();
+                        }
+                        startDateViewModel.setHourOfDay(hourOfDay);
+                        startDateViewModel.setMinute(minute);
+                        startTime.setText(startDateViewModel.getFormattedTime());
+                    }
+                });
             }
         };
     }
@@ -230,6 +263,8 @@ public class NewTripFragment extends Fragment {
         if (startDateViewModel == null) {
             startDate.setError(getString(R.string.plan_start_date_is_required));
             valid = false;
+        } else {
+
         }
 
         if (valid) {
@@ -238,20 +273,20 @@ public class NewTripFragment extends Fragment {
     }
 
     private void saveAndStartDetailsFragment() {
-            progressDialog = new ProgressDialog(getContext());
-            progressDialog.setTitle(R.string.creating_plan);
-            progressDialog.setMessage(getString(R.string.please_wait));
-            progressDialog.setCancelable(false);
-            progressDialog.show();
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setTitle(R.string.creating_plan);
+        progressDialog.setMessage(getString(R.string.please_wait));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
-            ParseUser user = ParseUser.getCurrentUser();
+        ParseUser user = ParseUser.getCurrentUser();
 
-            final TripPlan planDetails = new TripPlan();
-            planDetails.putCreatedUserId(user.getObjectId());
-            planDetails.putCreatedUserName(user.getUsername());
-            planDetails.putPlanName(planName.getText().toString());
-            planDetails.putCityName(destination.getText().toString());
-            planDetails.putTravelMonthNumber(startDateViewModel.getMonthNumber() + 1);
+        final TripPlan planDetails = new TripPlan();
+        planDetails.putCreatedUserId(user.getObjectId());
+        planDetails.putCreatedUserName(user.getUsername());
+        planDetails.putPlanName(planName.getText().toString());
+        planDetails.putCityName(destination.getText().toString());
+        planDetails.putTravelMonthNumber(startDateViewModel.getMonthOfYear() + 1);
         planDetails.putTravelMonth(startDateViewModel.getMonthName());
         planDetails.putTravelSeason(startDateViewModel.getSeasonName());
 
@@ -281,7 +316,7 @@ public class NewTripFragment extends Fragment {
                     parseNewTripObjectId = planDetails.getObjectId();
                     Log.d(TAG, "The object id is: " + parseNewTripObjectId);
                     GoogleImageSearch googleImageSearch = new GoogleImageSearch();
-                    googleImageSearch.fetchPlaceImage(destination.getText().toString(), parseNewTripObjectId,"PlanDetails");
+                    googleImageSearch.fetchPlaceImage(destination.getText().toString(), parseNewTripObjectId, "PlanDetails");
                     saveDayDetails(parseNewTripObjectId, totalTravelDays, planName.getText().toString(), parse(startDate.getText().toString()));
                 }
             }
@@ -347,6 +382,29 @@ public class NewTripFragment extends Fragment {
                 destination.showDropDown();
             }
         });
+    }
+
+    private void showTimePickerDialog(RadialTimePickerDialogFragment.OnTimeSetListener timeSetListener) {
+        final Calendar c = Calendar.getInstance();
+        int hourOfDay = c.get(Calendar.HOUR_OF_DAY);
+        int minuteOfHour = c.get(Calendar.MINUTE);
+        RadialTimePickerDialogFragment timePickerDialog = RadialTimePickerDialogFragment
+                .newInstance(timeSetListener, hourOfDay, minuteOfHour,
+                        DateFormat.is24HourFormat(getContext()));
+
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        timePickerDialog.show(fm, "FRAG_TAG_TIME_PICKER");
+    }
+
+    private void showDatePickerDialog(CalendarDatePickerDialogFragment.OnDateSetListener dateSetListener) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        CalendarDatePickerDialogFragment calendarDatePickerDialogFragment = CalendarDatePickerDialogFragment
+                .newInstance(dateSetListener, year, month, day);
+        calendarDatePickerDialogFragment.show(fm, "FRAG_TAG_DATE_PICKER");
     }
 
 }

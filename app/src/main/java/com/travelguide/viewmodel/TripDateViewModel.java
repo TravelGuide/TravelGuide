@@ -6,54 +6,70 @@ import java.util.Date;
 import static com.travelguide.helpers.DateUtils.formatDate;
 import static com.travelguide.helpers.DateUtils.formatMonthName;
 import static com.travelguide.helpers.DateUtils.formatSeasonName;
+import static com.travelguide.helpers.DateUtils.formatTime;
 
 public class TripDateViewModel {
 
-    private final int monthNumber;
-    private final String monthName;
-    private final String seasonName;
-    private final String formattedDate;
-    private final Date parsedDate;
+    private int year;
+    private int monthOfYear;
+    private int dayOfMonth;
+    private int hourOfDay;
+    private int minute;
 
-    public TripDateViewModel(int year, int monthOfYear, int dayOfMonth) {
-        this.monthNumber = monthOfYear;
-        this.monthName = formatMonthName(monthOfYear);
-        this.seasonName = formatSeasonName(monthOfYear);
-        this.formattedDate = formatDate(year, monthOfYear, dayOfMonth);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, monthOfYear, dayOfMonth);
-        this.parsedDate = calendar.getTime();
+    public void setYear(int year) {
+        this.year = year;
     }
 
-    public int getMonthNumber() {
-        return monthNumber;
+    public void setMonthOfYear(int monthOfYear) {
+        this.monthOfYear = monthOfYear;
+    }
+
+    public void setDayOfMonth(int dayOfMonth) {
+        this.dayOfMonth = dayOfMonth;
+    }
+
+    public void setHourOfDay(int hourOfDay) {
+        this.hourOfDay = hourOfDay;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
     }
 
     public String getMonthName() {
-        return monthName;
+        return formatMonthName(monthOfYear);
     }
 
     public String getSeasonName() {
-        return seasonName;
+        return formatSeasonName(monthOfYear);
     }
 
     public String getFormattedDate() {
-        return formattedDate;
+        return formatDate(year, monthOfYear, dayOfMonth);
+    }
+
+    public String getFormattedTime() {
+        return formatTime(hourOfDay, minute);
+    }
+
+    public int getMonthOfYear() {
+        return monthOfYear;
     }
 
     public Date getParsedDate() {
-        return parsedDate;
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, monthOfYear, dayOfMonth, hourOfDay, minute);
+        return calendar.getTime();
     }
 
     @Override
     public String toString() {
         return "TripDateViewModel{" +
-                "monthNumber=" + monthNumber +
-                ", monthName='" + monthName + '\'' +
-                ", seasonName='" + seasonName + '\'' +
-                ", formattedDate='" + formattedDate + '\'' +
-                ", parsedDate=" + parsedDate +
+                "year=" + year +
+                ", monthOfYear=" + monthOfYear +
+                ", dayOfMonth=" + dayOfMonth +
+                ", hourOfDay=" + hourOfDay +
+                ", minute=" + minute +
                 '}';
     }
 }
