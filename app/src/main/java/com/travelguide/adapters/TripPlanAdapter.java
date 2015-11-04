@@ -41,7 +41,9 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final TripPlan tripPlan = mTripPlans.get(position);
 
-        holder.tvPlanName.setText(tripPlan.getPlanName());
+        String planName = tripPlan.getPlanName() + "\n" + tripPlan.getCityName();
+
+        holder.tvPlanName.setText(planName);
         holder.ivPlace.setImageResource(R.drawable.city_placeholder);
 
         Glide.with(mContext)
@@ -53,7 +55,7 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
                     @Override
                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
                         super.onResourceReady(resource, glideAnimation);
-                        holder.ivPlace.setColorFilter(Color.argb(150, 50, 50, 50));
+                        holder.ivPlace.setColorFilter(Color.argb(145, 50, 50, 50));
                     }
 
                     @Override
