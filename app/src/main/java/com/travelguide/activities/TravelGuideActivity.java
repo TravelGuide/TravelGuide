@@ -559,9 +559,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
                 tvProfileUsername.setText(currentUser.getUsername());
                 tvProfileEmail.setText(currentUser.getEmail());
+                loadBackdrop();
             } else {
                 ivProfile.setImageResource(R.drawable.profile_placeholder);
                 tvProfileUsername.setText("");
