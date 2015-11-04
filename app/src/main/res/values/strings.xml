@@ -9,12 +9,12 @@
     <string name="label_logout">Logout</string>
     <string name="new_trip">New Trip</string>
     <string name="hint_destination">Destination</string>
-    <string name="hint_plan_name">Plan Name … </string>
+    <string name="hint_plan_name">Plan Name… </string>
     <string name="label_Start_Date">Trip Start Date</string>
     <string name="label_End_Date">Trip End Date</string>
     <string name="label_save">Save</string>
     <string name="label_cancel">Cancel</string>
-    <string name="hint_place_name">Enter place name …</string>
+    <string name="hint_place_name">Enter place name…</string>
     <string name="hint_travel_time">Time taken to visit ? 1 hr ?</string>
     <string name="plan_name_is_required">Plan name is required!</string>
     <string name="destination_is_required">Destination is required!</string>
@@ -42,5 +42,7 @@
     <string name="termsAndPrivacy">By logging in you agree to the TravelGuide Terms of Service and Privacy Policy.</string>
     <string name="log_in_facebook">Log In With Facebook</string>
     <string name="logging_in">Logging in…</string>
+    <string name="email">Email</string>
+    <string name="name">Name</string>
 
 </resources>

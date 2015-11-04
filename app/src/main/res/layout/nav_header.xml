@@ -11,6 +11,7 @@
         android:id="@+id/ivProfile"
         android:layout_width="@dimen/background_profile_size"
         android:layout_height="@dimen/background_profile_size"
+        android:layout_marginTop="@dimen/background_profile_image_margin_top"
         android:layout_marginBottom="@dimen/background_profile_image_margin_bottom"
         android:background="@drawable/background_profile"
         android:contentDescription="@null"

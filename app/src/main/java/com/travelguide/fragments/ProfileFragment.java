@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -27,15 +28,15 @@ import com.travelguide.adapters.TripPlanPagerAdapter;
 import com.travelguide.helpers.DeviceDimensionsHelper;
 import com.travelguide.helpers.ItemClickSupport;
 import com.travelguide.models.TripPlan;
+import com.travelguide.ui.RotationPageTransformer;
+import com.xgc1986.parallaxPagerTransformer.ParallaxPagerTransformer;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-// TODO: Allow access to ProfileFragment only if user has logged in previously
-
 /**
- * @author USPRKAN
+ * @author kprav
  *
  * History:
  *   18-Oct-2015    kprav       Initial Version
@@ -44,25 +45,13 @@ public class ProfileFragment extends Fragment {
     private static final String TAG = ProfileFragment.class.getSimpleName();
 
     private View view;
-
-    private CircleImageView ivProfilePic;
-    private ImageView ivCoverPic;
-    private TextView tvName;
-    private TextView tvEmail;
-
     private String userObjectId = null;
-    private String name = null;
-    private String email = null;
-    private String profilePicUrl = null;
-    private String coverPicUrl = null;
-
     private SharedPreferences userInfo;
-
     private OnFragmentInteractionListener mListener;
 
     private ViewPager vpPager;
     private TripPlanPagerAdapter viewPagerAdapter;
-    private PagerSlidingTabStrip tabsStrip;
+    private TabLayout tabsStrip;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,44 +69,24 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_profile, container, false);
-        ivCoverPic = (ImageView) view.findViewById(R.id.ivCoverPicInProfile);
-        ivProfilePic = (CircleImageView) view.findViewById(R.id.ivProfilePicInProfile);
-        tvName = (TextView) view.findViewById(R.id.tvNameInProfile);
-        tvEmail = (TextView) view.findViewById(R.id.tvEmailInProfile);
-
         setHasOptionsMenu(true);
-
-        tvName.setText(name);
-        tvEmail.setText(email);
-        Glide.with(getContext()).load(profilePicUrl).into(ivProfilePic);
-        // Glide.with(getContext()).load(coverPicUrl).override(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic);
-        Picasso.with(getContext()).load(coverPicUrl).resize(DeviceDimensionsHelper.getDisplayWidth(getActivity()), 0).into(ivCoverPic);
-
         loadFragments(view);
-
         return view;
     }
 
     private void loadFragments(View view) {
-        // Get the viewpager and setup a PageChangeListener
         vpPager = (ViewPager) view.findViewById(R.id.viewpager);
-        // Get the view pager adapter for the pager
-        viewPagerAdapter = new TripPlanPagerAdapter(getActivity().getSupportFragmentManager());
+        viewPagerAdapter = new TripPlanPagerAdapter(getChildFragmentManager());
         vpPager.setAdapter(viewPagerAdapter);
-        // Find the sliding tabstrips
-        tabsStrip = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
-        // Attach the tabstrip to the view pager
-        tabsStrip.setViewPager(vpPager);
-        setupPageChangeListener();
+        tabsStrip = (TabLayout) view.findViewById(R.id.tabs);
+        tabsStrip.setupWithViewPager(vpPager);
+        setupParallaxPagerTransformerForViewPager();
     }
 
-    private void setupPageChangeListener() {
-        tabsStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(final int position) {
-                Log.d(TAG, "PageChanged");
-            }
-        });
+    private void setupParallaxPagerTransformerForViewPager() {
+        ParallaxPagerTransformer pt = new ParallaxPagerTransformer(R.id.rvTripPlansInProfile);
+        pt.setBorder(20);
+        vpPager.setPageTransformer(false, pt);
     }
 
     @Override
@@ -135,14 +104,6 @@ public class ProfileFragment extends Fragment {
     private void getSharedPreferences() {
         userInfo = getActivity().getSharedPreferences("userInfo", 0);
         userObjectId = userInfo.getString("userObjectId", "missing");
-        name = userInfo.getString("name", "missing");
-        email = userInfo.getString("email", "missing");
-        profilePicUrl = userInfo.getString("profilePicUrl", "missing");
-        coverPicUrl = userInfo.getString("coverPicUrl", "missing");
-    }
-
-    private void savingOnDatabase(List<TripPlan> tripPlans) {
-        ParseObject.pinAllInBackground(tripPlans);
     }
 
     public interface OnFragmentInteractionListener {

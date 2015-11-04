@@ -3,118 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#ffffff"
+    android:background="@color/primary"
     tools:context="com.travelguide.fragments.ProfileFragment">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
-
-        <ImageView
-            android:id="@+id/ivCoverPicInProfile"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/primary" />
-
-    </FrameLayout>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/cvCardViewInProfile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="125dp"
-        android:background="@android:color/white"
-        app:cardBackgroundColor="@android:color/transparent"
-        app:cardCornerRadius="3dp"
-        app:cardElevation="5dp"
-        app:cardUseCompatPadding="true"
-        app:contentPadding="@dimen/activity_horizontal_margin">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal" >
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivProfilePicInProfile"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:src="@color/accent"
-                app:border_width="1dp" />
-
-            <TextView
-                android:id="@+id/tvEmailInProfile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/ivProfilePicInProfile"
-                android:layout_toStartOf="@id/ivProfilePicInProfile"
-                android:layout_alignBottom="@id/ivProfilePicInProfile"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:padding="8dp"
-                android:text="Email"
-                android:textSize="12sp"
-                android:textColor="@color/abc_secondary_text_material_light" />
-
-            <TextView
-                android:id="@+id/tvNameInProfile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/ivProfilePicInProfile"
-                android:layout_toStartOf="@id/ivProfilePicInProfile"
-                android:layout_above="@id/tvEmailInProfile"
-                android:layout_alignStart="@id/tvEmailInProfile"
-                android:layout_alignLeft="@id/tvEmailInProfile"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:padding="8dp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:text="Name"
-                android:textColor="@color/abc_secondary_text_material_light" />
-
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
-
-    <View
-        android:id="@+id/separator_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/cvCardViewInProfile"
-        android:layout_marginBottom="4dp"
-        android:background="@color/divider" />
-
-    <com.astuetz.PagerSlidingTabStrip
+    <android.support.design.widget.TabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:textSize="14sp"
-        app:pstsShouldExpand="true"
-        app:pstsTextAllCaps="true"
-        android:textColor="@color/primary_text"
-        app:pstsDividerColor="@color/divider"
-        app:pstsIndicatorColor="@color/accent"
-        app:pstsUnderlineColor="@color/primary_light"
-        android:layout_below="@id/separator_line"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        app:tabBackground="@color/primary"
+        app:tabIndicatorColor="@color/primary_light"
+        app:tabIndicatorHeight="4dp"
+        app:tabTextColor="@color/white"
+        app:tabSelectedTextColor="@color/white"
+        app:paddingStart="0dp"
+        app:paddingEnd="0dp"
+        app:tabPaddingStart="0dp"
+        app:tabPaddingEnd="0dp"
+        app:tabPaddingTop="0dp"
+        app:tabPaddingBottom="0dp" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
