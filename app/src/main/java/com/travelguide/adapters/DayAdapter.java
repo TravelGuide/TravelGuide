@@ -40,6 +40,7 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.ViewHolder> {
         String dayOfMonth = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
         String month = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault());
 
+        holder.itemView.setSelected(day.isSelected());
         holder.tvDay.setText(dayOfMonth);
         holder.tvMonth.setText(month);
     }
