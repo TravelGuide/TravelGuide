@@ -1,13 +1,16 @@
 package com.travelguide.fragments;
 
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+
+import com.travelguide.R;
 
 public abstract class TripBaseFragment extends Fragment {
 
     protected void setTitle(String title) {
-        if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(title);
+        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) getActivity().findViewById(R.id.collapsing_toolbar);
+        if (toolbarLayout != null) {
+            toolbarLayout.setTitle(title);
         }
     }
 }

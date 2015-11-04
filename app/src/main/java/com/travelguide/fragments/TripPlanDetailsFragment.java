@@ -1,5 +1,7 @@
 package com.travelguide.fragments;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -50,11 +52,12 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     private RecyclerView rvPlaceDetails;
     private FloatingActionsMenu floatingActionsMenu;
     private ImageView ivPlace;
+    private ImageView ivFavIcon;
 
     private String mTripPLanObjectId;
     private String mSelectedDayObjectId;
-    private String cityName;
 
+    private TripPlan mTripPlan;
 
     private List<Day> mDayList;
     private List<Place> mPlaceList;
@@ -93,6 +96,9 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         View view = inflater.inflate(R.layout.fragment_trip_plan_details, container, false);
         setHasOptionsMenu(true);
 
+        ivFavIcon = (ImageView) view.findViewById(R.id.ivFavorite);
+        setupFavIconOnClickListener();
+
         ivPlace = (ImageView) view.findViewById(R.id.ivPlace);
 
         floatingActionsMenu = (FloatingActionsMenu) view.findViewById(R.id.multiple_actions);
@@ -102,7 +108,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         fabNewPlace.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AddUpdatePlaceDetailsFragment addUpdatePlace = AddUpdatePlaceDetailsFragment
-                        .newInstance("Add New Place", null, null, TripPlanDetailsFragment.this,cityName);
+                        .newInstance("Add New Place", null, null, TripPlanDetailsFragment.this, mTripPlan.getCityName());
                 addUpdatePlace.show(getFragmentManager(), "add_update_place_details_fragment");
                 floatingActionsMenu.collapseImmediately();
             }
@@ -292,48 +298,52 @@ public class TripPlanDetailsFragment extends TripBaseFragment
             public void done(TripPlan tripPlan, ParseException e) {
                 if (e == null) {
                     setTitle(tripPlan.getPlanName());
-                    Glide.with(getContext()).load(tripPlan.getCityImageUrl()).into(ivPlace);
-                    cityName = tripPlan.getCityName();
+                    Glide.with(getContext())
+                            .load(tripPlan.getCityImageUrl())
+                            .placeholder(R.drawable.city_placeholder)
+                            .crossFade()
+                            .into(ivPlace);
+                    mTripPlan = tripPlan;
                 }
             }
         });
     }
 
-    //            ivFavIcon = (ImageView) itemView.findViewById(R.id.ivFavorite);
-//            ivFavIcon.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    int position = getLayoutPosition();
-//                    TripPlan tripPlan = mTripPlans.get(position);
-//
-//                    v.setSelected(!v.isSelected());
-//                    tripPlan.setFavorite(v.isSelected());
-//
-//                    if (v.isSelected()) {
-//                        ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
-//                        ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
-//                        AnimatorSet set1 = new AnimatorSet();
-//                        set1.playTogether(anim1, anim2);
-//                        ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
-//                        ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
-//                        AnimatorSet set2 = new AnimatorSet();
-//                        set2.playTogether(anim3, anim4);
-//                        AnimatorSet set4 = new AnimatorSet();
-//                        set4.playSequentially(set1, set2);
-//                        set4.start();
-//                    } else {
-//                        ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
-//                        ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
-//                        AnimatorSet set1 = new AnimatorSet();
-//                        set1.playTogether(anim1, anim2);
-//                        ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
-//                        ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
-//                        AnimatorSet set2 = new AnimatorSet();
-//                        set2.playTogether(anim3, anim4);
-//                        AnimatorSet set4 = new AnimatorSet();
-//                        set4.playSequentially(set1, set2);
-//                        set4.start();
-//                    }
-//                }
-//            });
+    private void setupFavIconOnClickListener() {
+        ivFavIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setSelected(!v.isSelected());
+                mTripPlan.setFavorite(v.isSelected());
+
+                if (v.isSelected()) {
+                    ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
+                    ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
+                    AnimatorSet set1 = new AnimatorSet();
+                    set1.playTogether(anim1, anim2);
+                    ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
+                    ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
+                    AnimatorSet set2 = new AnimatorSet();
+                    set2.playTogether(anim3, anim4);
+                    AnimatorSet set4 = new AnimatorSet();
+                    set4.playSequentially(set1, set2);
+                    set4.start();
+                } else {
+                    ObjectAnimator anim1 = ObjectAnimator.ofFloat(v, "scaleX", 0.8f);
+                    ObjectAnimator anim2 = ObjectAnimator.ofFloat(v, "scaleY", 0.8f);
+                    AnimatorSet set1 = new AnimatorSet();
+                    set1.playTogether(anim1, anim2);
+                    ObjectAnimator anim3 = ObjectAnimator.ofFloat(v, "scaleX", 1.0f);
+                    ObjectAnimator anim4 = ObjectAnimator.ofFloat(v, "scaleY", 1.0f);
+                    AnimatorSet set2 = new AnimatorSet();
+                    set2.playTogether(anim3, anim4);
+                    AnimatorSet set4 = new AnimatorSet();
+                    set4.playSequentially(set1, set2);
+                    set4.start();
+                }
+            }
+        });
+    }
+
+
 }

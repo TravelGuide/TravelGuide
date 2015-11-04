@@ -127,7 +127,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
         appBar = (AppBarLayout) findViewById(R.id.appbar);
         appBar.addOnOffsetChangedListener(this);
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle(getResources().getString(R.string.app_name));
 
         // Get the frame to show images in fullscreen
         fragmentFrameFullscreen = (FrameLayout) findViewById(R.id.fragment_frame_fullscreen);
@@ -626,8 +625,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
         if (collapsingToolbar.getHeight() + verticalOffset < 2 * ViewCompat.getMinimumHeight(collapsingToolbar)) {
             if (fragment != null && fragment instanceof ProfileFragment)
                 collapsingToolbar.setTitle(name);
-            else
-                collapsingToolbar.setTitle(getString(R.string.app_name));
         }
         else {
             collapsingToolbar.setTitle("");

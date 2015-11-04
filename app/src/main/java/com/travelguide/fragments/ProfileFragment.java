@@ -9,31 +9,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.astuetz.PagerSlidingTabStrip;
-import com.bumptech.glide.Glide;
-import com.parse.ParseObject;
-import com.squareup.picasso.Picasso;
 import com.travelguide.R;
 import com.travelguide.adapters.TripPlanAdapter;
 import com.travelguide.adapters.TripPlanPagerAdapter;
-import com.travelguide.helpers.DeviceDimensionsHelper;
 import com.travelguide.helpers.ItemClickSupport;
-import com.travelguide.models.TripPlan;
-import com.travelguide.ui.RotationPageTransformer;
 import com.xgc1986.parallaxPagerTransformer.ParallaxPagerTransformer;
-
-import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * @author kprav
@@ -87,6 +75,11 @@ public class ProfileFragment extends Fragment {
         ParallaxPagerTransformer pt = new ParallaxPagerTransformer(R.id.rvTripPlansInProfile);
         pt.setBorder(20);
         vpPager.setPageTransformer(false, pt);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
     }
 
     @Override
