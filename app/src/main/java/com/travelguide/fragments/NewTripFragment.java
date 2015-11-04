@@ -306,7 +306,6 @@ public class NewTripFragment extends TripBaseFragment {
             totalTravelDays = daysDifference(parse(startDate.getText().toString()), parse(endDate.getText().toString())) + 1;
             planDetails.putTripTime(totalTravelDays);
         }
-        planDetails.puCityImageURL("http://thenextweb.com/wp-content/blogs.dir/1/files/2013/09/nyc.jpg");
         planDetails.putEnabledFlag(false);
 
         planDetails.saveInBackground(new SaveCallback() {
@@ -316,14 +315,19 @@ public class NewTripFragment extends TripBaseFragment {
                     parseNewTripObjectId = planDetails.getObjectId();
                     Log.d(TAG, "The object id is: " + parseNewTripObjectId);
                     GoogleImageSearch googleImageSearch = new GoogleImageSearch();
-                    googleImageSearch.fetchPlaceImage(destination.getText().toString(), parseNewTripObjectId, "PlanDetails");
-                    saveDayDetails(parseNewTripObjectId, totalTravelDays, planName.getText().toString(), parse(startDate.getText().toString()));
+                    googleImageSearch.fetchPlaceImage(destination.getText().toString(), parseNewTripObjectId, "PlanDetails", new GoogleImageSearch.OnImageFetchListener() {
+                        @Override
+                        public void onImageFetched(String url) {
+                            planDetails.puCityImageURL(url);
+                            saveDayDetails(parseNewTripObjectId, totalTravelDays, planName.getText().toString(), parse(startDate.getText().toString()), url);
+                        }
+                    });
                 }
             }
         });
     }
 
-    private void saveDayDetails(String parsePlanID, int totalTravelDays, String planName, Date startDate) {
+    private void saveDayDetails(String parsePlanID, int totalTravelDays, String planName, Date startDate, final String imageUrl) {
         ParseUser user = ParseUser.getCurrentUser();
         Integer trackCount = 0;
         Date updatedStartDate = null;
@@ -354,7 +358,7 @@ public class NewTripFragment extends TripBaseFragment {
                     progressDialog.dismiss();
                     getFragmentManager().popBackStack();
                     if (mListener != null) {
-                        mListener.onTripPlanCreated(parseNewTripObjectId);
+                        mListener.onTripPlanCreated(parseNewTripObjectId, imageUrl);
                     }
                 }
             }

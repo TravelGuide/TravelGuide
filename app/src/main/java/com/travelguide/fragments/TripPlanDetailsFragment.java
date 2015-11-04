@@ -2,6 +2,7 @@ package com.travelguide.fragments;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +48,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         implements AddUpdatePlaceDetailsFragment.EditItemDialogListener {
 
     private static final String ARG_TRIP_PLAN_OBJECT_ID = "tripPlanObjectId";
+    private static final String ARG_TRIP_PLAN_IMAGE_URL = "tripPlanImageUrl";
 
     private RecyclerView rvDayDetails;
     private RecyclerView rvPlaceDetails;
@@ -55,6 +57,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     private ImageView ivFavIcon;
 
     private String mTripPLanObjectId;
+    private String mTripPlanImageUrl;
     private String mSelectedDayObjectId;
 
     private TripPlan mTripPlan;
@@ -73,6 +76,15 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         return fragment;
     }
 
+    public static TripPlanDetailsFragment newInstance(String tripPlanObjectId, String imageUrl) {
+        TripPlanDetailsFragment fragment = new TripPlanDetailsFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_TRIP_PLAN_OBJECT_ID, tripPlanObjectId);
+        args.putString(ARG_TRIP_PLAN_IMAGE_URL, imageUrl);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public TripPlanDetailsFragment() {
         // Required empty public constructor
     }
@@ -82,6 +94,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTripPLanObjectId = getArguments().getString(ARG_TRIP_PLAN_OBJECT_ID);
+            mTripPlanImageUrl = getArguments().getString(ARG_TRIP_PLAN_IMAGE_URL);
         }
     }
 
@@ -100,6 +113,12 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         setupFavIconOnClickListener();
 
         ivPlace = (ImageView) view.findViewById(R.id.ivPlace);
+        if (mTripPlanImageUrl != null)
+            Glide.with(getContext())
+                    .load(mTripPlanImageUrl)
+                    .placeholder(R.drawable.city_placeholder)
+                    .crossFade()
+                    .into(ivPlace);
 
         floatingActionsMenu = (FloatingActionsMenu) view.findViewById(R.id.multiple_actions);
 
@@ -213,7 +232,12 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                 if (e == null) {
                     addTripPlanPlace(placeDetails);
                     GoogleImageSearch googleImageSearch = new GoogleImageSearch();
-                    googleImageSearch.fetchPlaceImage(placeName.toString(), placeDetails.getObjectId(), "CityDetails");
+                    googleImageSearch.fetchPlaceImage(placeName.toString(), placeDetails.getObjectId(), "CityDetails", new GoogleImageSearch.OnImageFetchListener() {
+                        @Override
+                        public void onImageFetched(String url) {
+                            // do nothing
+                        }
+                    });
                 }
             }
         });
@@ -304,6 +328,8 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                             .crossFade()
                             .into(ivPlace);
                     mTripPlan = tripPlan;
+                } else {
+                    e.printStackTrace();
                 }
             }
         });
