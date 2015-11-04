@@ -43,6 +43,7 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
 
         holder.tvPlanName.setText(tripPlan.getPlanName());
         holder.ivPlace.setImageResource(R.drawable.city_placeholder);
+        holder.tvPlaceName.setText(tripPlan.getCityName());
 
         Glide.with(mContext)
                 .load(tripPlan.getCityImageUrl())
@@ -53,7 +54,7 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
                     @Override
                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
                         super.onResourceReady(resource, glideAnimation);
-                        holder.ivPlace.setColorFilter(Color.argb(150, 50, 50, 50));
+                        holder.ivPlace.setColorFilter(Color.argb(145, 50, 50, 50));
                     }
 
                     @Override
@@ -81,12 +82,14 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPlace;
         TextView tvPlanName;
+        TextView tvPlaceName;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             ivPlace = (ImageView) itemView.findViewById(R.id.ivPlace);
             tvPlanName = (TextView) itemView.findViewById(R.id.tvPlanName);
+            tvPlaceName = (TextView) itemView.findViewById(R.id.tvPlaceNameHomeScreen);
         }
     }
 }

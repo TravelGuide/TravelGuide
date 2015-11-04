@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,13 +14,34 @@
         android:src="@drawable/city_placeholder" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
         android:id="@+id/tvPlanName"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:background="?android:attr/selectableItemBackground"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/icons"
-        tools:text="Trip to NYC" />
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="5dp"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tvPlaceNameHomeScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal|bottom"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/icons"
+        tools:text="NYC,NY"
+        android:textSize="15sp"
+        android:layout_marginTop="53dp"
+        android:layout_below="@+id/tvPlanName"
+        android:layout_centerHorizontal="true" />
+
+
+
+</RelativeLayout>
