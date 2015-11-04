@@ -79,7 +79,7 @@ public class FullscreenPagerAdapter extends PagerAdapter {
         View view = mLayoutInflater.inflate(R.layout.fragment_fullscreen_pager_item, container, false);
         ImageView ivPagerImage = (ImageView) view.findViewById(R.id.ivPagerImage);
         Picasso.with(mContext).load(imageUrlArray[position])
-                .resize(DeviceDimensionsHelper.getDisplayWidth(mContext), DeviceDimensionsHelper.getDisplayHeight(mContext))
+                .resize(DeviceDimensionsHelper.getDisplayWidth(mContext), 0)
                 .into(ivPagerImage);
         container.addView(view);
         return view;

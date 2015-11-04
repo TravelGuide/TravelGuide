@@ -470,6 +470,12 @@ public class TravelGuideActivity extends AppCompatActivity implements
         setContentFragment(R.id.fragment_frame, fragment);
     }
 
+    @Override
+    public void onShowImageSlideShow(ArrayList<String> imageUrlSet) {
+        FullscreenFragment fragment = FullscreenFragment.newInstance(imageUrlSet);
+        setContentFragment(R.id.fragment_frame_fullscreen, fragment);
+    }
+
     private void setContentFragment(int fragmentFrame, Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
