@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.travelguide.R;
+import com.travelguide.adapters.FullscreenPagerAdapter;
 import com.xgc1986.parallaxPagerTransformer.ParallaxPagerTransformer;
 
 import java.util.ArrayList;

@@ -59,7 +59,7 @@ public class FavoriteItemsFragment extends ProfileFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvTripPlans.setLayoutManager(layoutManager);
 
-        RecyclerView.ItemDecoration itemDecoration = new VerticalSpaceItemDecoration(20, true, true);
+        RecyclerView.ItemDecoration itemDecoration = new VerticalSpaceItemDecoration(5, true, true);
         rvTripPlans.addItemDecoration(itemDecoration);
 
         addItemClickSupport(rvTripPlans, mTripPlanAdapter);

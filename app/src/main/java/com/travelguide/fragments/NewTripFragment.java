@@ -303,7 +303,7 @@ public class NewTripFragment extends TripBaseFragment {
             totalTravelDays = 1;
             planDetails.putTripTime(totalTravelDays);
         } else {
-            totalTravelDays = daysDifference(parse(startDate.getText().toString()), parse(endDate.getText().toString()));
+            totalTravelDays = daysDifference(parse(startDate.getText().toString()), parse(endDate.getText().toString())) + 1;
             planDetails.putTripTime(totalTravelDays);
         }
         planDetails.puCityImageURL("http://thenextweb.com/wp-content/blogs.dir/1/files/2013/09/nyc.jpg");
@@ -326,9 +326,6 @@ public class NewTripFragment extends TripBaseFragment {
     private void saveDayDetails(String parsePlanID, int totalTravelDays, String planName, Date startDate) {
         ParseUser user = ParseUser.getCurrentUser();
         Integer trackCount = 0;
-        if (totalTravelDays != 1) {
-            totalTravelDays = totalTravelDays + 1;
-        }
         Date updatedStartDate = null;
         List<Day> dayList = new ArrayList<Day>();
 
