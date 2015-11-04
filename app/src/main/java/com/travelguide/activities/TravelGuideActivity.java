@@ -31,8 +31,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -51,6 +53,7 @@ import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 import com.travelguide.R;
 import com.travelguide.foursquare.constants.FoursquareConstants;
+import com.travelguide.fragments.FullscreenFragment;
 import com.travelguide.fragments.LoginFragment;
 import com.travelguide.fragments.NewTripFragment;
 import com.travelguide.fragments.ProfileFragment;
@@ -85,6 +88,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
     private TextView tvProfileUsername;
     private TextView tvProfileEmail;
 
+    private FrameLayout fragmentFrameFullscreen;
     private CustomCoordinatorLayout coordinatorLayout;
     private CollapsingToolbarLayout collapsingToolbar;
     private AppBarLayout appBar;
@@ -125,8 +129,10 @@ public class TravelGuideActivity extends AppCompatActivity implements
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(getResources().getString(R.string.app_name));
 
-        // The backdrop imageview for collapsing toolbar
-        // ivBackdrop = (ImageView) findViewById(R.id.ivBackdrop);
+        // Get the frame to show images in fullscreen
+        fragmentFrameFullscreen = (FrameLayout) findViewById(R.id.fragment_frame_fullscreen);
+
+        // The backdrop components for collapsing toolbar
         ivCoverPic = (ImageView) findViewById(R.id.ivCoverPicInProfile);
         ivProfilePic = (CircleImageView) findViewById(R.id.ivProfilePicInProfile);
         tvName = (TextView) findViewById(R.id.tvNameInProfile);
@@ -171,7 +177,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         //                 .build()
         // );
 
-        setContentFragment(new TripPlanListFragment());
+        setContentFragment(R.id.fragment_frame, new TripPlanListFragment());
     }
 
     @Override
@@ -234,7 +240,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
                     new LoginFragment().logout(ParseUser.getCurrentUser(), this);
                 break;
             case R.id.profile_fragment:
-                setContentFragment(new ProfileFragment());
+                setContentFragment(R.id.fragment_frame, new ProfileFragment());
                 break;
             case R.id.settings_fragment:
                 showSettingsDialog();
@@ -256,7 +262,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        setContentFragment(SearchListFragment.newInstance(city, group, season));
+                        setContentFragment(R.id.fragment_frame, SearchListFragment.newInstance(city, group, season));
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -337,7 +343,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
                     query = "Any";
                 city = formatQueryForSearch(query.trim());
                 searchItem.collapseActionView();
-                setContentFragment(SearchListFragment.newInstance(city, group, season));
+                setContentFragment(R.id.fragment_frame, SearchListFragment.newInstance(city, group, season));
                 return true;
             }
 
@@ -442,6 +448,12 @@ public class TravelGuideActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_frame_fullscreen);
+        if (fragment != null && fragment instanceof FullscreenFragment) {
+            coordinatorLayout.setVisibility(View.VISIBLE);
+            fragmentFrameFullscreen.setVisibility(View.GONE);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
         super.onBackPressed();
         if (!(getSupportFragmentManager().getBackStackEntryCount() > 0)) {
             finish();
@@ -451,28 +463,36 @@ public class TravelGuideActivity extends AppCompatActivity implements
     @Override
     public void onTripPlanItemSelected(String tripPlanObjectId) {
         TripPlanDetailsFragment fragment = TripPlanDetailsFragment.newInstance(tripPlanObjectId);
-        setContentFragment(fragment);
+        setContentFragment(R.id.fragment_frame, fragment);
     }
 
     @Override
     public void onTripPlanNew() {
-        setContentFragment(new NewTripFragment());
+        setContentFragment(R.id.fragment_frame, new NewTripFragment());
     }
 
     @Override
     public void onTripPlanCreated(String tripPlanObjectId) {
         //Opening details passing ID of new item
         TripPlanDetailsFragment fragment = TripPlanDetailsFragment.newInstance(tripPlanObjectId);
-        setContentFragment(fragment);
+        setContentFragment(R.id.fragment_frame, fragment);
     }
 
-    private void setContentFragment(Fragment fragment) {
+    private void setContentFragment(int fragmentFrame, Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-        fragmentTransaction.replace(R.id.fragment_frame, fragment);
+        fragmentTransaction.replace(fragmentFrame, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-        allowCollapsingToolbarScroll(fragment);
+        if (fragment instanceof FullscreenFragment) {
+            coordinatorLayout.setVisibility(View.GONE);
+            fragmentFrameFullscreen.setVisibility(View.VISIBLE);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } else {
+            coordinatorLayout.setVisibility(View.VISIBLE);
+            fragmentFrameFullscreen.setVisibility(View.GONE);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
     }
 
     private void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
@@ -580,11 +600,6 @@ public class TravelGuideActivity extends AppCompatActivity implements
     }
 
     private void getSharedPreferences() {
-//        SharedPreferences userInfo = getSharedPreferences("userInfo", 0);
-//        name = userInfo.getString("name", "missing");
-//        email = userInfo.getString("email", "missing");
-//        profilePicUrl = userInfo.getString("profilePicUrl", "missing");
-//        coverPicUrl = userInfo.getString("coverPicUrl", "missing");
         name = Preferences.readString(this, Preferences.User.NAME);
         email = Preferences.readString(this, Preferences.User.EMAIL);
         profilePicUrl = Preferences.readString(this, Preferences.User.PROFILE_PIC_URL);
