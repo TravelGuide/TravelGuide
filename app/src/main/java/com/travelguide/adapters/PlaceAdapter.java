@@ -45,9 +45,12 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
         holder.tvPlaceName.setText(place.getPlaceName());
         holder.tvVisitingTime.setText(place.getVisitingTime());
 
-        //TODO Find a placeholder
-        //holder.ivPlace.setImageResource(R.mipmap.ic_launcher);
-        Picasso.with(mContext).load(place.getPlaceImageUrl()).fit().placeholder(R.drawable.ic_fav_icon).transform(mTransformation).into(holder.ivPlace);
+        Picasso.with(mContext)
+                .load(place.getPlaceImageUrl())
+                .fit()
+                .placeholder(R.drawable.ic_public_white_48dp)
+                .transform(mTransformation)
+                .into(holder.ivPlace);
     }
 
     @Override

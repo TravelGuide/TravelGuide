@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -34,6 +36,7 @@ import com.travelguide.decorations.DividerItemDecoration;
 import com.travelguide.helpers.GoogleImageSearch;
 import com.travelguide.helpers.ItemClickSupport;
 import com.travelguide.helpers.NetworkAvailabilityCheck;
+import com.travelguide.listener.OnTripPlanListener;
 import com.travelguide.models.Day;
 import com.travelguide.models.Place;
 import com.travelguide.models.TripPlan;
@@ -66,6 +69,9 @@ public class TripPlanDetailsFragment extends TripBaseFragment
 
     private PlaceAdapter mPlaceAdapter;
     private DayAdapter mDayAdapter;
+
+    private ArrayList<String> imageUrlSet = new ArrayList<String>();
+    private OnTripPlanListener listener;
 
     public static TripPlanDetailsFragment newInstance(String tripPlanObjectId) {
         TripPlanDetailsFragment fragment = new TripPlanDetailsFragment();
@@ -126,7 +132,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         fabNewPlace.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AddUpdatePlaceDetailsFragment addUpdatePlace = AddUpdatePlaceDetailsFragment
-                        .newInstance("Add New Place", null, null, TripPlanDetailsFragment.this, mTripPlan.getCityName());
+                        .newInstance(TripPlanDetailsFragment.this, mTripPlan.getCityName());
                 addUpdatePlace.show(getFragmentManager(), "add_update_place_details_fragment");
                 floatingActionsMenu.collapseImmediately();
             }
@@ -161,7 +167,6 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                 });
                 daysDetails.pinInBackground();
 
-
                 floatingActionsMenu.collapseImmediately();
             }
         });
@@ -176,6 +181,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         rvDayDetails = (RecyclerView) view.findViewById(R.id.rvContacts);
         rvDayDetails.setLayoutManager(layoutManagerDay);
         rvDayDetails.setAdapter(mDayAdapter);
+        rvDayDetails.setItemAnimator(new DefaultItemAnimator());
 
         ItemClickSupport.addTo(rvDayDetails).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
@@ -198,9 +204,22 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         rvPlaceDetails = (RecyclerView) view.findViewById(R.id.rvPlaces);
         rvPlaceDetails.setLayoutManager(layoutManagerPlace);
         rvPlaceDetails.setAdapter(mPlaceAdapter);
+        rvPlaceDetails.setItemAnimator(new DefaultItemAnimator());
         rvPlaceDetails.addItemDecoration(itemDecoration);
 
+        ItemClickSupport.addTo(rvPlaceDetails).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                showFullScreenImages();
+            }
+        });
+
         return view;
+    }
+
+    private void showFullScreenImages() {
+        if (listener != null && imageUrlSet != null && imageUrlSet.size() > 0)
+            listener.onShowImageSlideShow(imageUrlSet);
     }
 
     @Override
@@ -211,6 +230,17 @@ public class TripPlanDetailsFragment extends TripBaseFragment
 
         if (NetworkAvailabilityCheck.networkAvailable(getActivity())) {
             loadTripDaysFromRemote();
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            listener = (OnTripPlanListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnTripPlanListener");
         }
     }
 
@@ -229,7 +259,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                 if (e == null) {
                     addTripPlanPlace(placeDetails);
                     GoogleImageSearch googleImageSearch = new GoogleImageSearch();
-                    googleImageSearch.fetchPlaceImage(placeName.toString(), placeDetails.getObjectId(), "CityDetails", new GoogleImageSearch.OnImageFetchListener() {
+                    googleImageSearch.fetchPlaceImage(placeName, placeDetails.getObjectId(), "CityDetails", new GoogleImageSearch.OnImageFetchListener() {
                         @Override
                         public void onImageFetched(String url) {
                             // do nothing
@@ -320,12 +350,22 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     }
 
     private void populateTripPlanPlaces(List<Place> places) {
+        imageUrlSet = new ArrayList<String>();
+        for (Place place : places) {
+            if (place.getPlaceImageUrl() != null)
+                imageUrlSet.add(place.getPlaceImageUrl());
+        }
         mPlaceList.clear();
         mPlaceList.addAll(places);
         mPlaceAdapter.notifyDataSetChanged();
     }
 
     private void addTripPlanPlace(Place place) {
+        if (place.getPlaceImageUrl() != null) {
+            if (imageUrlSet == null)
+                imageUrlSet = new ArrayList<String>();
+            imageUrlSet.add(place.getPlaceImageUrl());
+        }
         mPlaceList.add(place);
         mPlaceAdapter.notifyDataSetChanged();
     }
