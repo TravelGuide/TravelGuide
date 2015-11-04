@@ -7,14 +7,12 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvTripPlansInProfile"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/cvCardViewInProfile" />
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/tvEmptyInProfile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/cvCardViewInProfile"
         android:gravity="center"
         android:text="@string/no_data_available"
         android:visibility="gone" />
