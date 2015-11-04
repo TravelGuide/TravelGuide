@@ -1,5 +1,7 @@
 package com.travelguide.listener;
 
+import java.util.ArrayList;
+
 public interface OnTripPlanListener {
 
     void onTripPlanItemSelected(String tripPlanObjectId);
@@ -7,4 +9,6 @@ public interface OnTripPlanListener {
     void onTripPlanCreated(String tripPlanObjectId, String imageUrl);
 
     void onTripPlanNew();
+
+    void onShowImageSlideShow(ArrayList<String> imageUrlSet);
 }
