@@ -26,6 +26,7 @@ import com.travelguide.decorations.VerticalSpaceItemDecoration;
 import com.travelguide.helpers.EndlessScrollListener;
 import com.travelguide.helpers.ItemClickSupport;
 import com.travelguide.helpers.NetworkAvailabilityCheck;
+import com.travelguide.helpers.Preferences;
 import com.travelguide.listener.OnTripPlanListener;
 import com.travelguide.models.TripPlan;
 
@@ -35,6 +36,8 @@ import java.util.List;
 public class TripPlanListFragment extends TripBaseFragment {
 
     private static final String TAG = TripPlanListFragment.class.getSimpleName();
+
+    private FloatingActionButton fabNewTripPlan;
 
     private OnTripPlanListener mTripPlanListener;
     private TripPlanAdapter mTripPlanAdapter;
@@ -55,6 +58,15 @@ public class TripPlanListFragment extends TripBaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    public void hideOrShowFAB() {
+        if (fabNewTripPlan != null) {
+            if (Preferences.DEF_VALUE.equals(Preferences.readString(getContext(), Preferences.User.USER_OBJECT_ID)))
+                fabNewTripPlan.setVisibility(View.GONE);
+            else
+                fabNewTripPlan.setVisibility(View.VISIBLE);
+        }
     }
 
     @Nullable
@@ -91,7 +103,7 @@ public class TripPlanListFragment extends TripBaseFragment {
             }
         });
 
-        FloatingActionButton fabNewTripPlan = (FloatingActionButton) view.findViewById(R.id.fabNewTripPlan);
+        fabNewTripPlan = (FloatingActionButton) view.findViewById(R.id.fabNewTripPlan);
         fabNewTripPlan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,6 +112,8 @@ public class TripPlanListFragment extends TripBaseFragment {
                 }
             }
         });
+
+        hideOrShowFAB();
 
         tvEmpty = (TextView) view.findViewById(R.id.tvEmpty);
 
@@ -142,6 +156,7 @@ public class TripPlanListFragment extends TripBaseFragment {
             }
         }
         progressDialog.show();
+        hideOrShowFAB();
         loadPlans(0);
     }
 

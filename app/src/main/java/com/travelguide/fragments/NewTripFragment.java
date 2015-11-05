@@ -20,6 +20,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
@@ -32,6 +33,7 @@ import com.parse.SaveCallback;
 import com.travelguide.R;
 import com.travelguide.adapters.TextWatcherAdapter;
 import com.travelguide.helpers.GoogleImageSearch;
+import com.travelguide.helpers.Preferences;
 import com.travelguide.listener.OnTripPlanListener;
 import com.travelguide.models.Day;
 import com.travelguide.models.TripPlan;
@@ -249,6 +251,11 @@ public class NewTripFragment extends TripBaseFragment {
 
     private void done() {
         boolean valid = true;
+
+        if (Preferences.DEF_VALUE.equals(Preferences.readString(getContext(), Preferences.User.USER_OBJECT_ID))) {
+            Toast.makeText(getContext(), "You must be logged in first!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (isEmpty(planName.getText().toString().trim())) {
             planName.setError(getString(R.string.plan_name_is_required));
