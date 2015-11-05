@@ -3,9 +3,11 @@ package com.travelguide.fragments;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,8 +18,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.ImageViewTarget;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.parse.FindCallback;
@@ -34,6 +40,8 @@ import com.travelguide.decorations.DividerItemDecoration;
 import com.travelguide.helpers.GoogleImageSearch;
 import com.travelguide.helpers.ItemClickSupport;
 import com.travelguide.helpers.NetworkAvailabilityCheck;
+import com.travelguide.helpers.Preferences;
+import com.travelguide.listener.OnTripPlanListener;
 import com.travelguide.models.Day;
 import com.travelguide.models.Place;
 import com.travelguide.models.TripPlan;
@@ -54,6 +62,8 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     private FloatingActionsMenu floatingActionsMenu;
     private ImageView ivPlace;
     private ImageView ivFavIcon;
+    private TextView tvGroupType;
+    private TextView tvTravelSeason;
 
     private String mTripPLanObjectId;
     private String mTripPlanImageUrl;
@@ -66,6 +76,9 @@ public class TripPlanDetailsFragment extends TripBaseFragment
 
     private PlaceAdapter mPlaceAdapter;
     private DayAdapter mDayAdapter;
+
+    private ArrayList<String> imageUrlSet = new ArrayList<String>();
+    private OnTripPlanListener listener;
 
     public static TripPlanDetailsFragment newInstance(String tripPlanObjectId) {
         TripPlanDetailsFragment fragment = new TripPlanDetailsFragment();
@@ -88,6 +101,18 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         // Required empty public constructor
     }
 
+    public void hideOrShowFAB() {
+        if (floatingActionsMenu != null) {
+            if (!Preferences.DEF_VALUE.equals(Preferences.readString(getContext(), Preferences.User.USER_OBJECT_ID))
+                    && mTripPlan != null
+                    && mTripPlan.getCreatedUserId().equals(Preferences.readString(getContext(), Preferences.User.USER_OBJECT_ID))) {
+                floatingActionsMenu.setVisibility(View.VISIBLE);
+            } else {
+                floatingActionsMenu.setVisibility(View.GONE);
+            }
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +133,9 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         View view = inflater.inflate(R.layout.fragment_trip_plan_details, container, false);
         setHasOptionsMenu(true);
 
+        tvGroupType = (TextView) view.findViewById(R.id.tvGroupType);
+        tvTravelSeason = (TextView) view.findViewById(R.id.tvTravelSeason);
+
         ivFavIcon = (ImageView) view.findViewById(R.id.ivFavorite);
         setupFavIconOnClickListener();
 
@@ -126,7 +154,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         fabNewPlace.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AddUpdatePlaceDetailsFragment addUpdatePlace = AddUpdatePlaceDetailsFragment
-                        .newInstance("Add New Place", null, null, TripPlanDetailsFragment.this, mTripPlan.getCityName());
+                        .newInstance(TripPlanDetailsFragment.this, mTripPlan.getCityName());
                 addUpdatePlace.show(getFragmentManager(), "add_update_place_details_fragment");
                 floatingActionsMenu.collapseImmediately();
             }
@@ -161,7 +189,6 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                 });
                 daysDetails.pinInBackground();
 
-
                 floatingActionsMenu.collapseImmediately();
             }
         });
@@ -176,6 +203,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         rvDayDetails = (RecyclerView) view.findViewById(R.id.rvContacts);
         rvDayDetails.setLayoutManager(layoutManagerDay);
         rvDayDetails.setAdapter(mDayAdapter);
+        rvDayDetails.setItemAnimator(new DefaultItemAnimator());
 
         ItemClickSupport.addTo(rvDayDetails).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
@@ -198,9 +226,22 @@ public class TripPlanDetailsFragment extends TripBaseFragment
         rvPlaceDetails = (RecyclerView) view.findViewById(R.id.rvPlaces);
         rvPlaceDetails.setLayoutManager(layoutManagerPlace);
         rvPlaceDetails.setAdapter(mPlaceAdapter);
+        rvPlaceDetails.setItemAnimator(new DefaultItemAnimator());
         rvPlaceDetails.addItemDecoration(itemDecoration);
 
+        ItemClickSupport.addTo(rvPlaceDetails).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                showFullScreenImages();
+            }
+        });
+
         return view;
+    }
+
+    private void showFullScreenImages() {
+        if (listener != null && imageUrlSet != null && imageUrlSet.size() > 0)
+            listener.onShowImageSlideShow(imageUrlSet);
     }
 
     @Override
@@ -211,6 +252,17 @@ public class TripPlanDetailsFragment extends TripBaseFragment
 
         if (NetworkAvailabilityCheck.networkAvailable(getActivity())) {
             loadTripDaysFromRemote();
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            listener = (OnTripPlanListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnTripPlanListener");
         }
     }
 
@@ -229,10 +281,14 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                 if (e == null) {
                     addTripPlanPlace(placeDetails);
                     GoogleImageSearch googleImageSearch = new GoogleImageSearch();
-                    googleImageSearch.fetchPlaceImage(placeName.toString(), placeDetails.getObjectId(), "CityDetails", new GoogleImageSearch.OnImageFetchListener() {
+                    googleImageSearch.fetchPlaceImage(placeName, placeDetails.getObjectId(), "CityDetails", new GoogleImageSearch.OnImageFetchListener() {
                         @Override
                         public void onImageFetched(String url) {
-                            // do nothing
+                            placeDetails.putPlaceImageUrl(url);
+                            if (imageUrlSet == null)
+                                imageUrlSet = new ArrayList<>();
+                            imageUrlSet.add(url);
+                            mPlaceAdapter.notifyDataSetChanged();
                         }
                     });
                 }
@@ -320,6 +376,11 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     }
 
     private void populateTripPlanPlaces(List<Place> places) {
+        imageUrlSet = new ArrayList<String>();
+        for (Place place : places) {
+            if (place.getPlaceImageUrl() != null)
+                imageUrlSet.add(place.getPlaceImageUrl());
+        }
         mPlaceList.clear();
         mPlaceList.addAll(places);
         mPlaceAdapter.notifyDataSetChanged();
@@ -342,13 +403,41 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                             .load(tripPlan.getCityImageUrl())
                             .placeholder(R.drawable.city_placeholder)
                             .crossFade()
-                            .into(ivPlace);
+                            .into(new ImageViewTarget<GlideDrawable>(ivPlace) {
+                                @Override
+                                public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                                    super.onResourceReady(resource, glideAnimation);
+                                    ivPlace.setColorFilter(Color.argb(145, 50, 50, 50));
+                                }
+
+                                @Override
+                                protected void setResource(GlideDrawable resource) {
+                                    ivPlace.setImageDrawable(resource);
+                                }
+                            });
                     mTripPlan = tripPlan;
+                    hideOrShowFAB();
+                    bindFavoriteIcon();
+                    tvGroupType.setText(mTripPlan.getGroupType());
+                    tvTravelSeason.setText(mTripPlan.getTravelSeason());
                 } else {
                     e.printStackTrace();
                 }
             }
         });
+    }
+
+    private void bindFavoriteIcon() {
+        ParseUser user = ParseUser.getCurrentUser();
+        if (user == null) {
+            ivFavIcon.setVisibility(View.GONE);
+        } else {
+            if (user.getObjectId().equals(mTripPlan.getCreatedUserId())) {
+                ivFavIcon.setVisibility(View.GONE);
+            } else {
+                ivFavIcon.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private void setupFavIconOnClickListener() {

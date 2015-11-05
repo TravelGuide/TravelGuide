@@ -86,6 +86,7 @@ public class ProfileItemsFragment extends ProfileFragment {
     private void loadTripPlansFromRemote() {
         ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
         query.whereEqualTo("createdUserId", userObjectId);
+        query.addDescendingOrder("createdAt");
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override
             public void done(List<TripPlan> tripPlans, ParseException e) {
@@ -109,6 +110,7 @@ public class ProfileItemsFragment extends ProfileFragment {
     private void loadTripPlansFromDatabase() {
         ParseQuery<TripPlan> query = ParseQuery.getQuery(TripPlan.class);
         query.whereEqualTo("createdUserId", userObjectId);
+        query.addDescendingOrder("createdAt");
         query.fromLocalDatastore();
         query.findInBackground(new FindCallback<TripPlan>() {
             @Override

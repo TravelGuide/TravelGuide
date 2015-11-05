@@ -3,6 +3,9 @@ package com.travelguide.adapters;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,9 +44,12 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final TripPlan tripPlan = mTripPlans.get(position);
 
-        holder.tvPlanName.setText(tripPlan.getPlanName());
+        String planName = tripPlan.getPlanName() + "\n" + tripPlan.getCityName();
+        Spannable span = new SpannableString(planName);
+        span.setSpan(new RelativeSizeSpan(0.75f), planName.indexOf("\n"), planName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        holder.tvPlanName.setText(span);
         holder.ivPlace.setImageResource(R.drawable.city_placeholder);
-        holder.tvPlaceName.setText(tripPlan.getCityName());
 
         Glide.with(mContext)
                 .load(tripPlan.getCityImageUrl())
@@ -82,14 +88,12 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanAdapter.ViewHo
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPlace;
         TextView tvPlanName;
-        TextView tvPlaceName;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             ivPlace = (ImageView) itemView.findViewById(R.id.ivPlace);
             tvPlanName = (TextView) itemView.findViewById(R.id.tvPlanName);
-            tvPlaceName = (TextView) itemView.findViewById(R.id.tvPlaceNameHomeScreen);
         }
     }
 }
