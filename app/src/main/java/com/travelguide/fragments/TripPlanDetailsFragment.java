@@ -40,6 +40,7 @@ import com.travelguide.decorations.DividerItemDecoration;
 import com.travelguide.helpers.GoogleImageSearch;
 import com.travelguide.helpers.ItemClickSupport;
 import com.travelguide.helpers.NetworkAvailabilityCheck;
+import com.travelguide.helpers.Preferences;
 import com.travelguide.listener.OnTripPlanListener;
 import com.travelguide.models.Day;
 import com.travelguide.models.Place;
@@ -98,6 +99,18 @@ public class TripPlanDetailsFragment extends TripBaseFragment
 
     public TripPlanDetailsFragment() {
         // Required empty public constructor
+    }
+
+    public void hideOrShowFAB() {
+        if (floatingActionsMenu != null) {
+            if (!Preferences.DEF_VALUE.equals(Preferences.readString(getContext(), Preferences.User.USER_OBJECT_ID))
+                    && mTripPlan != null
+                    && mTripPlan.getCreatedUserId().equals(Preferences.readString(getContext(), Preferences.User.USER_OBJECT_ID))) {
+                floatingActionsMenu.setVisibility(View.VISIBLE);
+            } else {
+                floatingActionsMenu.setVisibility(View.GONE);
+            }
+        }
     }
 
     @Override
@@ -405,6 +418,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                                 }
                             });
                     mTripPlan = tripPlan;
+                    hideOrShowFAB();
                     bindFavoriteIcon();
                     tvGroupType.setText(mTripPlan.getGroupType());
                     tvTravelSeason.setText(mTripPlan.getTravelSeason());
