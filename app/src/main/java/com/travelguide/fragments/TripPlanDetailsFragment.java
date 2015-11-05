@@ -3,6 +3,7 @@ package com.travelguide.fragments;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +18,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.ImageViewTarget;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.parse.FindCallback;
@@ -57,6 +61,8 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     private FloatingActionsMenu floatingActionsMenu;
     private ImageView ivPlace;
     private ImageView ivFavIcon;
+    private TextView tvGroupType;
+    private TextView tvTravelSeason;
 
     private String mTripPLanObjectId;
     private String mTripPlanImageUrl;
@@ -113,6 +119,9 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trip_plan_details, container, false);
         setHasOptionsMenu(true);
+
+        tvGroupType = (TextView) view.findViewById(R.id.tvGroupType);
+        tvTravelSeason = (TextView) view.findViewById(R.id.tvTravelSeason);
 
         ivFavIcon = (ImageView) view.findViewById(R.id.ivFavorite);
         setupFavIconOnClickListener();
@@ -262,7 +271,8 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                     googleImageSearch.fetchPlaceImage(placeName, placeDetails.getObjectId(), "CityDetails", new GoogleImageSearch.OnImageFetchListener() {
                         @Override
                         public void onImageFetched(String url) {
-                            // do nothing
+                            placeDetails.putPlaceImageUrl(url);
+                            mPlaceAdapter.notifyDataSetChanged();
                         }
                     });
                 }
@@ -363,7 +373,7 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     private void addTripPlanPlace(Place place) {
         if (place.getPlaceImageUrl() != null) {
             if (imageUrlSet == null)
-                imageUrlSet = new ArrayList<String>();
+                imageUrlSet = new ArrayList<>();
             imageUrlSet.add(place.getPlaceImageUrl());
         }
         mPlaceList.add(place);
@@ -382,13 +392,40 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                             .load(tripPlan.getCityImageUrl())
                             .placeholder(R.drawable.city_placeholder)
                             .crossFade()
-                            .into(ivPlace);
+                            .into(new ImageViewTarget<GlideDrawable>(ivPlace) {
+                                @Override
+                                public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                                    super.onResourceReady(resource, glideAnimation);
+                                    ivPlace.setColorFilter(Color.argb(145, 50, 50, 50));
+                                }
+
+                                @Override
+                                protected void setResource(GlideDrawable resource) {
+                                    ivPlace.setImageDrawable(resource);
+                                }
+                            });
                     mTripPlan = tripPlan;
+                    bindFavoriteIcon();
+                    tvGroupType.setText(mTripPlan.getGroupType());
+                    tvTravelSeason.setText(mTripPlan.getTravelSeason());
                 } else {
                     e.printStackTrace();
                 }
             }
         });
+    }
+
+    private void bindFavoriteIcon() {
+        ParseUser user = ParseUser.getCurrentUser();
+        if (user == null) {
+            ivFavIcon.setVisibility(View.GONE);
+        } else {
+            if (user.getObjectId().equals(mTripPlan.getCreatedUserId())) {
+                ivFavIcon.setVisibility(View.GONE);
+            } else {
+                ivFavIcon.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private void setupFavIconOnClickListener() {
