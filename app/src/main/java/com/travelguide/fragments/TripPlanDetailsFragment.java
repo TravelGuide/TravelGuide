@@ -285,6 +285,9 @@ public class TripPlanDetailsFragment extends TripBaseFragment
                         @Override
                         public void onImageFetched(String url) {
                             placeDetails.putPlaceImageUrl(url);
+                            if (imageUrlSet == null)
+                                imageUrlSet = new ArrayList<>();
+                            imageUrlSet.add(url);
                             mPlaceAdapter.notifyDataSetChanged();
                         }
                     });
@@ -384,11 +387,6 @@ public class TripPlanDetailsFragment extends TripBaseFragment
     }
 
     private void addTripPlanPlace(Place place) {
-        if (place.getPlaceImageUrl() != null) {
-            if (imageUrlSet == null)
-                imageUrlSet = new ArrayList<>();
-            imageUrlSet.add(place.getPlaceImageUrl());
-        }
         mPlaceList.add(place);
         mPlaceAdapter.notifyDataSetChanged();
     }
