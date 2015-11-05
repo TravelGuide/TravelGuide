@@ -482,6 +482,7 @@ public class TravelGuideActivity extends AppCompatActivity implements
         fragmentTransaction.replace(fragmentFrame, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+        lockUnlockNavigationDrawer(fragment);
         if (fragment instanceof FullscreenFragment) {
             coordinatorLayout.setVisibility(View.GONE);
             fragmentFrameFullscreen.setVisibility(View.VISIBLE);
@@ -490,6 +491,14 @@ public class TravelGuideActivity extends AppCompatActivity implements
             coordinatorLayout.setVisibility(View.VISIBLE);
             fragmentFrameFullscreen.setVisibility(View.GONE);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+    }
+
+    private void lockUnlockNavigationDrawer(Fragment fragment) {
+        if (fragment instanceof TripPlanListFragment) {
+            mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        } else {
+            mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }
     }
 
@@ -547,7 +556,9 @@ public class TravelGuideActivity extends AppCompatActivity implements
             drawerToggle.setToolbarNavigationClickListener(originalToolbarListener);
         }
 
-        allowCollapsingToolbarScroll(getSupportFragmentManager().findFragmentById(R.id.fragment_frame));
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_frame);
+        lockUnlockNavigationDrawer(fragment);
+        allowCollapsingToolbarScroll(fragment);
     }
 
     private void setHeaderProfileInfo(boolean force) {
@@ -595,6 +606,16 @@ public class TravelGuideActivity extends AppCompatActivity implements
         mLoginStatus = status;
         setMenuItemLoginTitle();
         setHeaderProfileInfo(false);
+        hideOrShowFAB();
+    }
+
+    public void hideOrShowFAB() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_frame);
+        if (fragment instanceof TripPlanListFragment) {
+            ((TripPlanListFragment) fragment).hideOrShowFAB();
+        } else if (fragment instanceof TripPlanDetailsFragment) {
+            ((TripPlanDetailsFragment) fragment).hideOrShowFAB();
+        }
     }
 
     private void getSharedPreferences() {
